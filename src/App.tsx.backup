@@ -6,15 +6,19 @@ import {
 import { api, KnowledgeBase, Analysis, Generated, Usage, Demo, setApiKey, getApiKey } from './lib/api';
 
 // ── Tab registry ────────────────────────────────────────────────────────────
-type TabId = 'pipeline' | 'repurpose' | 'discover' | 'carousel' | 'toolkit' | 'showcase';
+type TabId = 'pipeline' | 'showcase' | 'repurpose' | 'trends' | 'data' | 'chain' | 'carousel' | 'voice' | 'score' | 'seo';
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode; group: string; desc: string }[] = [
-  { id: 'pipeline',  label: 'Pipeline',    icon: <Zap size={15} />,             group: 'Core',      desc: 'Turn any insight into multi-channel content — then build a distribution chain' },
-  { id: 'repurpose', label: 'Repurpose',   icon: <Repeat size={15} />,           group: 'Core',     desc: 'Take existing content and rewrite it for different channels and formats' },
-  { id: 'discover',  label: 'Discover',    icon: <TrendingUp size={15} />,       group: 'Core',     desc: 'Find what to write about — scan industry trends or extract stories from your data' },
+  { id: 'pipeline',  label: 'Generate',    icon: <Zap size={15} />,             group: 'Core',      desc: 'Turn any insight into LinkedIn, Email, Twitter and Blog content in 2 clicks' },
+  { id: 'showcase',  label: 'Examples',    icon: <LayoutDashboard size={15} />,  group: 'Core',      desc: 'Full campaign demo with Cartly — brand setup to 5-channel output, animated, no API key needed' },
+  { id: 'repurpose', label: 'Repurpose',   icon: <Repeat size={15} />,           group: 'Tools',     desc: 'Take existing content and rewrite it for different channels and formats' },
+  { id: 'trends',    label: 'Trend Radar', icon: <TrendingUp size={15} />,       group: 'Tools',     desc: 'Discover what\'s happening in your industry and turn trends into content angles' },
+  { id: 'data',      label: 'Data → Story',icon: <BarChart2 size={15} />,        group: 'Tools',     desc: 'Paste stats or research findings and get ready-to-publish marketing narratives' },
+  { id: 'chain',     label: 'Content Chain',icon: <Link2 size={15} />,           group: 'Tools',     desc: 'Build a sequence of connected posts that guide your audience toward a goal' },
   { id: 'carousel',  label: 'Carousel',    icon: <Layers size={15} />,           group: 'Tools',     desc: 'Design slide-by-slide carousel content with visual direction for each slide' },
-  { id: 'toolkit',   label: 'Toolkit',     icon: <Search size={15} />,           group: 'Tools',     desc: 'Standalone analysis tools — SEO optimization, Brand Voice cloning, and Content Scoring' },
-  { id: 'showcase',  label: 'Showcase',    icon: <LayoutDashboard size={15} />,  group: 'Tools',     desc: 'Full campaign demo with Cartly — brand setup to 5-channel output, animated, no API key needed' },
+  { id: 'voice',     label: 'Brand Voice', icon: <Mic size={15} />,              group: 'Tools',     desc: 'Analyze your writing style and generate new content that sounds exactly like you' },
+  { id: 'score',     label: 'Score',       icon: <Star size={15} />,             group: 'Analytics', desc: 'Get a quality score on any piece of content with specific improvement suggestions' },
+  { id: 'seo',       label: 'SEO',         icon: <Search size={15} />,           group: 'Analytics', desc: 'Optimize content for search: title tags, meta descriptions, keyword placement' },
 ];
 
 const CHANNELS = ['LinkedIn', 'Twitter/X', 'Email', 'Blog', 'Instagram', 'TikTok/Video'];
@@ -164,13 +168,6 @@ function PipelineTab({
   const [topic, setTopic] = useState('');
   const [channels, setChannels] = useState(['LinkedIn', 'Twitter/X', 'Email', 'Blog']);
   const [apiKey, setApiKey] = useState('');
-
-  // Post-generation: Chain + Carousel
-  const [chainResult, setChainResult] = useState<any>(null);
-  const [chainLoading, setChainLoading] = useState(false);
-  const [carouselResult, setCarouselResult] = useState<any>(null);
-  const [carouselLoading, setCarouselLoading] = useState(false);
-  const [carouselActiveSlide, setCarouselActiveSlide] = useState(0);
 
   const kbValid = kb.company_name && kb.industry && kb.description && kb.target_audience && kb.value_prop && kb.brand_voice;
 
@@ -363,97 +360,6 @@ function PipelineTab({
                   <span key={i} className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500">{cta}</span>
                 ))}
               </div>
-            </div>
-          )}
-
-          {/* ── Next Steps: Content Chain + Carousel ── */}
-          <div className="border-t border-gray-200 pt-4 mt-4">
-            <p className="section-header mb-3">Next Steps</p>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                className="btn-primary flex items-center justify-center gap-2 text-sm"
-                disabled={chainLoading}
-                onClick={async () => {
-                  setChainLoading(true);
-                  try {
-                    const t = generated.topic || topic || 'Content distribution';
-                    const { result } = await api.chain(t, kb.target_audience, 5, 'Generate leads and build authority');
-                    setChainResult(result);
-                  } catch (e: any) { setError(e.message); }
-                  finally { setChainLoading(false); }
-                }}
-              >
-                {chainLoading ? <Spinner /> : <><Link2 size={14} /> Content Chain</>}
-              </button>
-              {generated.content?.['Blog'] && (
-                <button
-                  className="text-sm px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-                  disabled={carouselLoading}
-                  onClick={async () => {
-                    setCarouselLoading(true);
-                    try {
-                      const blogContent = generated.content?.['Blog']?.content || '';
-                      const { result } = await api.carousel(blogContent.slice(0, 200), 'LinkedIn', 6, kb.brand_voice || 'professional');
-                      setCarouselResult(result);
-                      setCarouselActiveSlide(0);
-                    } catch (e: any) { setError(e.message); }
-                    finally { setCarouselLoading(false); }
-                  }}
-                >
-                  {carouselLoading ? <Spinner /> : <><Layers size={14} /> Carousel from Blog</>}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Chain result */}
-          {chainResult && (
-            <div className="card p-4 space-y-3">
-              <p className="section-header mb-1">Distribution Strategy</p>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-sm text-green-800 font-medium">{chainResult.chain_title}</p>
-                <p className="text-xs text-green-600 mt-1">{chainResult.arc}</p>
-              </div>
-              {chainResult.pieces?.map((piece: any, i: number) => (
-                <div key={i} className="flex items-start gap-3 text-sm">
-                  <span className="w-6 h-6 rounded-full bg-brand-100 text-brand-600 text-xs flex items-center justify-center font-bold flex-shrink-0">{piece.number}</span>
-                  <div>
-                    <p className="font-medium text-gray-800">{piece.title}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{piece.angle}</p>
-                    {piece.bridge && <p className="text-xs text-brand-500 mt-1">→ {piece.bridge}</p>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Carousel result */}
-          {carouselResult && (
-            <div className="card p-4 space-y-3">
-              <p className="section-header mb-1">Carousel from Blog</p>
-              <div className="flex gap-1.5 flex-wrap">
-                {carouselResult.slides?.map((_: any, i: number) => (
-                  <button key={i} onClick={() => setCarouselActiveSlide(i)}
-                    className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${carouselActiveSlide === i ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
-                    {i + 1}
-                  </button>
-                ))}
-              </div>
-              {carouselResult.slides?.[carouselActiveSlide] && (() => {
-                const s = carouselResult.slides[carouselActiveSlide];
-                return (
-                  <div className="bg-gray-50 rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center gap-2">
-                    <p className="text-base font-semibold text-gray-900 leading-snug">{s.headline}</p>
-                    {s.body && <p className="text-sm text-gray-500">{s.body}</p>}
-                  </div>
-                );
-              })()}
-              {carouselResult.caption && (
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-500 truncate flex-1">{carouselResult.caption.slice(0, 100)}…</p>
-                  <CopyButton text={carouselResult.caption} />
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -1255,7 +1161,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
   );
 }
 
-// ── Tool Tabs (Repurpose, Discover, Carousel, Toolkit) ──
+// ── Tool Tabs (Repurpose, Trends, Data, Chain, Carousel, Voice, Score, SEO) ──
 function RepurposeTab() {
   const [content, setContent] = useState('');
   const [source, setSource] = useState('Blog');
@@ -1328,125 +1234,102 @@ function RepurposeTab() {
   );
 }
 
-// ── Discover Tab (merged: Trend Radar + Data → Story) ────────────────────────
-function DiscoverTab() {
-  const [mode, setMode] = useState<'trends' | 'data'>('trends');
-
-  // Trend Radar state
+function TrendsTab() {
   const [industry, setIndustry] = useState('');
-  const [trendAudience, setTrendAudience] = useState('');
-  const [trendsResult, setTrendsResult] = useState<any>(null);
-  const [trendsLoading, setTrendsLoading] = useState(false);
-  const [trendsError, setTrendsError] = useState<string | null>(null);
+  const [audience, setAudience] = useState('');
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Data → Story state
-  const [data, setData] = useState('');
-  const [dataContext, setDataContext] = useState('');
-  const [dataChannels, setDataChannels] = useState(['LinkedIn', 'Twitter/X']);
-  const [dataResult, setDataResult] = useState<any>(null);
-  const [dataLoading, setDataLoading] = useState(false);
-  const [dataError, setDataError] = useState<string | null>(null);
-
-  const runTrends = async () => {
-    setTrendsError(null); setTrendsLoading(true);
-    try { const { result: r } = await api.trends(industry, trendAudience); setTrendsResult(r); }
-    catch (e: any) { setTrendsError(e.message); }
-    finally { setTrendsLoading(false); }
-  };
-
-  const runData = async () => {
-    setDataError(null); setDataLoading(true);
-    try { const { result: r } = await api.dataInsights(data, dataContext, dataChannels); setDataResult(r); }
-    catch (e: any) { setDataError(e.message); }
-    finally { setDataLoading(false); }
+  const run = async () => {
+    setError(null); setLoading(true);
+    try { const { result: r } = await api.trends(industry, audience); setResult(r); }
+    catch (e: any) { setError(e.message); }
+    finally { setLoading(false); }
   };
 
   const urgencyColor = (u: string) => u === 'high' ? 'text-red-600' : u === 'medium' ? 'text-amber-400' : 'text-gray-500';
 
   return (
     <div className="space-y-4">
-      {/* Mode toggle */}
-      <div className="card p-4">
-        <p className="section-header mb-1">Discover — Find What to Write About</p>
-        <p className="text-xs text-gray-500 mb-3">Don't know what to write? Two ways to find your next content topic.</p>
-        <div className="flex gap-2">
-          <button onClick={() => setMode('trends')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'trends' ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
-            <TrendingUp size={14} /> Trend Radar
-          </button>
-          <button onClick={() => setMode('data')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'data' ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
-            <BarChart2 size={14} /> Data → Story
-          </button>
+      <div className="card p-5 space-y-3">
+        <p className="section-header">Trend Radar</p>
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className="text-xs text-gray-500 mb-1 block">Industry</label><input className="input w-full" placeholder="SaaS / Fashion / HealthTech" value={industry} onChange={e => setIndustry(e.target.value)} /></div>
+          <div><label className="text-xs text-gray-500 mb-1 block">Target Audience</label><input className="input w-full" placeholder="E-commerce directors…" value={audience} onChange={e => setAudience(e.target.value)} /></div>
         </div>
+        <button className="btn-primary flex items-center gap-2" onClick={run} disabled={!industry || loading}>
+          {loading ? <Spinner /> : <><TrendingUp size={14} /> Find Trends</>}
+        </button>
       </div>
-
-      {mode === 'trends' ? (
-        <>
-          <div className="card p-5 space-y-3">
-            <p className="section-header">Trend Radar — What's trending in your industry?</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div><label className="text-xs text-gray-500 mb-1 block">Industry / Niche</label><input className="input w-full" placeholder="SaaS / Fashion / HealthTech" value={industry} onChange={e => setIndustry(e.target.value)} /></div>
-              <div><label className="text-xs text-gray-500 mb-1 block">Target Audience (optional)</label><input className="input w-full" placeholder="E-commerce directors…" value={trendAudience} onChange={e => setTrendAudience(e.target.value)} /></div>
-            </div>
-            <button className="btn-primary flex items-center gap-2" onClick={runTrends} disabled={!industry || trendsLoading}>
-              {trendsLoading ? <Spinner /> : <><TrendingUp size={14} /> Scan for Trends</>}
-            </button>
+      {error && <ErrorBox msg={error} />}
+      {result?.trends?.map((t: any, i: number) => (
+        <div key={i} className="card p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="font-medium text-sm">{t.trend}</span>
+            <span className={`text-xs font-medium uppercase ${urgencyColor(t.urgency)}`}>{t.urgency}</span>
           </div>
-          {trendsError && <ErrorBox msg={trendsError} />}
-          {trendsResult?.trends?.map((t: any, i: number) => (
-            <div key={i} className="card p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-sm">{t.trend}</span>
-                <span className={`text-xs font-medium uppercase ${urgencyColor(t.urgency)}`}>{t.urgency}</span>
-              </div>
-              <p className="text-xs text-gray-500">{t.why_relevant}</p>
-              <p className="text-sm text-gray-800">{t.content_angle}</p>
-              <div className="flex flex-wrap gap-1">
-                {t.formats?.map((f: string, j: number) => <span key={j} className="badge bg-gray-100 text-gray-500">{f}</span>)}
-              </div>
+          <p className="text-xs text-gray-500">{t.why_relevant}</p>
+          <p className="text-sm text-gray-800">{t.content_angle}</p>
+          <div className="flex flex-wrap gap-1">
+            {t.formats?.map((f: string, j: number) => <span key={j} className="badge bg-gray-100 text-gray-500">{f}</span>)}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DataTab() {
+  const [data, setData] = useState('');
+  const [context, setContext] = useState('');
+  const [channels, setChannels] = useState(['LinkedIn', 'Twitter/X']);
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const run = async () => {
+    setError(null); setLoading(true);
+    try { const { result: r } = await api.dataInsights(data, context, channels); setResult(r); }
+    catch (e: any) { setError(e.message); }
+    finally { setLoading(false); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="card p-5 space-y-3">
+        <p className="section-header">Data → Story</p>
+        <textarea className="input w-full h-24 resize-none" placeholder="Paste your data, stats, research findings…&#10;e.g. 'Our Q3 data: 73% of users who onboard in under 5 minutes retain for 6+ months. Average onboard time: 8.2 min.'" value={data} onChange={e => setData(e.target.value)} />
+        <input className="input w-full" placeholder="Brand context (optional)" value={context} onChange={e => setContext(e.target.value)} />
+        <div className="flex flex-wrap gap-2">
+          {CHANNELS.map(ch => <button key={ch} onClick={() => setChannels(prev => prev.includes(ch) ? prev.filter(c => c !== ch) : [...prev, ch])}
+            className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${channels.includes(ch) ? 'border-brand-500 bg-brand-100 text-brand-600' : 'border-gray-300 text-gray-500'}`}>{ch}</button>)}
+        </div>
+        <button className="btn-primary flex items-center gap-2" onClick={run} disabled={!data || loading}>
+          {loading ? <Spinner /> : <><BarChart2 size={14} /> Convert to Content</>}
+        </button>
+      </div>
+      {error && <ErrorBox msg={error} />}
+      {result && (
+        <div className="space-y-4">
+          <div className="card p-4">
+            <p className="section-header mb-1">Data Story</p>
+            <p className="text-sm text-gray-700">{result.data_story}</p>
+            <p className="text-xs text-gray-500 mt-2">Key stat: <span className="text-brand-600 font-medium">{result.key_stat}</span></p>
+          </div>
+          {Object.entries(result.content ?? {}).map(([ch, val]: any) => (
+            <div key={ch}>
+              <div className="flex items-center gap-2 mb-2"><ChannelBadge ch={ch} /></div>
+              <ChannelOutputCard ch={ch} content={val.content} notes={val.notes ?? ''} />
             </div>
           ))}
-          {trendsResult && <p className="text-xs text-gray-400 text-center">💡 Copy a trend and paste it into the Pipeline tab to generate full content.</p>}
-        </>
-      ) : (
-        <>
-          <div className="card p-5 space-y-3">
-            <p className="section-header">Data → Story — Turn numbers into narratives</p>
-            <textarea className="input w-full h-24 resize-none" placeholder={"Paste your data, stats, research findings…\ne.g. 'Our Q3 data: 73% of users who onboard in under 5 minutes retain for 6+ months.'"} value={data} onChange={e => setData(e.target.value)} />
-            <input className="input w-full" placeholder="Brand context (optional)" value={dataContext} onChange={e => setDataContext(e.target.value)} />
-            <div className="flex flex-wrap gap-2">
-              {CHANNELS.map(ch => <button key={ch} onClick={() => setDataChannels(prev => prev.includes(ch) ? prev.filter(c => c !== ch) : [...prev, ch])}
-                className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${dataChannels.includes(ch) ? 'border-brand-500 bg-brand-100 text-brand-600' : 'border-gray-300 text-gray-500'}`}>{ch}</button>)}
-            </div>
-            <button className="btn-primary flex items-center gap-2" onClick={runData} disabled={!data || dataLoading}>
-              {dataLoading ? <Spinner /> : <><BarChart2 size={14} /> Convert to Content</>}
-            </button>
-          </div>
-          {dataError && <ErrorBox msg={dataError} />}
-          {dataResult && (
-            <div className="space-y-4">
-              <div className="card p-4">
-                <p className="section-header mb-1">Data Story</p>
-                <p className="text-sm text-gray-700">{dataResult.data_story}</p>
-                <p className="text-xs text-gray-500 mt-2">Key stat: <span className="text-brand-600 font-medium">{dataResult.key_stat}</span></p>
-              </div>
-              {Object.entries(dataResult.content ?? {}).map(([ch, val]: any) => (
-                <div key={ch}>
-                  <div className="flex items-center gap-2 mb-2"><ChannelBadge ch={ch} /></div>
-                  <ChannelOutputCard ch={ch} content={val.content} notes={val.notes ?? ''} />
-                </div>
-              ))}
-              <p className="text-xs text-gray-400 text-center">💡 Copy an insight and paste it into the Pipeline tab to generate full content.</p>
-            </div>
-          )}
-        </>
+        </div>
       )}
     </div>
   );
 }
 
-function ScorePanel() {
+function ScoreTab() {
   const [content, setContent] = useState('');
   const [channel, setChannel] = useState('LinkedIn');
   const [goal, setGoal] = useState('engagement and brand awareness');
@@ -1509,6 +1392,110 @@ function ScorePanel() {
               ))}
             </div>
           )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Chain Tab ─────────────────────────────────────────────────────────────────
+function ChainTab() {
+  const [goal, setGoal] = useState('');
+  const [audience, setAudience] = useState('');
+  const [pieces, setPieces] = useState(5);
+  const [chainGoal, setChainGoal] = useState('Generate leads and build authority');
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<number | null>(0);
+
+  const run = async () => {
+    setError(null); setLoading(true);
+    try { const { result: r } = await api.chain(goal, audience, pieces, chainGoal); setResult(r); setExpanded(0); }
+    catch (e: any) { setError(e.message); }
+    finally { setLoading(false); }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="card p-5 space-y-3">
+        <p className="section-header">Content Chain</p>
+        <p className="text-xs text-gray-500">A sequence of connected content pieces that build toward a goal — each one bridging to the next.</p>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Topic / Campaign</label>
+            <input className="input w-full" placeholder="AI in B2B marketing in 2025" value={goal} onChange={e => setGoal(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Target Audience</label>
+            <input className="input w-full" placeholder="Marketing directors at SaaS companies" value={audience} onChange={e => setAudience(e.target.value)} />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Chain Goal</label>
+            <input className="input w-full" value={chainGoal} onChange={e => setChainGoal(e.target.value)} />
+          </div>
+          <div>
+            <label className="text-xs text-gray-500 mb-1 block">Number of Pieces</label>
+            <select className="input w-full bg-gray-100" value={pieces} onChange={e => setPieces(Number(e.target.value))}>
+              {[3, 4, 5, 6, 7].map(n => <option key={n} value={n}>{n} pieces</option>)}
+            </select>
+          </div>
+        </div>
+        <button className="btn-primary flex items-center gap-2" onClick={run} disabled={!goal || !audience || loading}>
+          {loading ? <Spinner /> : <><Link2 size={14} /> Build Chain</>}
+        </button>
+      </div>
+      {error && <ErrorBox msg={error} />}
+      {result && (
+        <div className="space-y-3">
+          <div className="card p-4">
+            <p className="section-header mb-1">Chain Strategy</p>
+            <p className="text-sm text-gray-500 italic">"{result.chain_title}"</p>
+            <p className="text-xs text-gray-500 mt-1">{result.arc}</p>
+          </div>
+          {result.pieces?.map((piece: any, i: number) => (
+            <div key={i} className="card overflow-hidden">
+              <button
+                className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
+                onClick={() => setExpanded(expanded === i ? null : i)}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-6 h-6 rounded-full bg-brand-100 text-brand-600 text-xs flex items-center justify-center font-bold flex-shrink-0">{piece.number}</span>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">{piece.title}</p>
+                    <p className="text-xs text-gray-500">{piece.angle}</p>
+                  </div>
+                </div>
+                <span className="text-gray-500 text-xs">{expanded === i ? '▲' : '▼'}</span>
+              </button>
+              {expanded === i && (
+                <div className="px-4 pb-4 space-y-3 border-t border-gray-200">
+                  <div className="mt-3 bg-gray-50 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-brand-600 font-medium">Hook</span>
+                      <CopyButton text={piece.hook} />
+                    </div>
+                    <p className="text-sm text-gray-500 italic">"{piece.hook}"</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-gray-500 font-medium">Full Content</span>
+                      <CopyButton text={piece.content} />
+                    </div>
+                    <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{piece.content}</p>
+                  </div>
+                  {piece.bridge && (
+                    <div className="flex items-start gap-2 text-xs text-gray-500">
+                      <span className="text-brand-500 mt-0.5">→</span>
+                      <span>Bridge to next: {piece.bridge}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>
@@ -1638,8 +1625,8 @@ function CarouselTab() {
   );
 }
 
-// ── Voice Panel (inside Toolkit) ─────────────────────────────────────────
-function VoicePanel() {
+// ── Voice Tab ─────────────────────────────────────────────────────────────────
+function VoiceTab() {
   const [samples, setSamples] = useState(['', '', '']);
   const [newTopic, setNewTopic] = useState('');
   const [result, setResult] = useState<any>(null);
@@ -1721,8 +1708,8 @@ function VoicePanel() {
   );
 }
 
-// ── SEO Panel (inside Toolkit) ───────────────────────────────────────────
-function SeoPanel() {
+// ── SEO Tab ───────────────────────────────────────────────────────────────────
+function SeoTab() {
   const [content, setContent] = useState('');
   const [keyword, setKeyword] = useState('');
   const [secondary, setSecondary] = useState('');
@@ -1824,39 +1811,6 @@ function SeoPanel() {
   );
 }
 
-// ── Toolkit Tab (merged: SEO + Brand Voice + Content Score) ──────────────────
-function ToolkitTab() {
-  const [mode, setMode] = useState<'seo' | 'voice' | 'score'>('seo');
-
-  return (
-    <div className="space-y-4">
-      {/* Mode toggle */}
-      <div className="card p-4">
-        <p className="section-header mb-1">Toolkit — Standalone Analysis Tools</p>
-        <p className="text-xs text-gray-500 mb-3">Three tools, each with its own input. No Pipeline needed.</p>
-        <div className="flex gap-2 flex-wrap">
-          <button onClick={() => setMode('seo')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'seo' ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
-            <Search size={14} /> SEO Optimizer
-          </button>
-          <button onClick={() => setMode('voice')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'voice' ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
-            <Mic size={14} /> Brand Voice
-          </button>
-          <button onClick={() => setMode('score')}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'score' ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
-            <Star size={14} /> Content Score
-          </button>
-        </div>
-      </div>
-
-      {mode === 'seo' && <SeoPanel />}
-      {mode === 'voice' && <VoicePanel />}
-      {mode === 'score' && <ScorePanel />}
-    </div>
-  );
-}
-
 // ── Welcome Screen ────────────────────────────────────────────────────────────
 function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) => void; onViewExamples: () => void }) {
   const [key, setKey] = useState('');
@@ -1889,10 +1843,10 @@ function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) =
       {/* What it does */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg w-full mb-10">
         {[
-          { icon: <Zap size={14} />, label: 'Pipeline', desc: 'LinkedIn, Email, Twitter, Blog — plus distribution chain' },
+          { icon: <Zap size={14} />, label: 'Generate', desc: 'LinkedIn, Email, Twitter, Blog in one click' },
           { icon: <Repeat size={14} />, label: 'Repurpose', desc: 'Adapt existing content for new channels' },
-          { icon: <TrendingUp size={14} />, label: 'Discover', desc: 'Trend Radar + Data → Story in one place' },
-          { icon: <Search size={14} />, label: 'Toolkit', desc: 'SEO, Brand Voice cloning, Content Scoring' },
+          { icon: <TrendingUp size={14} />, label: 'Trend Radar', desc: 'Find content angles in your industry' },
+          { icon: <Mic size={14} />, label: 'Brand Voice', desc: 'Write new content that sounds like you' },
         ].map((item, i) => (
           <div key={i} className="bg-white border border-gray-200 rounded-xl p-3 flex items-start gap-3">
             <span className="text-brand-600 mt-0.5 flex-shrink-0">{item.icon}</span>
@@ -2005,15 +1959,20 @@ export default function App() {
   const renderTab = () => {
     switch (tab) {
       case 'pipeline': return <PipelineTab kb={kb} setKb={setKb} analysis={analysis} setAnalysis={setAnalysis} generated={generated} setGenerated={setGenerated} keyValid={keyValid} />;
-      case 'repurpose': return <RepurposeTab />;
-      case 'discover': return <DiscoverTab />;
-      case 'carousel': return <CarouselTab />;
-      case 'toolkit': return <ToolkitTab />;
       case 'showcase': return <ShowcaseTab onUseDemoKB={(newKb) => { setKb(newKb); setAnalysis(null); setGenerated(null); setTab('pipeline'); }} />;
+      case 'repurpose': return <RepurposeTab />;
+      case 'trends': return <TrendsTab />;
+      case 'data': return <DataTab />;
+      case 'score': return <ScoreTab />;
+      case 'chain': return <ChainTab />;
+      case 'carousel': return <CarouselTab />;
+      case 'voice': return <VoiceTab />;
+      case 'seo': return <SeoTab />;
       default: return null;
     }
   };
 
+  const groups = ['Core', 'Tools', 'Analytics'];
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -2057,10 +2016,19 @@ export default function App() {
       {/* Tab bar — scrollable on mobile */}
       <nav className="border-b border-gray-200 bg-white overflow-x-auto">
         <div className="flex items-center min-w-max px-3">
-          {TABS.map(t => (
+          {/* Core tabs */}
+          {TABS.filter(t => t.group === 'Core').map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`flex items-center gap-1.5 px-4 py-3 text-sm border-b-2 transition-colors font-medium whitespace-nowrap flex-shrink-0 ${tab === t.id ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
               {t.icon}{t.label}
+            </button>
+          ))}
+          <div className="w-px h-5 bg-gray-200 mx-1 flex-shrink-0" />
+          {/* Tool tabs */}
+          {TABS.filter(t => t.group !== 'Core').map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`flex items-center gap-1 px-3 py-3 text-xs border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${tab === t.id ? 'border-brand-500 text-brand-600 font-medium' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
+              {t.icon}<span>{t.label}</span>
             </button>
           ))}
         </div>
