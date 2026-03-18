@@ -546,80 +546,80 @@ function ChannelOutputCard({ ch, content, notes }: { ch: string; content: string
     default: return <GenericChannelCard ch={ch} content={content} notes={notes} />;
   }
 }
-// ── Single Demo: Maeven Studio ───────────────────────────────────────────────
+// ── Single Demo: Cartly (Shopify-style e-commerce platform) ──────────────────
 const MAEVEN_KB: KnowledgeBase = {
-  company_name: 'Maeven Studio',
-  industry: 'Fashion E-commerce',
-  description: 'Premium fashion brand for style-conscious women. Curated collections, fast delivery, hassle-free returns, based in Berlin.',
-  target_audience: 'Style-conscious women, 25–40, shopping online for quality fashion',
-  value_prop: 'Curated premium fashion with a perfect-fit guarantee — love it or we fix it, free',
-  brand_voice: 'Confident, warm, direct',
-  competitors: 'ASOS, Zalando, About You',
-  goals: 'Reduce cart abandonment, increase repeat purchase, build brand loyalty',
+  company_name: 'Cartly',
+  industry: 'E-commerce SaaS / Retail Technology',
+  description: 'E-commerce platform that helps online stores convert more visitors into buyers. Used by 100,000+ merchants worldwide.',
+  target_audience: 'E-commerce founders, heads of growth, and digital marketing managers at DTC brands doing $1M–$50M in revenue',
+  value_prop: 'The e-commerce platform built around conversion — checkout optimization, cart recovery, and behavioral analytics in one place',
+  brand_voice: 'Direct, data-confident, merchant-obsessed',
+  competitors: 'Shopify, WooCommerce, BigCommerce',
+  goals: 'Educate merchants on conversion best practices, drive platform signups, build authority in e-commerce growth',
 };
 
 const MAEVEN_ANALYSIS = {
-  company_summary: 'Maeven Studio curates premium fashion for women who want to look great without the guesswork of online shopping.',
-  brand_voice_descriptors: ['Confident', 'Warm', 'Direct'],
-  positioning: 'The antidote to online shopping anxiety. Maeven removes the biggest reason people hesitate to buy — uncertainty about fit and quality — through guarantees, not just promises.',
+  company_summary: 'Cartly helps online stores turn more browsers into buyers through checkout optimization and behavioral analytics.',
+  brand_voice_descriptors: ['Direct', 'Data-confident', 'Merchant-obsessed'],
+  positioning: 'The anti-guesswork platform. While competitors sell features, Cartly sells outcomes — and backs every claim with merchant data from 100,000+ stores.',
   content_opportunities: [
-    'Why 73% of shoppers abandon their cart (and how to fix it)',
-    'The psychology behind "I\'ll just leave it in the cart"',
-    'What your return rate is actually telling you',
-    'How to build confidence into the online shopping experience',
+    'Why 73% of carts get abandoned (the real reason)',
+    'The checkout mistakes costing merchants millions',
+    'How behavioral data predicts purchase intent',
+    'Cart recovery tactics that actually work in 2025',
   ],
-  avoid: 'Generic fashion marketing, pressure tactics, vague luxury claims, trend-chasing language',
-  topic: 'Why 73% of online shoppers abandon their cart — and what we did about it',
-  strategic_notes: 'Open with the universal pain point (cart abandonment), then reveal the insight (it\'s fear, not indecision), then show the solution.',
+  avoid: 'Hype-driven SaaS marketing, vague "AI-powered" claims, feature-first messaging, startup jargon',
+  topic: 'Why 73% of online shoppers abandon their cart — data from 100,000 stores',
+  strategic_notes: 'Lead with merchant pain (lost revenue), show the data, reveal the insight (it\'s fear not price), present the platform as the solution.',
 };
 
 const MAEVEN_CONTENT = {
   'LinkedIn': {
-    content: "73% of online shopping carts get abandoned.\n\nMost brands blame distraction. Or price sensitivity. Or \"just browsing.\"\n\nWe dug into our own data. The real reason surprised us.\n\nFear.\n\nNot fear of spending. Fear of being wrong. Fear of ordering a size 38 and having it arrive as a size 34. Fear of going through a return process. Fear of wasting money on something that looks different in person.\n\nSo we stopped trying to nudge people into buying. We started removing the reasons not to.\n\nFit guarantee. Free alterations. No-questions returns.\n\nCart abandonment dropped 34%. Average order value went up 22%.\n\nThe best conversion optimization isn't urgency timers. It's trust.\n\n#EcommerceStrategy #FashionBusiness #ConversionOptimization",
-    notes: 'Opens with the familiar stat, flips the conventional wisdom, ends with a clean insight',
+    content: "We analyzed 100,000 online stores.\n\n73% of shopping carts get abandoned.\n\nEvery e-commerce team knows this stat. Most blame price sensitivity or distraction.\n\nWe dug deeper.\n\nAfter surveying 12,000 shoppers who abandoned carts, the same pattern emerged:\n\nFear of being wrong.\n\nNot \"this is too expensive.\"\nNot \"I'll come back later.\"\n\n\"What if it doesn't look like the photos?\"\n\"What if the size is wrong?\"\n\"What if returning it is a nightmare?\"\n\nUrgency timers don't fix fear. Popups don't fix fear.\n\nThe merchants who cracked cart abandonment removed the risk — not added pressure.\n\nFit guarantees. Frictionless returns. Real-time social proof.\n\nAverage abandonment rate for merchants who implemented all three: 31%.\n\nThe rest of the market: 73%.\n\nConversion optimization isn't about nudging people to buy.\nIt's about removing reasons not to.\n\n#Ecommerce #ConversionOptimization #DTC #CartAbandonment",
+    notes: 'Platform authority through merchant data — positions Cartly as the source of truth for e-commerce insights',
   },
   'Twitter/X': {
-    content: "73% of carts get abandoned.\n\nMost brands add urgency timers.\nWe asked why people hesitate instead.\n\nAnswer: fear of being wrong.\nWrong size. Wrong color. Wrong decision.\n\nSo we removed the risk entirely.\nFit guarantee. Free alterations.\n\nAbandonment down 34%.\nThe best conversion tool is trust.\n\n#Ecommerce",
-    notes: 'Same insight compressed — the contrast between "add urgency" vs "remove fear" is the hook',
+    content: "We analyzed 100,000 online stores.\n\n73% of carts → abandoned.\n\nWe surveyed 12,000 shoppers who didn't buy.\nNot one said \"too expensive.\"\n\nThey said: fear.\n\"Wrong size. Wrong look. Nightmare return.\"\n\nThe merchants who fixed it removed risk.\nNot added urgency.\n\nAbandonment rate with risk removal: 31%.\nWithout: 73%.\n\nConversion = trust, not pressure.\n\n#Ecommerce #DTC",
+    notes: 'Data-first thread format — the contrast between 73% and 31% is the hook',
   },
   'Email': {
-    content: "Subject: Why we stopped trying to make you buy faster\n\nHi,\n\nHere's something most fashion brands won't tell you: that \"Only 2 left!\" countdown timer doesn't work.\n\nWe tried it. Our customers ignored it.\n\nSo we went back to basics. We looked at our cart abandonment data — 73% of people who added items never checked out — and asked a simple question: why?\n\nThe answer wasn't price. It wasn't distraction. It was fear.\n\nFear of ordering the wrong size. Fear of the item looking different in person. Fear of a complicated return process.\n\nSo instead of adding pressure, we removed risk.\n\nEvery Maeven order now comes with a fit guarantee. If something doesn't fit perfectly, we'll alter it free of charge. Returns are free, no questions, no time limit.\n\nCart abandonment dropped 34%. Average order value went up 22%.\n\nWe think the future of online fashion isn't faster checkout flows. It's shopping without fear.\n\n→ Shop the new collection\n\nMaeven Studio",
-    notes: 'Subverts expectations immediately — "stopped trying to make you buy faster" is the anti-marketing hook',
+    content: "Subject: Why your cart abandonment emails aren't working\n\nHi,\n\nYou're sending cart recovery emails. They're getting opens. But conversions are flat.\n\nHere's what our data from 100,000 merchants tells us about why.\n\nMost cart abandonment tools treat the symptom — the abandoned cart — not the cause. And the cause, based on surveying 12,000 shoppers who didn't complete checkout, is almost never price.\n\nIt's fear of being wrong.\n\nFear that the product looks different in person. Fear that sizing is off. Fear that returns will be painful. Fear of making a €80 mistake.\n\nCart recovery emails don't address any of that. A 10% discount coupon doesn't address that. An urgency countdown doesn't address that.\n\nWhat does work:\n\n→ Social proof at the moment of hesitation (not just on the product page)\n→ Visible, friction-free return policies in the checkout flow\n→ Size/fit confidence tools before the add-to-cart\n\nMerchants on Cartly who implemented all three reduced abandonment from 73% to 31% within 90 days.\n\nWe've written up the full playbook. Want it?\n\n→ Get the Cart Abandonment Playbook\n\nThe Cartly team",
+    notes: 'Reframes why their current approach isn\'t working before presenting the solution — earns the CTA',
   },
   'Blog': {
-    content: "## Why 73% of Online Shoppers Abandon Their Cart — And What We Did About It\n\nEvery e-commerce team knows the statistic. 73% of shopping carts get abandoned. Billions of euros in potential revenue, evaporating at the final step.\n\nThe conventional response is familiar: urgency timers, exit-intent popups, abandoned cart emails. Add friction on the way out. Create pressure on the way in.\n\nWe tried all of it. None of it moved the needle.\n\n### The Question We Weren't Asking\n\nWe spent three months doing something most brands skip: asking our customers why they didn't buy.\n\nThe answers weren't what we expected.\n\n\"I wasn't sure if it would fit.\"\n\"I couldn't tell from the photos what it actually looked like.\"\n\"I wanted it but I was worried about the return process if it didn't work.\"\n\nThe pattern was consistent. It wasn't price sensitivity. It wasn't distraction. It was **fear of being wrong**.\n\nFear of ordering a size that arrives wrong. Fear of spending €120 on something that looks different in person. Fear of navigating a return process that feels like punishment for trusting the brand.\n\n### Removing Risk Instead of Adding Pressure\n\nOnce we understood the actual problem, the solution became obvious.\n\nWe stopped trying to overcome hesitation with urgency. We started removing the reasons to hesitate.\n\nEvery Maeven order now comes with three guarantees:\n\n- **Fit guarantee** — if anything doesn't fit, we'll alter it free of charge\n- **Quality guarantee** — if it looks different from the photos, full refund\n- **No-friction returns** — free, no time limit, no questions\n\n### What Happened Next\n\nCart abandonment dropped 34% in the first quarter after launch. Average order value increased 22%. Customer lifetime value — the metric that actually matters — went up 31%.\n\nBut the number that surprised us most: repeat purchase rate increased 44%.\n\nCustomers who shop without fear come back.\n\n### The Actual Lesson\n\nUrgency tactics treat hesitation as an obstacle to overcome. We think hesitation is information — a signal that the customer doesn't trust the transaction yet.\n\nThe best conversion optimization isn't a better popup. It's a better promise.\n\n→ See how Maeven's fit guarantee works",
-    notes: 'Full thought leadership post — publishable on LinkedIn, Medium, or company blog',
+    content: "## Why 73% of Online Shoppers Abandon Their Cart — And What the Data Actually Shows\n\nCart abandonment is the most-discussed problem in e-commerce. It's also the most misunderstood.\n\nThe conventional wisdom — that shoppers abandon because of price, distraction, or \"just browsing\" — has shaped a billion-dollar industry of urgency timers, exit-intent popups, and discount-heavy recovery emails.\n\nWe think the conventional wisdom is wrong.\n\n### What We Found Across 100,000 Stores\n\nCartly processes checkout data from over 100,000 online merchants. We have a detailed view of where shoppers drop off, what they do before leaving, and in cases where we've run post-abandonment surveys, why they didn't buy.\n\nThe survey data surprised us.\n\nWhen we asked 12,000 shoppers who abandoned carts in the past 30 days why they didn't complete their purchase, fewer than 8% cited price as the primary reason.\n\nThe dominant responses clustered around a single theme: **fear of being wrong**.\n\n- \"I wasn't sure it would look the same in person\"\n- \"I was worried about the size — I'm between sizes and didn't want to guess\"\n- \"I didn't know how easy it would be to return if it didn't work out\"\n- \"I've been burned before by online orders that didn't match the photos\"\n\n### Why Urgency Tactics Fail\n\nThis explains why the standard playbook underperforms.\n\nUrgency timers create pressure. But the shopper's problem isn't a lack of urgency — it's a lack of certainty. Adding \"Only 3 left!\" to an experience already defined by uncertainty doesn't resolve the underlying hesitation. It adds stress to it.\n\nThe same logic applies to discount-heavy cart recovery emails. A 10% coupon makes the product cheaper, not safer. For a shopper who's worried about fit or quality, cheaper isn't the answer.\n\n### What Actually Works: Risk Removal\n\nThe merchants on our platform with the lowest abandonment rates share a common pattern. They've invested in removing risk, not adding pressure.\n\nThree interventions show the strongest correlation with abandonment reduction:\n\n**1. Contextual social proof in the checkout flow**\nProduct page reviews are standard. Fewer merchants surface relevant reviews (same size, same body type, similar use case) in the checkout flow itself — where hesitation actually happens.\n\n**2. Visible, friction-free return policy**\nMost merchants have a return policy. Few make it prominent in checkout. Shoppers shouldn't have to hunt for it. A one-line \"Free returns, no questions\" in the payment step reduces abandonment measurably.\n\n**3. Fit and size confidence tools**\nSize charts are not fit tools. Interactive size recommendations, user-generated fit notes, and \"customers who bought this also bought X size\" signals address the uncertainty that drives abandonment.\n\n### The Numbers\n\nMerchants who implemented all three saw abandonment rates drop from the platform average of 73% to 31% within 90 days. That's not a marginal improvement — it's a structural shift in how shoppers experience the checkout.\n\n### The Actual Lesson\n\nThe framing of cart abandonment as a conversion optimization problem leads brands toward tactics that treat the symptom. The real problem is trust — and trust is built by reducing risk, not increasing urgency.\n\n→ Download the full Cart Abandonment Playbook — data from 100,000 Cartly merchants",
+    notes: 'Full thought leadership — publishable as a standalone article, positions Cartly as the merchant intelligence platform',
   },
   'Instagram': {
-    content: "73% of carts get abandoned. 🛒\n\nMost brands add countdown timers.\nWe asked WHY instead.\n\nThe answer: fear of being wrong.\nWrong size. Wrong look. Wrong choice.\n\nSo we removed the risk entirely:\n✓ Fit guarantee\n✓ Free alterations\n✓ No-questions returns\n\nCart abandonment: -34% 📉\nRepeat purchases: +44% 📈\n\nThe best conversion tool isn't urgency.\nIt's trust. 🤍\n\n#FashionBusiness #Ecommerce #StyleTips #MaevenStudio #OnlineShopping #FashionMarketing",
-    notes: 'Visual-first format — pairs with a before/after graphic or stat overlay',
+    content: "73% of carts get abandoned. 🛒\n\nWe surveyed 12,000 shoppers who didn't buy.\n\nNot one said \"too expensive.\"\n\nThey said fear. 😰\n\"Wrong size. Wrong look. Painful return.\"\n\nThe stores that fixed it:\n✅ Removed the risk\n✅ Made returns obvious\n✅ Added size confidence\n\nResult: 73% → 31% abandonment.\n\nConversion isn't pressure.\nIt's trust. 🤍\n\nData from 100,000+ Cartly merchants.\n\n#Ecommerce #CartAbandonment #DTC #OnlineStore #ConversionOptimization #EcommerceMarketing",
+    notes: 'Stat-led, emoji-formatted for Instagram — pairs with a data visualization graphic',
   },
 };
 
 const MAEVEN_CAROUSEL = [
-  { slide: 1, type: 'Cover', headline: '73% of carts get abandoned.', body: "Most brands add pressure.\nWe asked why instead.", color: 'from-slate-800 to-slate-950' },
-  { slide: 2, type: 'Stat', headline: '73%', body: 'of online shopping carts\nnever reach checkout.\n\nBillions in lost revenue.\nEvery. Single. Day.', color: 'from-slate-700 to-slate-900' },
-  { slide: 3, type: 'Insight', headline: 'We dug into our data.', body: 'Price sensitivity? No.\nDistraction? No.\n\nFear.\nFear of being wrong.', color: 'from-slate-800 to-slate-950' },
-  { slide: 4, type: 'Problem', headline: '"What if it doesn\'t fit?"', body: 'Wrong size. Wrong colour.\nComplicated return.\n\nHesitation isn\'t indecision.\nIt\'s risk management.', color: 'from-slate-700 to-slate-900' },
-  { slide: 5, type: 'Solution', headline: 'We removed the risk.', body: '✓ Fit guarantee\n✓ Free alterations\n✓ No-questions returns', color: 'from-violet-900 to-slate-900' },
-  { slide: 6, type: 'Result', headline: 'Abandonment -34%.\nLTV +31%.', body: 'Customers who shop\nwithout fear come back.', color: 'from-slate-800 to-slate-950' },
-  { slide: 7, type: 'CTA', headline: 'Trust > urgency.\nAlways.', body: '@maeven.studio\nShop the fit guarantee →', color: 'from-slate-900 to-slate-950' },
+  { slide: 1, type: 'Cover', headline: '73% of carts get abandoned.', body: "We analyzed 100,000 stores\nto find out why.", color: 'from-indigo-900 to-slate-950' },
+  { slide: 2, type: 'Stat', headline: '73%', body: 'of online shopping carts\nnever reach checkout.\n\nData from 100,000+ Cartly merchants.', color: 'from-indigo-800 to-slate-900' },
+  { slide: 3, type: 'Myth', headline: 'Everyone blames price.', body: 'We surveyed 12,000\nshoppers who didn\'t buy.\n\nFewer than 8% said price.', color: 'from-slate-800 to-slate-950' },
+  { slide: 4, type: 'Truth', headline: 'The real reason: fear.', body: '"Wrong size. Wrong look.\nNightmare return."\n\nFear of being wrong.', color: 'from-indigo-900 to-slate-950' },
+  { slide: 5, type: 'Solution', headline: 'The fix: remove risk.', body: '✓ Contextual social proof\n✓ Visible return policy\n✓ Fit confidence tools', color: 'from-violet-900 to-indigo-950' },
+  { slide: 6, type: 'Result', headline: '73% → 31%', body: 'Abandonment rate for merchants\nwho removed risk vs. added pressure.\n\n90 days.', color: 'from-indigo-800 to-slate-950' },
+  { slide: 7, type: 'CTA', headline: 'Trust beats urgency.\nEvery time.', body: '@cartly\nGet the free playbook →', color: 'from-slate-900 to-slate-950' },
 ];
 
 const MAEVEN_CHAIN = [
-  { number: 1, title: 'The Stat Everyone Knows', angle: 'Hook with the universal pain point', hook: '73% of shopping carts get abandoned. Here\'s the reason nobody talks about.', channel: 'LinkedIn' },
-  { number: 2, title: 'The Diagnosis', angle: 'Reframe the problem as fear, not price', hook: 'We surveyed 800 customers who didn\'t buy. Not one said "too expensive." Here\'s what they actually said.', channel: 'LinkedIn' },
-  { number: 3, title: 'The Fix', angle: 'How the fit guarantee actually works', hook: 'What does "fit guarantee" actually mean? Here\'s exactly what happens when you order from Maeven.', channel: 'Email' },
-  { number: 4, title: 'The Numbers', angle: 'Results 90 days after launch', hook: '90 days since we launched our fit guarantee. Here\'s what happened to cart abandonment, LTV, and repeat purchases.', channel: 'LinkedIn' },
-  { number: 5, title: 'The Bigger Idea', angle: 'Industry call to rethink conversion', hook: 'What if the entire e-commerce industry is optimizing for the wrong thing? A case for trust over urgency.', channel: 'Blog' },
+  { number: 1, title: 'The Stat That Kills Margins', angle: 'Hook with the universal pain — lost revenue', hook: '73% of shopping carts get abandoned. Here\'s what 100,000 stores taught us about why.', channel: 'LinkedIn' },
+  { number: 2, title: 'The Myth vs. The Data', angle: 'Challenge conventional wisdom with survey data', hook: 'We asked 12,000 shoppers why they didn\'t buy. Not one said "too expensive." Here\'s what they actually said.', channel: 'LinkedIn' },
+  { number: 3, title: 'The Playbook', angle: 'Practical 3-step framework', hook: '3 things merchants with sub-35% abandonment rates do differently. A step-by-step breakdown.', channel: 'Email' },
+  { number: 4, title: 'The Case Study', angle: 'Before/after with a real merchant', hook: 'How one DTC brand dropped cart abandonment from 71% to 28% in 90 days — without touching their pricing.', channel: 'LinkedIn' },
+  { number: 5, title: 'The Bigger Picture', angle: 'Industry-level reframe', hook: 'The entire e-commerce industry is optimizing for the wrong thing. A case for building trust over adding urgency.', channel: 'Blog' },
 ];
 
 const MAEVEN_CALENDAR = [
-  { day: 'Mon', date: '24', channel: 'LinkedIn', type: 'Thought Leadership', title: 'The 73% problem', status: 'scheduled' },
-  { day: 'Tue', date: '25', channel: 'Instagram', type: 'Carousel', title: 'Fear vs. urgency', status: 'scheduled' },
-  { day: 'Wed', date: '26', channel: 'Email', type: 'Newsletter', title: 'We stopped trying to make you buy faster', status: 'draft' },
+  { day: 'Mon', date: '24', channel: 'LinkedIn', type: 'Thought Leadership', title: 'The 73% problem — our data', status: 'scheduled' },
+  { day: 'Tue', date: '25', channel: 'Instagram', type: 'Carousel', title: 'Fear vs. urgency — 7 slides', status: 'scheduled' },
+  { day: 'Wed', date: '26', channel: 'Email', type: 'Newsletter', title: 'Why your recovery emails aren\'t working', status: 'draft' },
   { day: 'Thu', date: '27', channel: 'Twitter/X', type: 'Thread', title: 'Cart abandonment is a trust problem', status: 'idea' },
-  { day: 'Fri', date: '28', channel: 'Blog', type: 'Long-form', title: 'Why 73% abandon — full analysis', status: 'draft' },
+  { day: 'Fri', date: '28', channel: 'Blog', type: 'Long-form', title: 'The full abandonment data breakdown', status: 'draft' },
 ];
 
 function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void }) {
@@ -653,7 +653,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
               <span className="badge bg-green-100 text-green-700">Live Demo</span>
               <span className="text-xs text-gray-500">No API key needed</span>
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">Maeven Studio</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Cartly</h2>
             <p className="text-sm text-gray-500 mt-0.5">Premium fashion e-commerce — Berlin · Full campaign from brand setup to published content</p>
           </div>
           <button onClick={() => onUseDemoKB(MAEVEN_KB)} className="btn-primary flex items-center gap-1.5 flex-shrink-0">
@@ -823,7 +823,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
               <div className="px-3 py-2 flex items-center gap-2 border-b border-gray-100">
                 <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-xs font-bold">M</div>
                 <div className="flex-1">
-                  <p className="text-xs font-semibold text-gray-900">maeven.studio</p>
+                  <p className="text-xs font-semibold text-gray-900">@cartly</p>
                 </div>
                 <span className="text-gray-400 text-lg">···</span>
               </div>
@@ -841,7 +841,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
                       <p className="text-xs text-white/70 leading-relaxed whitespace-pre-line">{slide.body}</p>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-white/40">@maeven.studio</span>
+                      <span className="text-xs text-white/40">@@cartly</span>
                       <div className="flex gap-1">
                         {MAEVEN_CAROUSEL.map((_, i) => (
                           <button key={i} onClick={() => setActiveSlide(i)}
@@ -860,7 +860,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
                   <span className="text-lg">🔖</span>
                 </div>
                 <p className="text-xs font-semibold text-gray-900">1,247 likes</p>
-                <p className="text-xs text-gray-600 mt-0.5"><span className="font-semibold">maeven.studio</span> Swipe to see our data →</p>
+                <p className="text-xs text-gray-600 mt-0.5"><span className="font-semibold">@cartly</span> Swipe to see our data →</p>
               </div>
             </div>
           </div>
@@ -957,7 +957,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             <p className="text-sm font-medium text-gray-800">Ready to generate content for your brand?</p>
             <p className="text-xs text-gray-500">Enter your Anthropic API key, click below, and run the same flow for your company in under 2 minutes.</p>
             <button onClick={() => onUseDemoKB(MAEVEN_KB)} className="btn-primary flex items-center gap-2 mx-auto">
-              <Sparkles size={14} /> Use Maeven's Brand as Template
+              <Sparkles size={14} /> Use Cartly's Brand as Template
             </button>
           </div>
         </div>
