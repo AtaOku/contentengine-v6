@@ -2334,15 +2334,28 @@ export default function App() {
         </a>
       </header>
 
-      {/* Tab bar — scrollable on mobile */}
+      {/* Tab bar — locked until analysis */}
       <nav className="border-b border-gray-200 bg-white overflow-x-auto">
         <div className="flex items-center min-w-max px-3">
-          {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
-              className={`flex items-center gap-1.5 px-4 py-3 text-sm border-b-2 transition-colors font-medium whitespace-nowrap flex-shrink-0 ${tab === t.id ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
-              {t.icon}{t.label}
-            </button>
-          ))}
+          {TABS.map(t => {
+            const locked = !analysis && t.id !== 'pipeline';
+            return (
+              <button key={t.id}
+                onClick={() => !locked && setTab(t.id)}
+                disabled={locked}
+                className={`flex items-center gap-1.5 px-4 py-3 text-sm border-b-2 transition-colors font-medium whitespace-nowrap flex-shrink-0 ${
+                  locked
+                    ? 'border-transparent text-gray-300 cursor-not-allowed'
+                    : tab === t.id
+                      ? 'border-brand-500 text-brand-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}>
+                {t.icon}
+                {t.label}
+                {locked && <span className="ml-1 text-xs text-gray-300">🔒</span>}
+              </button>
+            );
+          })}
         </div>
       </nav>
 
@@ -2353,6 +2366,19 @@ export default function App() {
           {!keyValid && (
             <span className="text-xs text-amber-600 flex-shrink-0 hidden sm:block">← Enter API key to generate</span>
           )}
+        </div>
+      )}
+
+      {/* Unlock preview — shown when on Pipeline and no analysis yet */}
+      {!analysis && tab === 'pipeline' && (
+        <div className="bg-brand-50 border-b border-brand-200 px-4 py-3">
+          <div className="max-w-4xl mx-auto flex items-start gap-3">
+            <Sparkles size={16} className="text-brand-500 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm text-brand-800 font-medium">Start by setting up your brand</p>
+              <p className="text-xs text-brand-600 mt-0.5">Fill in your brand details below and hit Analyze. Once the AI understands your brand, all tools unlock: Repurpose, Discover, Carousel, and Toolkit.</p>
+            </div>
+          </div>
         </div>
       )}
 
