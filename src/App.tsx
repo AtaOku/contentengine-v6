@@ -6,7 +6,7 @@ import {
 import { api, KnowledgeBase, Analysis, Generated, Usage, Demo, setApiKey, getApiKey } from './lib/api';
 
 // ── Tab registry ────────────────────────────────────────────────────────────
-type TabId = 'pipeline' | 'repurpose' | 'discover' | 'carousel' | 'toolkit' | 'showcase';
+type TabId = 'pipeline' | 'repurpose' | 'discover' | 'carousel' | 'toolkit';
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode; group: string; desc: string }[] = [
   { id: 'pipeline',  label: 'Pipeline',    icon: <Zap size={15} />,             group: 'Core',      desc: 'Turn any insight into multi-channel content — then build a distribution chain' },
@@ -14,7 +14,6 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode; group: string; de
   { id: 'discover',  label: 'Discover',    icon: <TrendingUp size={15} />,       group: 'Core',     desc: 'Find what to write about — scan industry trends or extract stories from your data' },
   { id: 'carousel',  label: 'Carousel',    icon: <Layers size={15} />,           group: 'Tools',     desc: 'Design slide-by-slide carousel content with visual direction for each slide' },
   { id: 'toolkit',   label: 'Toolkit',     icon: <Search size={15} />,           group: 'Tools',     desc: 'Standalone analysis tools — SEO optimization, Brand Voice cloning, and Content Scoring' },
-  { id: 'showcase',  label: 'Showcase',    icon: <LayoutDashboard size={15} />,  group: 'Tools',     desc: 'Full campaign demo with Cartly — brand setup to 5-channel output, animated, no API key needed' },
 ];
 
 const CHANNELS = ['LinkedIn', 'Twitter/X', 'Email', 'Blog', 'Instagram', 'TikTok/Video'];
@@ -834,7 +833,7 @@ const MAEVEN_CALENDAR = [
   { day: 'Fri', date: '28', channel: 'Email', type: 'Follow-up', title: 'Get the free cart abandonment playbook', status: 'idea', time: '3:00 PM' },
 ];
 
-function ShowcaseTab() {
+function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
   const [activeSection, setActiveSection] = useState<string>('brand');
   const [activeChannel, setActiveChannel] = useState<string>('LinkedIn');
   const [activeSlide, setActiveSlide] = useState<number>(-1);
@@ -908,11 +907,11 @@ function ShowcaseTab() {
   useEffect(() => { navigateTo('brand'); return clearTimers; }, []);
 
   const sections = [
-    { id: 'brand', label: '① Brand Setup' },
-    { id: 'analysis', label: '② AI Analysis' },
-    { id: 'content', label: '③ Multi-Channel' },
-    { id: 'chain', label: '④ Content Chain' },
-    { id: 'calendar', label: '⑤ Calendar' },
+    { id: 'brand', label: '① Brand Setup', desc: 'First, you tell the engine about your brand — company, audience, voice, and goals. This is the knowledge base that shapes every piece of content.' },
+    { id: 'analysis', label: '② AI Analysis', desc: 'Claude analyzes your brand and extracts content pillars, audience pain points, and strategic opportunities. One API call — the foundation for everything that follows.' },
+    { id: 'content', label: '③ Multi-Channel', desc: 'Pick a topic, choose your channels. One more API call generates LinkedIn, Twitter, Email, and Blog — all at once, all in your brand voice.' },
+    { id: 'chain', label: '④ Content Chain', desc: 'A sequence of connected posts that build toward a goal — each piece bridges to the next. This is how you turn one insight into a week of content.' },
+    { id: 'calendar', label: '⑤ Calendar', desc: 'Everything mapped to a publishing schedule. From raw insight to a full content week — that\'s the complete pipeline.' },
   ];
 
   const channelStatusColor = (status: string) => ({
@@ -921,45 +920,102 @@ function ShowcaseTab() {
     idea: 'bg-gray-100 text-gray-500',
   }[status] ?? 'bg-gray-100 text-gray-500');
 
+  const activeSectionData = sections.find(s => s.id === activeSection);
+  const sectionIdx = sections.findIndex(s => s.id === activeSection);
+
+  const hints: Record<string, [string, string]> = {
+    brand:    ['In the real tool', 'Paste your website URL and the engine extracts all brand fields automatically.'],
+    analysis: ['Why this matters', 'The analysis is reusable — generate 10 times with different topics, brand context stays consistent.'],
+    content:  ['Batch efficiency', 'All channels generated in a single API call. Same insight, adapted per platform.'],
+    chain:    ['Content strategy', 'Each piece bridges to the next — the audience follows a narrative arc, not isolated posts.'],
+    calendar: ['The complete picture', 'From a single insight to a full publishing week. That is content operations.'],
+  };
+  const hint = hints[activeSection];
+
   return (
-    <div className="space-y-6">
-
-      {/* Header */}
-      <div className="card p-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="badge bg-green-100 text-green-700">Live Demo</span>
-              <span className="text-xs text-gray-500">No API key needed</span>
-            </div>
-            <h2 className="text-lg font-semibold text-gray-900">Cartly</h2>
-            <p className="text-sm text-gray-500 mt-0.5">E-commerce SaaS — Full campaign from brand setup to published content</p>
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* Tour header */}
+      <header className="bg-white border-b border-gray-200 px-6 py-3">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 bg-brand-600 rounded-lg flex items-center justify-center"><Zap size={14} className="text-white" /></div>
+            <span className="font-semibold text-sm text-gray-900">ContentEngine AI</span>
+            <span className="text-xs bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full font-medium">Product Tour</span>
           </div>
+          <button onClick={onEnterTool} className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex items-center gap-1">
+            Skip tour <ChevronRight size={12} />
+          </button>
         </div>
-      </div>
+      </header>
 
-      {/* Section nav — locked progression */}
-      <div className="flex gap-1.5 flex-wrap">
-        {sections.map((s, i) => {
-          const isActive = activeSection === s.id;
-          const isCompleted = completedSections.has(s.id);
-          const isUnlocked = isActive || isCompleted || i === 0;
-          return (
-            <button key={s.id}
-              onClick={() => isUnlocked && navigateTo(s.id)}
-              disabled={!isUnlocked}
-              className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
-                isActive
-                  ? 'border-brand-500 bg-brand-50 text-brand-700'
-                  : isCompleted
-                    ? 'border-green-300 bg-green-50 text-green-700'
-                    : 'border-gray-200 text-gray-300 cursor-not-allowed'
-              }`}>
-              {isCompleted && !isActive ? '✓ ' : ''}{s.label}
-            </button>
-          );
-        })}
-      </div>
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+
+          {/* Progress bar */}
+          <div className="flex items-center gap-1 mb-6">
+            {sections.map((s, i) => {
+              const isActive = activeSection === s.id;
+              const isCompleted = completedSections.has(s.id);
+              return (
+                <button key={s.id} onClick={() => (isActive || isCompleted || i === 0) && navigateTo(s.id)}
+                  disabled={!isActive && !isCompleted && i !== 0} className="flex-1">
+                  <div className={`h-1.5 rounded-full transition-all ${isActive ? 'bg-brand-500' : isCompleted ? 'bg-green-500' : 'bg-gray-200'}`} />
+                  <p className={`text-xs mt-1 transition-colors ${isActive ? 'text-brand-600 font-medium' : isCompleted ? 'text-green-600' : 'text-gray-300'}`}>{s.label}</p>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Two-column: context + demo */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            {/* Left: Context panel */}
+            <div className="lg:col-span-4">
+              <div className="bg-white rounded-xl border border-gray-200 p-5 lg:sticky lg:top-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-7 h-7 rounded-full bg-brand-100 text-brand-600 text-xs flex items-center justify-center font-bold">{sectionIdx + 1}</span>
+                  <span className="text-sm font-semibold text-gray-900">{activeSectionData?.label}</span>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed">{activeSectionData?.desc}</p>
+
+                {hint && (
+                  <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                    <p className="text-xs font-medium text-gray-700 mb-1">{hint[0]}</p>
+                    <p className="text-xs text-gray-500">{hint[1]}</p>
+                  </div>
+                )}
+
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-400 mb-1">Demo brand</p>
+                  <p className="text-sm font-medium text-gray-800">Cartly</p>
+                  <p className="text-xs text-gray-500">E-commerce SaaS · 100K+ merchants</p>
+                </div>
+
+                {/* Nav buttons */}
+                <div className="flex items-center gap-2 pt-2">
+                  {sectionIdx > 0 && (
+                    <button onClick={() => navigateTo(sections[sectionIdx - 1].id)}
+                      className="flex-1 text-xs py-2.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors text-center">
+                      Back
+                    </button>
+                  )}
+                  {sectionIdx < sections.length - 1 ? (
+                    <button onClick={() => navigateTo(sections[sectionIdx + 1].id)}
+                      className="flex-1 text-xs py-2.5 rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition-colors text-center flex items-center justify-center gap-1">
+                      Next <ChevronRight size={12} />
+                    </button>
+                  ) : (
+                    <button onClick={onEnterTool}
+                      className="flex-1 text-xs py-2.5 rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition-colors text-center flex items-center justify-center gap-1">
+                      <Sparkles size={12} /> Try it yourself
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Demo content */}
+            <div className="lg:col-span-8 space-y-4">
 
       {/* ① Brand Setup */}
       {activeSection === 'brand' && (
@@ -1339,13 +1395,20 @@ function ShowcaseTab() {
           </div>
 
           {/* Final CTA */}
-          <div className="card p-5 text-center space-y-2">
-            <p className="text-sm font-semibold text-gray-800">Generate a full week like this for your brand</p>
-            <p className="text-xs text-gray-500">Switch to the Pipeline tab, enter your brand details and API key, and run the same flow in under 2 minutes.</p>
+          <div className="card p-6 text-center space-y-3">
+            <p className="text-lg font-semibold text-gray-900">That's the full pipeline</p>
+            <p className="text-sm text-gray-500">From raw insight to a published content week — in two API calls.</p>
+            <button onClick={onEnterTool} className="btn-primary px-8 py-3 text-sm flex items-center justify-center gap-2 mx-auto mt-2">
+              <Sparkles size={15} /> Now try it with your brand →
+            </button>
           </div>
         </div>
       )}
 
+      </div>
+      </div>
+      </div>
+      </div>
     </div>
   );
 }
@@ -2048,12 +2111,12 @@ function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) =
           className="w-full py-3 text-sm font-medium text-brand-700 bg-brand-50 border border-brand-200 rounded-lg hover:bg-brand-100 transition-colors flex items-center justify-center gap-2"
         >
           <LayoutDashboard size={14} />
-          View Free Demo — No API Key Needed
+          See How It Works — Product Tour
           <span className="ml-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Free</span>
         </button>
 
         <p className="text-xs text-gray-400 text-center">
-          The demo shows a full campaign from brand setup to published content across 5 channels — animated, interactive, no account required.
+          Watch a full campaign built from scratch — brand setup to a published content week. Interactive, no account required.
         </p>
         <p className="text-xs text-gray-400 text-center">
           Need a key? Get one free at{' '}
@@ -2079,6 +2142,7 @@ export default function App() {
   });
   const [showKey, setShowKey] = useState(false);
   const [onboarded, setOnboarded] = useState(() => !!sessionStorage.getItem('ce_onboarded'));
+  const [showingTour, setShowingTour] = useState(false);
 
   const handleKeyChange = (val: string) => {
     setApiKeyState(val);
@@ -2088,22 +2152,30 @@ export default function App() {
 
   const keyValid = apiKey.startsWith('sk-ant-') && apiKey.length > 20;
 
+  const enterTool = () => {
+    setShowingTour(false);
+    setOnboarded(true);
+    sessionStorage.setItem('ce_onboarded', '1');
+  };
+
   // Show welcome screen if not onboarded
-  if (!onboarded) {
+  if (!onboarded && !showingTour) {
     return (
       <WelcomeScreen
         onKeySet={(key) => {
           handleKeyChange(key);
-          setOnboarded(true);
-          sessionStorage.setItem('ce_onboarded', '1');
+          enterTool();
         }}
         onViewExamples={() => {
-          setOnboarded(true);
-          sessionStorage.setItem('ce_onboarded', '1');
-          setTab('showcase');
+          setShowingTour(true);
         }}
       />
     );
+  }
+
+  // Show product tour (fullscreen onboarding)
+  if (showingTour) {
+    return <OnboardingExperience onEnterTool={enterTool} />;
   }
 
   const activeTab = TABS.find(t => t.id === tab);
@@ -2115,7 +2187,6 @@ export default function App() {
       case 'discover': return <DiscoverTab onUseInPipeline={(text) => { setPipelineTopic(text); setTab('pipeline'); }} />;
       case 'carousel': return <CarouselTab />;
       case 'toolkit': return <ToolkitTab />;
-      case 'showcase': return <ShowcaseTab />;
       default: return null;
     }
   };
@@ -2176,7 +2247,7 @@ export default function App() {
       {activeTab && (
         <div className="bg-white/80 border-b border-gray-200/60 px-4 py-2 flex items-center justify-between gap-2">
           <p className="text-xs text-gray-500 truncate">{activeTab.desc}</p>
-          {!keyValid && tab !== 'showcase' && (
+          {!keyValid && (
             <span className="text-xs text-amber-600 flex-shrink-0 hidden sm:block">← Enter API key to generate</span>
           )}
         </div>
