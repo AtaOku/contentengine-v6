@@ -1214,19 +1214,18 @@ function RepurposeTab() {
       </div>
       {error && <ErrorBox msg={error} />}
       {result && (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div className="card p-4">
             <p className="section-header mb-1">Key Message Preserved</p>
-            <p className="text-sm text-gray-500 italic">"{result.key_message}"</p>
+            <p className="text-sm text-gray-600 italic">"{result.key_message}"</p>
           </div>
           {Object.entries(result.repurposed ?? {}).map(([ch, val]: any) => (
-            <div key={ch} className="card p-4">
-              <div className="flex items-center justify-between mb-2">
+            <div key={ch}>
+              <div className="flex items-center gap-2 mb-2">
                 <ChannelBadge ch={ch} />
-                <CopyButton text={val.content} />
+                {val.adaptation_notes && <span className="text-xs text-gray-400 italic">{val.adaptation_notes}</span>}
               </div>
-              <p className="text-sm text-gray-800 whitespace-pre-wrap">{val.content}</p>
-              <p className="text-xs text-gray-500 mt-2">{val.adaptation_notes}</p>
+              <ChannelOutputCard ch={ch} content={val.content} notes={val.adaptation_notes ?? ''} />
             </div>
           ))}
         </div>
@@ -1312,16 +1311,16 @@ function DataTab() {
       </div>
       {error && <ErrorBox msg={error} />}
       {result && (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div className="card p-4">
             <p className="section-header mb-1">Data Story</p>
-            <p className="text-sm text-gray-800">{result.data_story}</p>
-            <p className="text-xs text-gray-500 mt-2">Key stat: <span className="text-brand-600">{result.key_stat}</span></p>
+            <p className="text-sm text-gray-700">{result.data_story}</p>
+            <p className="text-xs text-gray-500 mt-2">Key stat: <span className="text-brand-600 font-medium">{result.key_stat}</span></p>
           </div>
           {Object.entries(result.content ?? {}).map(([ch, val]: any) => (
-            <div key={ch} className="card p-4">
-              <div className="flex items-center justify-between mb-2"><ChannelBadge ch={ch} /><CopyButton text={val.content} /></div>
-              <p className="text-sm text-gray-800 whitespace-pre-wrap">{val.content}</p>
+            <div key={ch}>
+              <div className="flex items-center gap-2 mb-2"><ChannelBadge ch={ch} /></div>
+              <ChannelOutputCard ch={ch} content={val.content} notes={val.notes ?? ''} />
             </div>
           ))}
         </div>
@@ -1842,7 +1841,7 @@ function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) =
       </div>
 
       {/* What it does */}
-      <div className="grid grid-cols-2 gap-3 max-w-lg w-full mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg w-full mb-10">
         {[
           { icon: <Zap size={14} />, label: 'Generate', desc: 'LinkedIn, Email, Twitter, Blog in one click' },
           { icon: <Repeat size={14} />, label: 'Repurpose', desc: 'Adapt existing content for new channels' },
@@ -1978,77 +1977,76 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Header */}
-      <header className="border-b border-gray-200 px-6 py-3 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3 flex-shrink-0">
+      <header className="border-b border-gray-200 bg-white px-4 py-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <div className="w-7 h-7 bg-brand-600 rounded-lg flex items-center justify-center">
             <Zap size={14} className="text-white" />
           </div>
-          <span className="font-semibold text-sm text-gray-900">ContentEngine</span>
+          <span className="font-semibold text-sm text-gray-900 hidden sm:block">ContentEngine</span>
         </div>
 
         {/* API Key input */}
-        <div className="flex items-center gap-2 flex-1 max-w-sm">
+        <div className="flex items-center gap-2 flex-1 max-w-xs sm:max-w-sm">
           <div className="relative flex-1">
             <input
               type={showKey ? 'text' : 'password'}
-              className="input w-full pr-16 text-xs"
-              placeholder="Anthropic API key (sk-ant-…)"
+              className="input w-full pr-14 text-xs"
+              placeholder="API key (sk-ant-…)"
               value={apiKey}
               onChange={e => handleKeyChange(e.target.value)}
             />
             <button
               onClick={() => setShowKey(v => !v)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-500"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600"
             >
               {showKey ? 'hide' : 'show'}
             </button>
           </div>
-          <span className={`text-xs flex-shrink-0 ${keyValid ? 'text-green-600' : 'text-gray-500'}`}>
-            {keyValid ? '✓ Ready' : '⚠ No key'}
+          <span className={`text-xs flex-shrink-0 ${keyValid ? 'text-green-600' : 'text-gray-400'}`}>
+            {keyValid ? '✓' : '⚠'}
           </span>
         </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <a href="https://notion.so/326feccf871081f7a3cde0e1033be38b" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-gray-500 transition-colors">Case Study →</a>
-        </div>
+        <a href="https://notion.so/326feccf871081f7a3cde0e1033be38b" target="_blank" rel="noopener noreferrer"
+          className="text-xs text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 hidden sm:block">
+          Case Study →
+        </a>
       </header>
 
-      {/* Tab bar */}
-      <nav className="border-b border-gray-200 bg-white">
-        {/* Core tabs — prominent */}
-        <div className="px-4 flex items-center gap-1 border-b border-gray-100">
+      {/* Tab bar — scrollable on mobile */}
+      <nav className="border-b border-gray-200 bg-white overflow-x-auto">
+        <div className="flex items-center min-w-max px-3">
+          {/* Core tabs */}
           {TABS.filter(t => t.group === 'Core').map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`flex items-center gap-1.5 px-4 py-3 text-sm border-b-2 transition-colors font-medium ${tab === t.id ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+              className={`flex items-center gap-1.5 px-4 py-3 text-sm border-b-2 transition-colors font-medium whitespace-nowrap flex-shrink-0 ${tab === t.id ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
               {t.icon}{t.label}
             </button>
           ))}
-          <div className="w-px h-5 bg-gray-200 mx-2" />
-          {/* Tools inline */}
-          <div className="flex items-center gap-0.5 overflow-x-auto">
-            {TABS.filter(t => t.group !== 'Core').map(t => (
-              <button key={t.id} onClick={() => setTab(t.id)}
-                className={`flex items-center gap-1 px-3 py-3 text-xs border-b-2 transition-colors whitespace-nowrap ${tab === t.id ? 'border-brand-500 text-brand-600 font-medium' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
-                {t.icon}<span>{t.label}</span>
-              </button>
-            ))}
-          </div>
+          <div className="w-px h-5 bg-gray-200 mx-1 flex-shrink-0" />
+          {/* Tool tabs */}
+          {TABS.filter(t => t.group !== 'Core').map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`flex items-center gap-1 px-3 py-3 text-xs border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${tab === t.id ? 'border-brand-500 text-brand-600 font-medium' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
+              {t.icon}<span>{t.label}</span>
+            </button>
+          ))}
         </div>
       </nav>
 
       {/* Tab description banner */}
       {activeTab && (
-        <div className="bg-white/70 border-b border-gray-200/60 px-6 py-2 flex items-center justify-between">
-          <p className="text-xs text-gray-500">{activeTab.desc}</p>
+        <div className="bg-white/80 border-b border-gray-200/60 px-4 py-2 flex items-center justify-between gap-2">
+          <p className="text-xs text-gray-500 truncate">{activeTab.desc}</p>
           {!keyValid && tab !== 'showcase' && (
-            <span className="text-xs text-amber-600">← Enter API key in header to generate</span>
+            <span className="text-xs text-amber-600 flex-shrink-0 hidden sm:block">← Enter API key to generate</span>
           )}
         </div>
       )}
 
       {/* Content */}
       <main className="flex-1 overflow-auto">
-        <div className="max-w-4xl mx-auto px-6 py-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           {renderTab()}
         </div>
       </main>
