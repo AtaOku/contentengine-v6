@@ -844,9 +844,52 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
   const [analysisPhase, setAnalysisPhase] = useState<'idle' | 'analyzing' | 'done'>('idle');
   const [visibleChannels, setVisibleChannels] = useState<string[]>([]);
   const [generatingChannel, setGeneratingChannel] = useState<string | null>(null);
+  const [typedChars, setTypedChars] = useState<Record<string, number>>({});
   const animTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const animFrames = useRef<number[]>([]);
 
-  const clearTimers = () => { animTimers.current.forEach(clearTimeout); animTimers.current = []; };
+  const clearTimers = () => {
+    animTimers.current.forEach(clearTimeout);
+    animTimers.current = [];
+    animFrames.current.forEach(cancelAnimationFrame);
+    animFrames.current = [];
+  };
+
+  // Typing animation helper — types out a text at ~40 chars/sec
+  const typeText = (key: string, fullText: string, delay: number = 0, speed: number = 25) => {
+    const t = setTimeout(() => {
+      let idx = 0;
+      const tick = () => {
+        idx += 1 + Math.floor(Math.random() * 2); // 1-3 chars per tick for natural feel
+        if (idx >= fullText.length) idx = fullText.length;
+        setTypedChars(prev => ({ ...prev, [key]: idx }));
+        if (idx < fullText.length) {
+          const frame = requestAnimationFrame(() => {
+            const inner = setTimeout(tick, speed + Math.random() * 15);
+            animTimers.current.push(inner);
+          });
+          animFrames.current.push(frame);
+        }
+      };
+      tick();
+    }, delay);
+    animTimers.current.push(t);
+  };
+
+  // Get typed portion of a text
+  const typed = (key: string, fullText: string) => {
+    const n = typedChars[key] ?? 0;
+    if (n >= fullText.length) return fullText;
+    return fullText.slice(0, n);
+  };
+  const isTyping = (key: string, fullText: string) => {
+    const n = typedChars[key] ?? 0;
+    return n > 0 && n < fullText.length;
+  };
+  const isDoneTyping = (key: string, fullText: string) => {
+    const n = typedChars[key] ?? 0;
+    return n >= fullText.length;
+  };
 
   const navigateTo = (id: string) => {
     // Mark current section as completed when moving forward
@@ -857,47 +900,65 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
     setAnalysisPhase('idle');
     setVisibleChannels([]);
     setGeneratingChannel(null);
+    setTypedChars({});
 
     if (id === 'brand') {
-      const kbKeys = ['Company', 'Industry', 'Target Audience', 'Brand Voice', 'Value Proposition', 'Description', 'Competitors', 'Content Goals'];
-      kbKeys.forEach((_, i) => {
-        const t = setTimeout(() => setVisibleItems(i + 1), 120 * (i + 1));
+      // Type each KB field value with staggered starts
+      const fields = [
+        { key: 'company', val: MAEVEN_KB.company_name },
+        { key: 'industry', val: MAEVEN_KB.industry },
+        { key: 'audience', val: MAEVEN_KB.target_audience },
+        { key: 'voice', val: MAEVEN_KB.brand_voice },
+        { key: 'value', val: MAEVEN_KB.value_prop },
+        { key: 'desc', val: MAEVEN_KB.description },
+        { key: 'competitors', val: MAEVEN_KB.competitors || '' },
+        { key: 'goals', val: MAEVEN_KB.goals || '' },
+      ];
+      fields.forEach((f, i) => {
+        const delay = i * 400 + 200;
+        const t = setTimeout(() => setVisibleItems(i + 1), delay);
         animTimers.current.push(t);
+        typeText(f.key, f.val, delay + 100, 18);
       });
     }
 
     if (id === 'analysis') {
       setAnalysisPhase('analyzing');
-      const t1 = setTimeout(() => setAnalysisPhase('done'), 1800);
-      const t2 = setTimeout(() => setVisibleItems(1), 2000);
-      const t3 = setTimeout(() => setVisibleItems(2), 2400);
-      const t4 = setTimeout(() => setVisibleItems(3), 2800);
-      const t5 = setTimeout(() => setVisibleItems(4), 3200);
+      // Longer analyzing phase — feels like real API call
+      const t1 = setTimeout(() => setAnalysisPhase('done'), 2800);
+      // Stream analysis results with typing
+      const t2 = setTimeout(() => { setVisibleItems(1); typeText('summary', MAEVEN_ANALYSIS.company_summary, 0, 20); }, 3000);
+      const t3 = setTimeout(() => setVisibleItems(2), 4200);
+      const t4 = setTimeout(() => { setVisibleItems(3); typeText('positioning', MAEVEN_ANALYSIS.positioning, 0, 15); }, 5000);
+      const t5 = setTimeout(() => setVisibleItems(4), 6500);
       animTimers.current.push(t1, t2, t3, t4, t5);
     }
 
     if (id === 'content') {
       const channels = ['LinkedIn', 'Twitter/X', 'Email', 'Blog', 'Instagram'];
       channels.forEach((ch, i) => {
-        const tGen = setTimeout(() => setGeneratingChannel(ch), 600 * i);
+        // Longer generation time per channel — feels like real work
+        const startDelay = i * 1200;
+        const tGen = setTimeout(() => setGeneratingChannel(ch), startDelay);
         const tShow = setTimeout(() => {
           setVisibleChannels(prev => [...prev, ch]);
           setGeneratingChannel(null);
-        }, 600 * i + 500);
+          if (i === 0) setActiveChannel(ch);
+        }, startDelay + 1000);
         animTimers.current.push(tGen, tShow);
       });
     }
 
     if (id === 'chain') {
       MAEVEN_CHAIN.forEach((_, i) => {
-        const t = setTimeout(() => setVisibleItems(i + 1), 300 * (i + 1));
+        const t = setTimeout(() => setVisibleItems(i + 1), 500 * (i + 1));
         animTimers.current.push(t);
       });
     }
 
     if (id === 'calendar') {
       MAEVEN_CALENDAR.forEach((_, i) => {
-        const t = setTimeout(() => setVisibleItems(i + 1), 150 * (i + 1));
+        const t = setTimeout(() => setVisibleItems(i + 1), 200 * (i + 1));
         animTimers.current.push(t);
       });
     }
@@ -1029,19 +1090,22 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { label: 'Company', value: MAEVEN_KB.company_name },
-              { label: 'Industry', value: MAEVEN_KB.industry },
-              { label: 'Target Audience', value: MAEVEN_KB.target_audience },
-              { label: 'Brand Voice', value: MAEVEN_KB.brand_voice },
-              { label: 'Value Proposition', value: MAEVEN_KB.value_prop, full: true },
-              { label: 'Description', value: MAEVEN_KB.description, full: true },
-              { label: 'Competitors', value: MAEVEN_KB.competitors },
-              { label: 'Content Goals', value: MAEVEN_KB.goals },
+              { label: 'Company', value: MAEVEN_KB.company_name, key: 'company' },
+              { label: 'Industry', value: MAEVEN_KB.industry, key: 'industry' },
+              { label: 'Target Audience', value: MAEVEN_KB.target_audience, key: 'audience' },
+              { label: 'Brand Voice', value: MAEVEN_KB.brand_voice, key: 'voice' },
+              { label: 'Value Proposition', value: MAEVEN_KB.value_prop, key: 'value', full: true },
+              { label: 'Description', value: MAEVEN_KB.description, key: 'desc', full: true },
+              { label: 'Competitors', value: MAEVEN_KB.competitors, key: 'competitors' },
+              { label: 'Content Goals', value: MAEVEN_KB.goals, key: 'goals' },
             ].map((f, i) => (
               <div key={i} className={`transition-all duration-500 ${f.full ? 'col-span-2' : ''} ${visibleItems > i ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
                 <p className="text-xs text-gray-500 mb-1">{f.label}</p>
-                <div className="bg-gray-50 rounded-lg px-3 py-2">
-                  <p className="text-sm text-gray-600">{f.value}</p>
+                <div className="bg-gray-50 rounded-lg px-3 py-2 min-h-[36px]">
+                  <p className="text-sm text-gray-600">
+                    {typed(f.key, f.value || '')}
+                    {isTyping(f.key, f.value || '') && <span className="inline-block w-0.5 h-4 bg-brand-500 animate-pulse ml-0.5 align-middle" />}
+                  </p>
                 </div>
               </div>
             ))}
@@ -1085,7 +1149,10 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
             <div className={`transition-all duration-500 ${visibleItems >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
               <p className="text-xs text-gray-500 mb-2">Brand Summary</p>
               <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-sm text-gray-600 italic">"{MAEVEN_ANALYSIS.company_summary}"</p>
+                <p className="text-sm text-gray-600 italic">
+                  "{typed('summary', MAEVEN_ANALYSIS.company_summary)}"
+                  {isTyping('summary', MAEVEN_ANALYSIS.company_summary) && <span className="inline-block w-0.5 h-4 bg-brand-500 animate-pulse ml-0.5 align-middle" />}
+                </p>
               </div>
             </div>
             <div className={`transition-all duration-500 ${visibleItems >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
@@ -1099,7 +1166,10 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
             <div className={`transition-all duration-500 ${visibleItems >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
               <p className="text-xs text-gray-500 mb-2">Strategic Positioning</p>
               <div className="bg-gray-50 rounded-lg p-3">
-                <p className="text-sm text-gray-600">{MAEVEN_ANALYSIS.positioning}</p>
+                <p className="text-sm text-gray-600">
+                  {typed('positioning', MAEVEN_ANALYSIS.positioning)}
+                  {isTyping('positioning', MAEVEN_ANALYSIS.positioning) && <span className="inline-block w-0.5 h-4 bg-brand-500 animate-pulse ml-0.5 align-middle" />}
+                </p>
               </div>
             </div>
             <div className={`grid grid-cols-2 gap-3 transition-all duration-500 ${visibleItems >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
