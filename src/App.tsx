@@ -16,7 +16,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode; group: string; de
   { id: 'toolkit',   label: 'Toolkit',     icon: <Search size={15} />,           group: 'Tools',     desc: 'Standalone analysis tools — SEO optimization, Brand Voice cloning, and Content Scoring' },
 ];
 
-const CHANNELS = ['LinkedIn', 'Twitter/X', 'Email', 'Blog', 'Instagram', 'TikTok/Video'];
+const CHANNELS = ['LinkedIn', 'Twitter/X', 'Email', 'Blog', 'Reddit', 'Instagram', 'TikTok/Video'];
 
 const DEFAULT_KB: KnowledgeBase = {
   company_name: '',
@@ -56,6 +56,7 @@ function ChannelBadge({ ch }: { ch: string }) {
     'Twitter/X': 'bg-gray-200 text-gray-500',
     'Email': 'bg-purple-100 text-purple-700',
     'Blog': 'bg-amber-100 text-amber-700',
+    'Reddit': 'bg-orange-100 text-orange-700',
     'Instagram': 'bg-pink-100 text-pink-700',
     'TikTok/Video': 'bg-cyan-900/40 text-cyan-300',
   };
@@ -743,12 +744,40 @@ function GenericChannelCard({ ch, content, notes }: { ch: string; content: strin
   );
 }
 
+function RedditCard({ content, notes }: { content: string; notes: string }) {
+  return (
+    <div className="bg-white rounded-xl overflow-hidden shadow-lg">
+      <div className="px-4 pt-4 pb-2 flex items-center gap-3 border-b border-gray-100">
+        <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-bold">r/</div>
+        <div>
+          <span className="text-sm font-semibold text-gray-900">r/ecommerce</span>
+          <span className="text-xs text-gray-400 ml-2">Posted by u/cartly_team · 2h</span>
+        </div>
+      </div>
+      <div className="px-4 py-3">
+        <p className="text-sm text-gray-900 whitespace-pre-wrap leading-relaxed">{content}</p>
+      </div>
+      <div className="px-4 py-2 flex items-center gap-4 text-xs text-gray-400 border-t border-gray-100">
+        <span>▲ 847</span>
+        <span>💬 132 comments</span>
+        <span>↗ Share</span>
+        <span>⭐ Award</span>
+      </div>
+      <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-t border-gray-100">
+        <span className="text-xs text-gray-500 italic">{notes}</span>
+        <CopyButton text={content} />
+      </div>
+    </div>
+  );
+}
+
 function ChannelOutputCard({ ch, content, notes }: { ch: string; content: string; notes: string }) {
   switch (ch) {
     case 'LinkedIn': return <LinkedInCard content={content} notes={notes} />;
     case 'Email': return <EmailCard content={content} notes={notes} />;
     case 'Twitter/X': return <TwitterCard content={content} notes={notes} />;
     case 'Blog': return <BlogCard content={content} notes={notes} />;
+    case 'Reddit': return <RedditCard content={content} notes={notes} />;
     case 'Instagram': return <InstagramCard content={content} notes={notes} />;
     default: return <GenericChannelCard ch={ch} content={content} notes={notes} />;
   }
@@ -796,6 +825,10 @@ const MAEVEN_CONTENT = {
   'Blog': {
     content: "## Why 73% of Online Shoppers Abandon Their Cart — And What the Data Actually Shows\n\nCart abandonment is the most-discussed problem in e-commerce. It's also the most misunderstood.\n\nThe conventional wisdom — that shoppers abandon because of price, distraction, or \"just browsing\" — has shaped a billion-dollar industry of urgency timers, exit-intent popups, and discount-heavy recovery emails.\n\nWe think the conventional wisdom is wrong.\n\n### What We Found Across 100,000 Stores\n\nCartly processes checkout data from over 100,000 online merchants. We have a detailed view of where shoppers drop off, what they do before leaving, and in cases where we've run post-abandonment surveys, why they didn't buy.\n\nThe survey data surprised us.\n\nWhen we asked 12,000 shoppers who abandoned carts in the past 30 days why they didn't complete their purchase, fewer than 8% cited price as the primary reason.\n\nThe dominant responses clustered around a single theme: **fear of being wrong**.\n\n- \"I wasn't sure it would look the same in person\"\n- \"I was worried about the size — I'm between sizes and didn't want to guess\"\n- \"I didn't know how easy it would be to return if it didn't work out\"\n- \"I've been burned before by online orders that didn't match the photos\"\n\n### Why Urgency Tactics Fail\n\nThis explains why the standard playbook underperforms.\n\nUrgency timers create pressure. But the shopper's problem isn't a lack of urgency — it's a lack of certainty. Adding \"Only 3 left!\" to an experience already defined by uncertainty doesn't resolve the underlying hesitation. It adds stress to it.\n\nThe same logic applies to discount-heavy cart recovery emails. A 10% coupon makes the product cheaper, not safer. For a shopper who's worried about fit or quality, cheaper isn't the answer.\n\n### What Actually Works: Risk Removal\n\nThe merchants on our platform with the lowest abandonment rates share a common pattern. They've invested in removing risk, not adding pressure.\n\nThree interventions show the strongest correlation with abandonment reduction:\n\n**1. Contextual social proof in the checkout flow**\nProduct page reviews are standard. Fewer merchants surface relevant reviews (same size, same body type, similar use case) in the checkout flow itself — where hesitation actually happens.\n\n**2. Visible, friction-free return policy**\nMost merchants have a return policy. Few make it prominent in checkout. Shoppers shouldn't have to hunt for it. A one-line \"Free returns, no questions\" in the payment step reduces abandonment measurably.\n\n**3. Fit and size confidence tools**\nSize charts are not fit tools. Interactive size recommendations, user-generated fit notes, and \"customers who bought this also bought X size\" signals address the uncertainty that drives abandonment.\n\n### The Numbers\n\nMerchants who implemented all three saw abandonment rates drop from the platform average of 73% to 31% within 90 days. That's not a marginal improvement — it's a structural shift in how shoppers experience the checkout.\n\n### The Actual Lesson\n\nThe framing of cart abandonment as a conversion optimization problem leads brands toward tactics that treat the symptom. The real problem is trust — and trust is built by reducing risk, not increasing urgency.\n\n→ Download the full Cart Abandonment Playbook — data from 100,000 Cartly merchants",
     notes: 'Full thought leadership — publishable as a standalone article, positions Cartly as the merchant intelligence platform',
+  },
+  'Reddit': {
+    content: "We work on checkout optimization tools and recently dug into our data across 100K+ stores to understand why carts actually get abandoned.\n\nThe common assumption is price sensitivity or distraction. Our survey of 12,000 shoppers who didn't complete checkout told a different story.\n\nLess than 8% said price was the main reason.\n\nThe overwhelming pattern was fear of making a mistake:\n- \"What if it doesn't look like the photos?\"\n- \"What if the size is wrong?\"\n- \"What if returning it is a nightmare?\"\n\nThe stores with the lowest abandonment rates (31% vs the 73% average) all did three things: surfaced relevant reviews at checkout, made return policies impossible to miss, and added fit confidence tools beyond basic size charts.\n\nUrgency tactics and discount popups don't address any of that. They treat the symptom, not the cause.\n\nCurious if other e-commerce folks here see the same pattern. Has anyone tested removing friction vs adding urgency? What worked?",
+    notes: 'Community tone, no hard sell — ends with discussion question to drive engagement',
   },
   'Instagram': {
     content: "73% of carts get abandoned. 🛒\n\nWe surveyed 12,000 shoppers who didn't buy.\n\nNot one said \"too expensive.\"\n\nThey said fear. 😰\n\"Wrong size. Wrong look. Painful return.\"\n\nThe stores that fixed it:\n✅ Removed the risk\n✅ Made returns obvious\n✅ Added size confidence\n\nResult: 73% → 31% abandonment.\n\nConversion isn't pressure.\nIt's trust. 🤍\n\nData from 100,000+ Cartly merchants.\n\n#Ecommerce #CartAbandonment #DTC #OnlineStore #ConversionOptimization #EcommerceMarketing",
@@ -935,7 +968,7 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
     }
 
     if (id === 'content') {
-      const channels = ['LinkedIn', 'Twitter/X', 'Email', 'Blog', 'Instagram'];
+      const channels = ['LinkedIn', 'Twitter/X', 'Email', 'Blog', 'Reddit', 'Instagram'];
       channels.forEach((ch, i) => {
         // Longer generation time per channel — feels like real work
         const startDelay = i * 1200;

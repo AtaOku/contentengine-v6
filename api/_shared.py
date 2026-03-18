@@ -136,6 +136,7 @@ def prompt_generate_batch(kb: dict, analysis: dict, topic: str, channels: list) 
         "Twitter/X": "punchy, under 280 chars, hook in first 5 words, 1-2 hashtags",
         "Email": "subject line + preview text + 200-word body, conversational, clear CTA",
         "Blog": "SEO-optimized, 350-400 words, H2 subheadings, strong intro + conclusion",
+        "Reddit": "conversational, value-first, 150-250 words, no self-promotion feel, community tone, end with discussion question",
         "Instagram": "visual-first, 100-150 words, storytelling, 10-15 hashtags",
         "TikTok/Video": "script format, hook (3s) + content (45s) + CTA (12s)",
     }
