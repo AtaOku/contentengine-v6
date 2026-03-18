@@ -812,27 +812,54 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             </div>
           </div>
 
-          {/* Carousel slide */}
-          {(() => {
-            const slide = MAEVEN_CAROUSEL[activeSlide];
-            return (
-              <div className={`rounded-2xl bg-gradient-to-br ${slide.color} p-8 min-h-64 flex flex-col justify-between relative overflow-hidden`}>
-                <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 -translate-y-8 translate-x-8" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-white/5 translate-y-6 -translate-x-6" />
-                <div>
-                  <span className="text-xs text-white/50 uppercase tracking-widest">{slide.type} · {slide.slide}/{MAEVEN_CAROUSEL.length}</span>
+          {/* IG Phone Mockup */}
+          <div className="flex justify-center">
+            <div className="w-72 bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
+              {/* IG header */}
+              <div className="px-3 py-2 flex items-center gap-2 border-b border-gray-100">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-xs font-bold">M</div>
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-900">maeven.studio</p>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-white leading-tight mb-3 whitespace-pre-line">{slide.headline}</p>
-                  <p className="text-sm text-white/70 leading-relaxed whitespace-pre-line">{slide.body}</p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-white/40">@maeven.studio</span>
-                  <span className="text-xs text-white/40">{slide.slide} / {MAEVEN_CAROUSEL.length}</span>
-                </div>
+                <span className="text-gray-400 text-lg">···</span>
               </div>
-            );
-          })()}
+
+              {/* Square slide 1:1 */}
+              {(() => {
+                const slide = MAEVEN_CAROUSEL[activeSlide];
+                return (
+                  <div className={`aspect-square bg-gradient-to-br ${slide.color} flex flex-col justify-between p-6 relative overflow-hidden`}>
+                    <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/5 -translate-y-6 translate-x-6" />
+                    <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-4 -translate-x-4" />
+                    <span className="text-xs text-white/50 uppercase tracking-widest">{slide.type}</span>
+                    <div>
+                      <p className="text-xl font-bold text-white leading-tight mb-2 whitespace-pre-line">{slide.headline}</p>
+                      <p className="text-xs text-white/70 leading-relaxed whitespace-pre-line">{slide.body}</p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-white/40">@maeven.studio</span>
+                      <div className="flex gap-1">
+                        {MAEVEN_CAROUSEL.map((_, i) => (
+                          <button key={i} onClick={() => setActiveSlide(i)}
+                            className={`rounded-full transition-all ${activeSlide === i ? 'bg-white w-3 h-1.5' : 'bg-white/30 w-1.5 h-1.5'}`} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* IG footer */}
+              <div className="px-3 py-2">
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex gap-3 text-lg">❤️ 💬 ✈️</div>
+                  <span className="text-lg">🔖</span>
+                </div>
+                <p className="text-xs font-semibold text-gray-900">1,247 likes</p>
+                <p className="text-xs text-gray-600 mt-0.5"><span className="font-semibold">maeven.studio</span> Swipe to see our data →</p>
+              </div>
+            </div>
+          </div>
 
           {/* Nav */}
           <div className="flex gap-2">
@@ -1784,19 +1811,26 @@ export default function App() {
       </header>
 
       {/* Tab bar */}
-      <nav className="border-b border-gray-200 px-4 flex items-center overflow-x-auto">
-        {groups.map((group, gi) => (
-          <div key={group} className="flex items-center flex-shrink-0">
-            {gi > 0 && <div className="w-px h-4 bg-gray-100 mx-2" />}
-            <span className="text-xs text-gray-500 pr-1">{group}</span>
-            {TABS.filter(t => t.group === group).map(t => (
+      <nav className="border-b border-gray-200 bg-white">
+        {/* Core tabs — prominent */}
+        <div className="px-4 flex items-center gap-1 border-b border-gray-100">
+          {TABS.filter(t => t.group === 'Core').map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`flex items-center gap-1.5 px-4 py-3 text-sm border-b-2 transition-colors font-medium ${tab === t.id ? 'border-brand-500 text-brand-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+              {t.icon}{t.label}
+            </button>
+          ))}
+          <div className="w-px h-5 bg-gray-200 mx-2" />
+          {/* Tools inline */}
+          <div className="flex items-center gap-0.5 overflow-x-auto">
+            {TABS.filter(t => t.group !== 'Core').map(t => (
               <button key={t.id} onClick={() => setTab(t.id)}
-                className={`flex items-center gap-1.5 px-3 py-3 text-xs border-b-2 transition-colors whitespace-nowrap ${tab === t.id ? 'border-brand-500 text-brand-600 font-medium' : 'border-transparent text-gray-500 hover:text-gray-600'}`}>
-                {t.icon}<span className="hidden sm:inline">{t.label}</span>
+                className={`flex items-center gap-1 px-3 py-3 text-xs border-b-2 transition-colors whitespace-nowrap ${tab === t.id ? 'border-brand-500 text-brand-600 font-medium' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
+                {t.icon}<span>{t.label}</span>
               </button>
             ))}
           </div>
-        ))}
+        </div>
       </nav>
 
       {/* Tab description banner */}
