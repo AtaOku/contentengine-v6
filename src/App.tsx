@@ -600,99 +600,234 @@ const STATIC_DEMOS: Demo[] = [
   },
 ];
 
+const KB_MAP: Record<string, KnowledgeBase> = {
+  tech_saas: { company_name: 'Nexus Analytics', industry: 'SaaS / Analytics', description: 'B2B analytics platform that helps mid-market e-commerce teams predict churn and understand behavioral signals.', target_audience: 'E-commerce directors and heads of retention at $10M-$100M online retailers', value_prop: 'Real-time behavioral scoring that predicts churn 11 weeks before it shows in your dashboard', brand_voice: 'Direct, data-confident, jargon-free', competitors: 'Mixpanel, Amplitude', goals: 'Generate demos, build authority in e-commerce analytics' },
+  fashion_ecom: { company_name: 'Maeven Studio', industry: 'Fashion E-commerce', description: 'Sustainable fashion brand for conscious millennial women. Premium basics, transparent supply chain, based in Berlin.', target_audience: 'Conscious millennial women, 28–40, reducing fast fashion', value_prop: 'Sustainable premium basics with full supply chain transparency and a fit guarantee', brand_voice: 'Honest, understated, direct', competitors: 'Everlane, Organic Basics', goals: 'Build community, drive repeat purchase' },
+  healthtech: { company_name: 'Forma Health', industry: 'HealthTech / Wellness', description: 'B2B wellness platform for HR teams. Combines biometric screening and predictive health scoring to reduce corporate healthcare costs.', target_audience: 'HR directors and Chief People Officers at 500–5000 person companies', value_prop: 'Predictive health scoring that identifies high-risk employee cohorts before they become costly', brand_voice: 'Evidence-based, empathetic, precise', competitors: 'Virgin Pulse, Noom for Business', goals: 'Build thought leadership, generate enterprise leads' },
+};
+
+const DEMO_ANALYSIS_EXTRA: Record<string, { positioning: string; content_opportunities: string[]; avoid: string }> = {
+  tech_saas: {
+    positioning: 'Anti-hype analytics. Nexus wins by making the invisible visible — not by adding more dashboards, but by closing the gap between what\'s happening and when you know about it.',
+    content_opportunities: ['The 11-week data lag problem', 'Why churn prediction > churn reaction', 'How real-time behavioral scoring works without a data team'],
+    avoid: 'Buzzwords (AI-powered, game-changing), generic SaaS claims, feature-first messaging',
+  },
+  fashion_ecom: {
+    positioning: 'Radical transparency in a greenwashed market. Maeven earns trust by showing the math — return rates, supply chain, environmental cost — not hiding it.',
+    content_opportunities: ['The real cost of returns for the planet', 'Why fast fashion is a fit problem', 'Supply chain transparency as competitive advantage'],
+    avoid: 'Preachy sustainability messaging, vague eco-claims, pressure tactics',
+  },
+  healthtech: {
+    positioning: 'From reactive healthcare to predictive intervention. Forma flips the wellness model — instead of waiting for employees to engage, it identifies who needs support before they know it.',
+    content_opportunities: ['Why 77% of wellness benefits go unused', 'The ROI case for preventive vs reactive care', 'How predictive health scoring works for HR'],
+    avoid: 'Medical jargon, fear-based messaging, oversimplified wellness platitudes',
+  },
+};
+
 function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void }) {
   const [active, setActive] = useState<string>('tech_saas');
   const [activeChannel, setActiveChannel] = useState<string>('LinkedIn');
+  const [step, setStep] = useState<number>(1);
   const demo = STATIC_DEMOS.find(d => d.id === active)!;
-
+  const extra = DEMO_ANALYSIS_EXTRA[active];
+  const kb = KB_MAP[active];
   const availableChannels = Object.keys(demo.generated ?? {});
+  const currentContent = demo.generated?.[activeChannel as keyof typeof demo.generated];
 
   const switchDemo = (id: string) => {
     setActive(id);
-    const d = STATIC_DEMOS.find(d => d.id === id)!;
-    const chs = Object.keys(d.generated ?? {});
-    if (!chs.includes(activeChannel)) setActiveChannel(chs[0]);
+    setStep(1);
+    setActiveChannel('LinkedIn');
   };
-
-  const useThis = () => {
-    const kbMap: Record<string, KnowledgeBase> = {
-      tech_saas: { company_name: 'Nexus Analytics', industry: 'SaaS / Analytics', description: 'B2B analytics platform that helps mid-market e-commerce teams predict churn and understand behavioral signals.', target_audience: 'E-commerce directors and heads of retention at $10M-$100M online retailers', value_prop: 'Real-time behavioral scoring that predicts churn 11 weeks before it shows in your dashboard', brand_voice: 'Direct, data-confident, jargon-free', competitors: 'Mixpanel, Amplitude', goals: 'Generate demos, build authority in e-commerce analytics' },
-      fashion_ecom: { company_name: 'Maeven Studio', industry: 'Fashion E-commerce', description: 'Sustainable fashion brand for conscious millennial women. Premium basics, transparent supply chain, based in Berlin.', target_audience: 'Conscious millennial women, 28–40, reducing fast fashion', value_prop: 'Sustainable premium basics with full supply chain transparency and a fit guarantee', brand_voice: 'Honest, understated, direct', competitors: 'Everlane, Organic Basics', goals: 'Build community, drive repeat purchase' },
-      healthtech: { company_name: 'Forma Health', industry: 'HealthTech / Wellness', description: 'B2B wellness platform for HR teams. Combines biometric screening and predictive health scoring to reduce corporate healthcare costs.', target_audience: 'HR directors and Chief People Officers at 500–5000 person companies', value_prop: 'Predictive health scoring that identifies high-risk employee cohorts before they become costly', brand_voice: 'Evidence-based, empathetic, precise', competitors: 'Virgin Pulse, Noom for Business', goals: 'Build thought leadership, generate enterprise leads' },
-    };
-    onUseDemoKB(kbMap[active]);
-  };
-
-  const currentContent = demo.generated?.[activeChannel as keyof typeof demo.generated];
 
   return (
     <div className="space-y-5">
-      {/* Brand selector cards */}
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-semibold text-gray-200">Full workflow demo</p>
+          <p className="text-xs text-gray-500 mt-0.5">See how ContentEngine works from brand setup to published content — no API key needed</p>
+        </div>
+      </div>
+
+      {/* Brand selector */}
       <div className="grid grid-cols-3 gap-3">
         {STATIC_DEMOS.map(d => (
           <button key={d.id} onClick={() => switchDemo(d.id)}
             className={`text-left p-4 rounded-xl border transition-all ${active === d.id
               ? 'border-brand-500 bg-brand-900/20'
-              : 'border-gray-200 bg-white/60 hover:border-gray-300'}`}>
-            <p className={`text-xs font-semibold mb-0.5 ${active === d.id ? 'text-brand-600' : 'text-gray-500'}`}>{d.label}</p>
-            <p className="text-sm font-medium text-gray-800">{d.company}</p>
+              : 'border-gray-800 bg-gray-900/40 hover:border-gray-700'}`}>
+            <p className={`text-xs font-semibold mb-0.5 ${active === d.id ? 'text-brand-400' : 'text-gray-500'}`}>{d.label}</p>
+            <p className="text-sm font-medium text-gray-200">{d.company}</p>
             <p className="text-xs text-gray-500 mt-1 leading-relaxed">{d.tagline}</p>
           </button>
         ))}
       </div>
 
-      {/* Topic + Voice DNA */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="card p-4">
-          <p className="text-xs text-gray-500 mb-1.5">Topic used to generate this content</p>
-          <p className="text-sm text-gray-800 italic">"{demo.topic}"</p>
-        </div>
-        <div className="card p-4">
-          <p className="text-xs text-gray-500 mb-2">Brand Voice</p>
-          <div className="flex flex-wrap gap-1.5">
-            {demo.analysis?.brand_voice_descriptors?.map((d, i) => (
-              <span key={i} className="badge bg-brand-100 text-brand-700">{d}</span>
-            ))}
+      {/* Step navigator */}
+      <div className="flex items-center gap-0">
+        {[
+          { n: 1, label: 'Brand Setup' },
+          { n: 2, label: 'AI Analysis' },
+          { n: 3, label: 'Generated Content' },
+        ].map((s, i) => (
+          <div key={s.n} className="flex items-center">
+            <button onClick={() => setStep(s.n)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium transition-colors ${step === s.n
+                ? 'bg-brand-600 text-white'
+                : 'text-gray-500 hover:text-gray-300'}`}>
+              <span className={`w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold ${step === s.n ? 'bg-white/20 text-white' : 'bg-gray-800 text-gray-400'}`}>{s.n}</span>
+              {s.label}
+            </button>
+            {i < 2 && <span className="text-gray-700 mx-1">→</span>}
           </div>
-        </div>
+        ))}
       </div>
 
-      {/* Channel switcher + output */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex gap-2 flex-wrap">
-            {availableChannels.map(ch => (
-              <button key={ch} onClick={() => setActiveChannel(ch)}
-                className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeChannel === ch
-                  ? 'border-brand-500 bg-brand-100 text-brand-600'
-                  : 'border-gray-300 text-gray-500 hover:border-gray-600 hover:text-gray-600'}`}>
-                {ch === 'Twitter/X' ? '𝕏 Twitter' : ch}
-              </button>
-            ))}
+      {/* Step 1: Brand Setup */}
+      {step === 1 && (
+        <div className="space-y-4">
+          <div className="card p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Step 1 — Brand Knowledge Base</p>
+                <p className="text-sm text-gray-400 mt-0.5">This is the brand context ContentEngine uses to generate everything</p>
+              </div>
+              <span className="badge bg-green-900/40 text-green-400">✓ Pre-filled</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: 'Company Name', value: kb.company_name },
+                { label: 'Industry', value: kb.industry },
+                { label: 'Target Audience', value: kb.target_audience },
+                { label: 'Brand Voice', value: kb.brand_voice },
+                { label: 'Core Value Proposition', value: kb.value_prop, full: true },
+                { label: 'What You Do', value: kb.description, full: true },
+                { label: 'Competitors', value: kb.competitors },
+                { label: 'Content Goals', value: kb.goals },
+              ].map((f, i) => (
+                <div key={i} className={`${f.full ? 'col-span-2' : ''}`}>
+                  <p className="text-xs text-gray-500 mb-1">{f.label}</p>
+                  <div className="bg-gray-800/60 rounded-lg px-3 py-2">
+                    <p className="text-sm text-gray-300">{f.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <button onClick={useThis} className="btn-primary text-xs flex items-center gap-1.5 py-1.5 px-3">
-            Use This Brand <ChevronRight size={12} />
+          <button onClick={() => setStep(2)} className="btn-primary w-full flex items-center justify-center gap-2">
+            See AI Analysis <ChevronRight size={14} />
           </button>
         </div>
-        {currentContent && (
-          <ChannelOutputCard ch={activeChannel} content={currentContent.content} notes={currentContent.notes} />
-        )}
-      </div>
+      )}
 
-      {/* Bottom CTA */}
-      <div className="card p-4 flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-800">Generate content for your own brand</p>
-          <p className="text-xs text-gray-500 mt-0.5">Enter your Anthropic API key above, click "Use This Brand" to pre-fill, or go to Generate</p>
+      {/* Step 2: AI Analysis */}
+      {step === 2 && (
+        <div className="space-y-4">
+          <div className="card p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Step 2 — Brand Analysis</p>
+                <p className="text-sm text-gray-400 mt-0.5">What Claude extracted from the brand knowledge base</p>
+              </div>
+              <span className="badge bg-brand-900/40 text-brand-300">AI Generated</span>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Brand Summary</p>
+              <div className="bg-gray-800/60 rounded-lg p-3">
+                <p className="text-sm text-gray-300 italic">"{demo.analysis?.company_summary}"</p>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Voice DNA</p>
+              <div className="flex flex-wrap gap-2">
+                {demo.analysis?.brand_voice_descriptors?.map((v, i) => (
+                  <span key={i} className="badge bg-brand-900/40 text-brand-300 text-xs px-3 py-1">{v}</span>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Strategic Positioning</p>
+              <div className="bg-gray-800/60 rounded-lg p-3">
+                <p className="text-sm text-gray-300">{extra.positioning}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-xs text-gray-500 mb-2">Content Opportunities</p>
+                <ul className="space-y-1.5">
+                  {extra.content_opportunities.map((o, i) => (
+                    <li key={i} className="flex items-start gap-2 text-xs text-gray-300">
+                      <span className="text-brand-400 mt-0.5 flex-shrink-0">→</span>{o}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 mb-2">Topic Used for This Demo</p>
+                <div className="bg-gray-800/60 rounded-lg p-3">
+                  <p className="text-sm text-gray-300 italic">"{demo.topic}"</p>
+                </div>
+                <p className="text-xs text-gray-600 mt-2">⚠ Avoid: {extra.avoid}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => setStep(1)} className="btn-secondary flex-1 flex items-center justify-center gap-2">
+              ← Brand Setup
+            </button>
+            <button onClick={() => setStep(3)} className="btn-primary flex-1 flex items-center justify-center gap-2">
+              See Generated Content <ChevronRight size={14} />
+            </button>
+          </div>
         </div>
-        <button onClick={useThis} className="btn-primary flex items-center gap-1.5">
-          Use This Brand <ChevronRight size={14} />
-        </button>
-      </div>
+      )}
+
+      {/* Step 3: Generated Content */}
+      {step === 3 && (
+        <div className="space-y-4">
+          <div className="card p-4">
+            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">Step 3 — Generated Content</p>
+            <div className="flex items-center justify-between">
+              <div className="flex gap-2 flex-wrap">
+                {availableChannels.map(ch => (
+                  <button key={ch} onClick={() => setActiveChannel(ch)}
+                    className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeChannel === ch
+                      ? 'border-brand-500 bg-brand-900/30 text-brand-300'
+                      : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300'}`}>
+                    {ch === 'Twitter/X' ? '𝕏 Twitter' : ch}
+                  </button>
+                ))}
+              </div>
+              <button onClick={() => onUseDemoKB(kb)} className="btn-primary text-xs flex items-center gap-1.5 py-1.5 px-3">
+                Use This Brand <ChevronRight size={12} />
+              </button>
+            </div>
+          </div>
+
+          {currentContent && (
+            <ChannelOutputCard ch={activeChannel} content={currentContent.content} notes={currentContent.notes} />
+          )}
+
+          <div className="flex gap-3">
+            <button onClick={() => setStep(2)} className="btn-secondary flex-1 flex items-center justify-center gap-2">
+              ← AI Analysis
+            </button>
+            <button onClick={() => onUseDemoKB(kb)} className="btn-primary flex-1 flex items-center justify-center gap-2">
+              <Sparkles size={14} /> Try With Your Brand
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
-
 
 // ── Tool Tabs (Repurpose, Trends, Data, Chain, Carousel, Voice, Score, SEO) ──
 function RepurposeTab() {
