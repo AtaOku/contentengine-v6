@@ -10,7 +10,7 @@ type TabId = 'pipeline' | 'showcase' | 'repurpose' | 'trends' | 'data' | 'chain'
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode; group: string; desc: string }[] = [
   { id: 'pipeline',  label: 'Generate',    icon: <Zap size={15} />,             group: 'Core',      desc: 'Turn any insight into LinkedIn, Email, Twitter and Blog content in 2 clicks' },
-  { id: 'showcase',  label: 'Examples',    icon: <LayoutDashboard size={15} />,  group: 'Core',      desc: 'See real output for 3 different brands — no API key needed' },
+  { id: 'showcase',  label: 'Examples',    icon: <LayoutDashboard size={15} />,  group: 'Core',      desc: 'Full campaign demo with Cartly — brand setup to 5-channel output, animated, no API key needed' },
   { id: 'repurpose', label: 'Repurpose',   icon: <Repeat size={15} />,           group: 'Tools',     desc: 'Take existing content and rewrite it for different channels and formats' },
   { id: 'trends',    label: 'Trend Radar', icon: <TrendingUp size={15} />,       group: 'Tools',     desc: 'Discover what\'s happening in your industry and turn trends into content angles' },
   { id: 'data',      label: 'Data → Story',icon: <BarChart2 size={15} />,        group: 'Tools',     desc: 'Paste stats or research findings and get ready-to-publish marketing narratives' },
@@ -82,8 +82,24 @@ function CopyButton({ text }: { text: string }) {
 }
 
 function ErrorBox({ msg }: { msg: string }) {
+  const isKeyError = msg.toLowerCase().includes('api key') || msg.toLowerCase().includes('401') || msg.toLowerCase().includes('unauthorized') || msg.toLowerCase().includes('authentication');
+  const isRateLimit = msg.toLowerCase().includes('rate') || msg.toLowerCase().includes('429') || msg.toLowerCase().includes('too many');
+  const isTimeout = msg.toLowerCase().includes('timeout') || msg.toLowerCase().includes('503');
+
+  const hint = isKeyError
+    ? 'Check your Anthropic API key — it should start with sk-ant- and be active at console.anthropic.com'
+    : isRateLimit
+    ? 'Rate limit reached. Wait a moment and try again, or check your Anthropic usage limits.'
+    : isTimeout
+    ? 'The request timed out. Try again — Claude API occasionally has latency spikes.'
+    : null;
+
   return (
-    <div className="bg-red-900/30 border border-red-800 rounded-lg p-3 text-red-300 text-sm">{msg}</div>
+    <div className="bg-red-50 border border-red-200 rounded-lg p-3 space-y-1">
+      <p className="text-red-700 text-sm font-medium">Something went wrong</p>
+      <p className="text-red-600 text-xs">{msg}</p>
+      {hint && <p className="text-red-500 text-xs mt-1">💡 {hint}</p>}
+    </div>
   );
 }
 
@@ -215,7 +231,14 @@ function PipelineTab({
             <span className="w-6 h-6 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">1</span>
             <span className="font-medium text-sm">Brand Setup</span>
           </div>
-          {analysis && <span className="badge bg-green-100 text-green-700">✓ Analyzed</span>}
+          <div className="flex items-center gap-2">
+            {analysis && <span className="badge bg-green-100 text-green-700">✓ Analyzed</span>}
+            {!kb.company_name && (
+              <button onClick={() => setKb(MAEVEN_KB)} className="text-xs text-brand-600 hover:text-brand-700 border border-brand-200 bg-brand-50 px-2 py-1 rounded-lg transition-colors">
+                Try with Cartly demo →
+              </button>
+            )}
+          </div>
         </div>
         <KBForm kb={kb} onChange={setKb} />
         <div className="mt-4 flex items-center gap-3">
@@ -309,7 +332,11 @@ function PipelineTab({
               <span className="font-medium text-sm">Generated Content</span>
             </div>
             <div className="flex items-center gap-2">
-              {totalCost > 0 && <span className="badge bg-green-100 text-green-700">Total: ${totalCost.toFixed(4)}</span>}
+              {totalCost > 0 && (
+                <span className="badge bg-green-100 text-green-700 px-3 py-1">
+                  💡 Generated for ${totalCost.toFixed(4)}
+                </span>
+              )}
             </div>
           </div>
           <p className="text-xs text-gray-500 italic">{generated.strategic_notes}</p>
@@ -1900,7 +1927,7 @@ export default function App() {
     return saved;
   });
   const [showKey, setShowKey] = useState(false);
-  const [onboarded, setOnboarded] = useState(() => !!sessionStorage.getItem('ce_api_key'));
+  const [onboarded, setOnboarded] = useState(() => !!sessionStorage.getItem('ce_onboarded'));
 
   const handleKeyChange = (val: string) => {
     setApiKeyState(val);
@@ -1917,9 +1944,11 @@ export default function App() {
         onKeySet={(key) => {
           handleKeyChange(key);
           setOnboarded(true);
+          sessionStorage.setItem('ce_onboarded', '1');
         }}
         onViewExamples={() => {
           setOnboarded(true);
+          sessionStorage.setItem('ce_onboarded', '1');
           setTab('showcase');
         }}
       />
