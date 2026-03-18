@@ -1862,23 +1862,26 @@ function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) =
 
         <div className="flex items-center gap-3">
           <div className="flex-1 h-px bg-gray-100" />
-          <span className="text-xs text-gray-500">or</span>
+          <span className="text-xs text-gray-400">or try without a key</span>
           <div className="flex-1 h-px bg-gray-100" />
         </div>
 
         <button
           onClick={onViewExamples}
-          className="w-full py-2.5 text-sm text-gray-500 border border-gray-200 rounded-lg hover:border-gray-300 hover:text-gray-500 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3 text-sm font-medium text-brand-700 bg-brand-50 border border-brand-200 rounded-lg hover:bg-brand-100 transition-colors flex items-center justify-center gap-2"
         >
-          <LayoutDashboard size={14} /> View Examples — No API Key Needed
+          <LayoutDashboard size={14} />
+          View Free Demo — No API Key Needed
+          <span className="ml-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Free</span>
         </button>
 
-        <p className="text-xs text-gray-500 text-center">
-          Get your free API key at{' '}
-          <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-600">
-            console.anthropic.com
-          </a>
-          {' '}· Your key stays in your browser, never stored on our servers
+        <p className="text-xs text-gray-400 text-center">
+          The demo shows a full campaign from brand setup to published content across 5 channels — animated, interactive, no account required.
+        </p>
+        <p className="text-xs text-gray-400 text-center">
+          Need a key? Get one free at{' '}
+          <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-700">console.anthropic.com</a>
+          {' '}· Stays in your browser, never on our servers
         </p>
       </div>
     </div>
