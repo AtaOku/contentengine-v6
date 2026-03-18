@@ -191,7 +191,7 @@ function ChannelTabs({ content }: { content: Record<string, { content: string; n
 function PipelineTab({
   kb, setKb, analysis, setAnalysis, generated, setGenerated, keyValid, topic, setTopic
 }: {
-  kb: KnowledgeBase; setKb: (kb: KnowledgeBase) => void;
+  kb: KnowledgeBase; setKb: React.Dispatch<React.SetStateAction<KnowledgeBase>>;
   analysis: Analysis | null; setAnalysis: (a: Analysis) => void;
   generated: Generated | null; setGenerated: (g: Generated) => void;
   keyValid: boolean;
@@ -209,6 +209,39 @@ function PipelineTab({
   const [carouselResult, setCarouselResult] = useState<any>(null);
   const [carouselLoading, setCarouselLoading] = useState(false);
   const [carouselActiveSlide, setCarouselActiveSlide] = useState(0);
+
+  // URL auto-fill
+  const [scrapeUrl, setScrapeUrl] = useState('');
+  const [scrapeLoading, setScrapeLoading] = useState(false);
+  const [scrapeError, setScrapeError] = useState<string | null>(null);
+  const [scrapeSuccess, setScrapeSuccess] = useState<string | null>(null);
+
+  const runScrape = async () => {
+    setScrapeError(null);
+    setScrapeSuccess(null);
+    setScrapeLoading(true);
+    try {
+      let url = scrapeUrl.trim();
+      if (!url.startsWith('http')) url = 'https://' + url;
+      const { knowledge_base: scrapedKb, chars_extracted } = await api.scrapeBrand(url);
+      setKb(prev => ({
+        ...prev,
+        company_name: scrapedKb.company_name || prev.company_name,
+        industry: scrapedKb.industry || prev.industry,
+        description: scrapedKb.description || prev.description,
+        target_audience: scrapedKb.target_audience || prev.target_audience,
+        value_prop: scrapedKb.value_prop || prev.value_prop,
+        brand_voice: scrapedKb.brand_voice || prev.brand_voice,
+        competitors: scrapedKb.competitors || prev.competitors,
+        goals: scrapedKb.goals || prev.goals,
+      }));
+      setScrapeSuccess(`Extracted from ${chars_extracted.toLocaleString()} chars — review and edit below`);
+    } catch (e: any) {
+      setScrapeError(e.message);
+    } finally {
+      setScrapeLoading(false);
+    }
+  };
 
   const kbValid = kb.company_name && kb.industry && kb.description && kb.target_audience && kb.value_prop && kb.brand_voice;
 
@@ -281,6 +314,31 @@ function PipelineTab({
             )}
           </div>
         </div>
+
+        {/* URL Auto-fill */}
+        <div className="mb-4 p-3 bg-gray-50 rounded-lg space-y-2">
+          <p className="text-xs text-gray-500 font-medium">Quick start — scan your website</p>
+          <div className="flex gap-2">
+            <input
+              className="input flex-1 text-sm"
+              placeholder="yourcompany.com"
+              value={scrapeUrl}
+              onChange={e => setScrapeUrl(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && scrapeUrl.trim() && !scrapeLoading && runScrape()}
+            />
+            <button
+              className="btn-primary flex items-center gap-1.5 text-sm px-4 flex-shrink-0"
+              disabled={!scrapeUrl.trim() || scrapeLoading || !keyValid}
+              onClick={runScrape}
+            >
+              {scrapeLoading ? <Spinner /> : <><Search size={13} /> Scan</>}
+            </button>
+          </div>
+          {scrapeError && <p className="text-xs text-red-500">{scrapeError}</p>}
+          {scrapeSuccess && <p className="text-xs text-green-600">{scrapeSuccess}</p>}
+          {!keyValid && <p className="text-xs text-amber-500">API key required for website scanning</p>}
+        </div>
+
         <KBForm kb={kb} onChange={setKb} />
         <div className="mt-4 flex items-center gap-3">
           <button className="btn-primary flex items-center gap-2" onClick={runAnalyze} disabled={!kbValid || !keyValid || loading !== null}>

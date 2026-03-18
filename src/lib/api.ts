@@ -33,6 +33,9 @@ export const api = {
   health: () => get<{ status: string; version: string }>('/api/health'),
   demos: () => get<{ demos: Demo[] }>('/api/demos'),
 
+  scrapeBrand: (url: string) =>
+    post<{ knowledge_base: KnowledgeBase; usage: Usage; chars_extracted: number }>('/api/scrape-brand', { url }),
+
   analyze: (knowledge_base: KnowledgeBase) =>
     post<{ analysis: Analysis; usage: Usage }>('/api/analyze', { knowledge_base }),
 
