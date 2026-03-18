@@ -185,8 +185,29 @@ function PipelineTab({
   const toggleChannel = (ch: string) =>
     setChannels(prev => prev.includes(ch) ? prev.filter(c => c !== ch) : [...prev, ch]);
 
+  const step = !analysis ? 1 : !generated ? 2 : 3;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      {/* Progress indicator */}
+      <div className="flex items-center gap-0">
+        {[
+          { n: 1, label: 'Setup Brand' },
+          { n: 2, label: 'Pick Topic & Channels' },
+          { n: 3, label: 'Generated Content' },
+        ].map((s, i) => (
+          <div key={s.n} className="flex items-center flex-1">
+            <div className={`flex items-center gap-2 ${step >= s.n ? 'opacity-100' : 'opacity-30'}`}>
+              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-bold flex-shrink-0 ${step > s.n ? 'bg-green-600 text-white' : step === s.n ? 'bg-brand-600 text-white' : 'bg-gray-800 text-gray-500'}`}>
+                {step > s.n ? '✓' : s.n}
+              </span>
+              <span className={`text-xs ${step === s.n ? 'text-gray-200 font-medium' : 'text-gray-500'}`}>{s.label}</span>
+            </div>
+            {i < 2 && <div className={`flex-1 h-px mx-3 ${step > s.n ? 'bg-green-700' : 'bg-gray-800'}`} />}
+          </div>
+        ))}
+      </div>
+
       {/* Step 1: KB */}
       <div className="card p-5">
         <div className="flex items-center justify-between mb-4">
@@ -575,10 +596,19 @@ const STATIC_DEMOS: Demo[] = [
 
 function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void }) {
   const [active, setActive] = useState<string>('tech_saas');
+  const [activeChannel, setActiveChannel] = useState<string>('LinkedIn');
   const demo = STATIC_DEMOS.find(d => d.id === active)!;
 
+  const availableChannels = Object.keys(demo.generated ?? {});
+
+  const switchDemo = (id: string) => {
+    setActive(id);
+    const d = STATIC_DEMOS.find(d => d.id === id)!;
+    const chs = Object.keys(d.generated ?? {});
+    if (!chs.includes(activeChannel)) setActiveChannel(chs[0]);
+  };
+
   const useThis = () => {
-    // Build a KB from the demo for users to continue with
     const kbMap: Record<string, KnowledgeBase> = {
       tech_saas: { company_name: 'Nexus Analytics', industry: 'SaaS / Analytics', description: 'B2B analytics platform that helps mid-market e-commerce teams predict churn and understand behavioral signals.', target_audience: 'E-commerce directors and heads of retention at $10M-$100M online retailers', value_prop: 'Real-time behavioral scoring that predicts churn 11 weeks before it shows in your dashboard', brand_voice: 'Direct, data-confident, jargon-free', competitors: 'Mixpanel, Amplitude', goals: 'Generate demos, build authority in e-commerce analytics' },
       fashion_ecom: { company_name: 'Maeven Studio', industry: 'Fashion E-commerce', description: 'Sustainable fashion brand for conscious millennial women. Premium basics, transparent supply chain, based in Berlin.', target_audience: 'Conscious millennial women, 28–40, reducing fast fashion', value_prop: 'Sustainable premium basics with full supply chain transparency and a fit guarantee', brand_voice: 'Honest, understated, direct', competitors: 'Everlane, Organic Basics', goals: 'Build community, drive repeat purchase' },
@@ -587,57 +617,76 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
     onUseDemoKB(kbMap[active]);
   };
 
+  const currentContent = demo.generated?.[activeChannel as keyof typeof demo.generated];
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 pb-3 border-b border-gray-800">
+    <div className="space-y-5">
+      {/* Brand selector cards */}
+      <div className="grid grid-cols-3 gap-3">
         {STATIC_DEMOS.map(d => (
-          <button key={d.id} onClick={() => setActive(d.id)}
-            className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${active === d.id ? 'border-brand-500 bg-brand-900/30 text-brand-300' : 'border-gray-700 text-gray-400 hover:border-gray-600'}`}>
-            {d.label}
+          <button key={d.id} onClick={() => switchDemo(d.id)}
+            className={`text-left p-4 rounded-xl border transition-all ${active === d.id
+              ? 'border-brand-500 bg-brand-900/20'
+              : 'border-gray-800 bg-gray-900/40 hover:border-gray-700'}`}>
+            <p className={`text-xs font-semibold mb-0.5 ${active === d.id ? 'text-brand-300' : 'text-gray-500'}`}>{d.label}</p>
+            <p className="text-sm font-medium text-gray-200">{d.company}</p>
+            <p className="text-xs text-gray-500 mt-1 leading-relaxed">{d.tagline}</p>
           </button>
         ))}
       </div>
 
-      <div className="flex items-start justify-between">
+      {/* Topic + Voice DNA */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="card p-4">
+          <p className="text-xs text-gray-500 mb-1.5">Topic used to generate this content</p>
+          <p className="text-sm text-gray-200 italic">"{demo.topic}"</p>
+        </div>
+        <div className="card p-4">
+          <p className="text-xs text-gray-500 mb-2">Brand Voice</p>
+          <div className="flex flex-wrap gap-1.5">
+            {demo.analysis?.brand_voice_descriptors?.map((d, i) => (
+              <span key={i} className="badge bg-brand-900/40 text-brand-300">{d}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Channel switcher + output */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex gap-2 flex-wrap">
+            {availableChannels.map(ch => (
+              <button key={ch} onClick={() => setActiveChannel(ch)}
+                className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeChannel === ch
+                  ? 'border-brand-500 bg-brand-900/30 text-brand-300'
+                  : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300'}`}>
+                {ch === 'Twitter/X' ? '𝕏 Twitter' : ch}
+              </button>
+            ))}
+          </div>
+          <button onClick={useThis} className="btn-primary text-xs flex items-center gap-1.5 py-1.5 px-3">
+            Use This Brand <ChevronRight size={12} />
+          </button>
+        </div>
+        {currentContent && (
+          <ChannelOutputCard ch={activeChannel} content={currentContent.content} notes={currentContent.notes} />
+        )}
+      </div>
+
+      {/* Bottom CTA */}
+      <div className="card p-4 flex items-center justify-between">
         <div>
-          <h2 className="font-semibold text-lg">{demo.company}</h2>
-          <p className="text-sm text-gray-400">{demo.tagline}</p>
-          <p className="text-xs text-gray-500 mt-1 max-w-lg">{demo.description}</p>
+          <p className="text-sm font-medium text-gray-200">Generate content for your own brand</p>
+          <p className="text-xs text-gray-500 mt-0.5">Enter your Anthropic API key above, click "Use This Brand" to pre-fill, or go to Generate</p>
         </div>
         <button onClick={useThis} className="btn-primary flex items-center gap-1.5">
           Use This Brand <ChevronRight size={14} />
         </button>
       </div>
-
-      <div className="card p-4">
-        <p className="section-header mb-3">Topic Used</p>
-        <p className="text-sm text-gray-300 italic">"{demo.topic}"</p>
-      </div>
-
-      {demo.analysis?.brand_voice_descriptors && (
-        <div className="card p-4">
-          <p className="section-header mb-2">Voice DNA</p>
-          <div className="flex gap-2">
-            {demo.analysis.brand_voice_descriptors.map((d, i) => (
-              <span key={i} className="badge bg-brand-900/40 text-brand-300">{d}</span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="space-y-4">
-        {Object.entries(demo.generated ?? {}).map(([ch, val]) => { const content = val?.content ?? ''; const notes = val?.notes ?? ''; return (
-          <div key={ch}>
-            <div className="flex items-center gap-2 mb-2">
-              <ChannelBadge ch={ch} />
-            </div>
-            <ChannelOutputCard ch={ch} content={content} notes={notes} />
-          </div>
-        );})}
-      </div>
     </div>
   );
 }
+
 
 // ── Tool Tabs (Repurpose, Trends, Data, Chain, Carousel, Voice, Score, SEO) ──
 function RepurposeTab() {
@@ -1487,14 +1536,15 @@ export default function App() {
       </header>
 
       {/* Tab bar */}
-      <nav className="border-b border-gray-800 px-6 flex items-center gap-1">
-        {groups.map(group => (
-          <div key={group} className="flex items-center">
-            <span className="text-xs text-gray-700 px-2 py-3">{group}</span>
+      <nav className="border-b border-gray-800 px-4 flex items-center overflow-x-auto">
+        {groups.map((group, gi) => (
+          <div key={group} className="flex items-center flex-shrink-0">
+            {gi > 0 && <div className="w-px h-4 bg-gray-800 mx-2" />}
+            <span className="text-xs text-gray-700 pr-1">{group}</span>
             {TABS.filter(t => t.group === group).map(t => (
               <button key={t.id} onClick={() => setTab(t.id)}
-                className={`flex items-center gap-1.5 px-3 py-3 text-xs border-b-2 transition-colors ${tab === t.id ? 'border-brand-500 text-brand-300' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
-                {t.icon}{t.label}
+                className={`flex items-center gap-1.5 px-3 py-3 text-xs border-b-2 transition-colors whitespace-nowrap ${tab === t.id ? 'border-brand-500 text-brand-300 font-medium' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+                {t.icon}<span className="hidden sm:inline">{t.label}</span>
               </button>
             ))}
           </div>
