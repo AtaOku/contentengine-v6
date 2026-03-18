@@ -149,19 +149,57 @@ function KBForm({ kb, onChange }: { kb: KnowledgeBase; onChange: (kb: KnowledgeB
   );
 }
 
+// ── Channel Output Tabs (replaces vertical stack — each channel gets full space) ──
+function ChannelTabs({ content }: { content: Record<string, { content: string; notes: string }> }) {
+  const channels = Object.keys(content);
+  const [active, setActive] = useState(channels[0] || '');
+
+  if (channels.length === 0) return null;
+
+  const current = content[active];
+
+  return (
+    <div className="space-y-3">
+      {/* Channel tab bar */}
+      <div className="flex gap-1.5 flex-wrap">
+        {channels.map(ch => (
+          <button key={ch} onClick={() => setActive(ch)}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${active === ch
+              ? 'bg-brand-600 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            }`}>
+            <ChannelBadge ch={ch} />
+          </button>
+        ))}
+      </div>
+
+      {/* Active channel card — full size */}
+      {current && <ChannelOutputCard ch={active} content={current.content} notes={current.notes} />}
+
+      {/* Progress indicator */}
+      <div className="flex items-center justify-center gap-1.5">
+        {channels.map(ch => (
+          <button key={ch} onClick={() => setActive(ch)}
+            className={`w-2 h-2 rounded-full transition-colors ${active === ch ? 'bg-brand-600' : 'bg-gray-300'}`} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Pipeline Tab ─────────────────────────────────────────────────────────────
 function PipelineTab({
-  kb, setKb, analysis, setAnalysis, generated, setGenerated, keyValid
+  kb, setKb, analysis, setAnalysis, generated, setGenerated, keyValid, topic, setTopic
 }: {
   kb: KnowledgeBase; setKb: (kb: KnowledgeBase) => void;
   analysis: Analysis | null; setAnalysis: (a: Analysis) => void;
   generated: Generated | null; setGenerated: (g: Generated) => void;
   keyValid: boolean;
+  topic: string; setTopic: (t: string) => void;
 }) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [usages, setUsages] = useState<Usage[]>([]);
-  const [topic, setTopic] = useState('');
   const [channels, setChannels] = useState(['LinkedIn', 'Twitter/X', 'Email', 'Blog']);
   const [apiKey, setApiKey] = useState('');
 
@@ -344,16 +382,7 @@ function PipelineTab({
           </div>
           <p className="text-xs text-gray-500 italic">{generated.strategic_notes}</p>
 
-          <div className="space-y-4">
-            {Object.entries(generated.content ?? {}).map(([ch, { content, notes }]) => (
-              <div key={ch}>
-                <div className="flex items-center gap-2 mb-2">
-                  <ChannelBadge ch={ch} />
-                </div>
-                <ChannelOutputCard ch={ch} content={content} notes={notes} />
-              </div>
-            ))}
-          </div>
+          <ChannelTabs content={generated.content ?? {}} />
 
           {generated.cta_options?.length > 0 && (
             <div>
@@ -747,7 +776,7 @@ const MAEVEN_CALENDAR = [
   { day: 'Fri', date: '28', channel: 'Email', type: 'Follow-up', title: 'Get the free cart abandonment playbook', status: 'idea', time: '3:00 PM' },
 ];
 
-function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void }) {
+function ShowcaseTab() {
   const [activeSection, setActiveSection] = useState<string>('brand');
   const [activeChannel, setActiveChannel] = useState<string>('LinkedIn');
   const [activeSlide, setActiveSlide] = useState<number>(-1);
@@ -845,9 +874,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             <h2 className="text-lg font-semibold text-gray-900">Cartly</h2>
             <p className="text-sm text-gray-500 mt-0.5">Premium fashion e-commerce — Berlin · Full campaign from brand setup to published content</p>
           </div>
-          <button onClick={() => onUseDemoKB(MAEVEN_KB)} className="btn-primary flex items-center gap-1.5 flex-shrink-0">
-            <Sparkles size={14} /> Use This Brand
-          </button>
+          <span className="badge bg-green-100 text-green-700 flex-shrink-0">Live Demo</span>
         </div>
       </div>
 
@@ -1241,12 +1268,9 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
           </div>
 
           {/* Final CTA */}
-          <div className="card p-5 text-center space-y-3">
+          <div className="card p-5 text-center space-y-2">
             <p className="text-sm font-semibold text-gray-800">Generate a full week like this for your brand</p>
-            <p className="text-xs text-gray-500">Enter your Anthropic API key and run the same flow in under 2 minutes.</p>
-            <button onClick={() => onUseDemoKB(MAEVEN_KB)} className="btn-primary flex items-center gap-2 mx-auto">
-              <Sparkles size={14} /> Use Cartly's Brand as Template
-            </button>
+            <p className="text-xs text-gray-500">Switch to the Pipeline tab, enter your brand details and API key, and run the same flow in under 2 minutes.</p>
           </div>
         </div>
       )}
@@ -1329,7 +1353,7 @@ function RepurposeTab() {
 }
 
 // ── Discover Tab (merged: Trend Radar + Data → Story) ────────────────────────
-function DiscoverTab() {
+function DiscoverTab({ onUseInPipeline }: { onUseInPipeline: (text: string) => void }) {
   const [mode, setMode] = useState<'trends' | 'data'>('trends');
 
   // Trend Radar state
@@ -1402,8 +1426,14 @@ function DiscoverTab() {
               </div>
               <p className="text-xs text-gray-500">{t.why_relevant}</p>
               <p className="text-sm text-gray-800">{t.content_angle}</p>
-              <div className="flex flex-wrap gap-1">
-                {t.formats?.map((f: string, j: number) => <span key={j} className="badge bg-gray-100 text-gray-500">{f}</span>)}
+              <div className="flex items-center justify-between">
+                <div className="flex flex-wrap gap-1">
+                  {t.formats?.map((f: string, j: number) => <span key={j} className="badge bg-gray-100 text-gray-500">{f}</span>)}
+                </div>
+                <button onClick={() => onUseInPipeline(`${t.trend}. ${t.content_angle}`)}
+                  className="text-xs text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1 flex-shrink-0">
+                  <Zap size={12} /> Use in Pipeline →
+                </button>
               </div>
             </div>
           ))}
@@ -1438,6 +1468,10 @@ function DiscoverTab() {
                 </div>
               ))}
               <p className="text-xs text-gray-400 text-center">💡 Copy an insight and paste it into the Pipeline tab to generate full content.</p>
+              <button onClick={() => onUseInPipeline(`${dataResult.data_story}. Key stat: ${dataResult.key_stat}`)}
+                className="btn-primary w-full flex items-center justify-center gap-2 text-sm mt-2">
+                <Zap size={14} /> Use Data Story in Pipeline →
+              </button>
             </div>
           )}
         </>
@@ -1966,6 +2000,7 @@ export default function App() {
   const [kb, setKb] = useState<KnowledgeBase>(DEFAULT_KB);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [generated, setGenerated] = useState<Generated | null>(null);
+  const [pipelineTopic, setPipelineTopic] = useState('');
   const [apiKey, setApiKeyState] = useState(() => {
     const saved = sessionStorage.getItem('ce_api_key') || '';
     if (saved) setApiKey(saved);
@@ -2004,12 +2039,12 @@ export default function App() {
 
   const renderTab = () => {
     switch (tab) {
-      case 'pipeline': return <PipelineTab kb={kb} setKb={setKb} analysis={analysis} setAnalysis={setAnalysis} generated={generated} setGenerated={setGenerated} keyValid={keyValid} />;
+      case 'pipeline': return <PipelineTab kb={kb} setKb={setKb} analysis={analysis} setAnalysis={setAnalysis} generated={generated} setGenerated={setGenerated} keyValid={keyValid} topic={pipelineTopic} setTopic={setPipelineTopic} />;
       case 'repurpose': return <RepurposeTab />;
-      case 'discover': return <DiscoverTab />;
+      case 'discover': return <DiscoverTab onUseInPipeline={(text) => { setPipelineTopic(text); setTab('pipeline'); }} />;
       case 'carousel': return <CarouselTab />;
       case 'toolkit': return <ToolkitTab />;
-      case 'showcase': return <ShowcaseTab onUseDemoKB={(newKb) => { setKb(newKb); setAnalysis(null); setGenerated(null); setTab('pipeline'); }} />;
+      case 'showcase': return <ShowcaseTab />;
       default: return null;
     }
   };
