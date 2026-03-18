@@ -615,11 +615,15 @@ const MAEVEN_CHAIN = [
 ];
 
 const MAEVEN_CALENDAR = [
-  { day: 'Mon', date: '24', channel: 'LinkedIn', type: 'Thought Leadership', title: 'The 73% problem — our data', status: 'scheduled' },
-  { day: 'Tue', date: '25', channel: 'Instagram', type: 'Carousel', title: 'Fear vs. urgency — 7 slides', status: 'scheduled' },
-  { day: 'Wed', date: '26', channel: 'Email', type: 'Newsletter', title: 'Why your recovery emails aren\'t working', status: 'draft' },
-  { day: 'Thu', date: '27', channel: 'Twitter/X', type: 'Thread', title: 'Cart abandonment is a trust problem', status: 'idea' },
-  { day: 'Fri', date: '28', channel: 'Blog', type: 'Long-form', title: 'The full abandonment data breakdown', status: 'draft' },
+  { day: 'Mon', date: '24', channel: 'LinkedIn', type: 'Thought Leadership', title: 'The 73% problem — our data', status: 'scheduled', time: '9:00 AM' },
+  { day: 'Mon', date: '24', channel: 'Twitter/X', type: 'Teaser', title: 'We analyzed 100,000 stores. Thread coming Monday.', status: 'scheduled', time: '8:00 AM' },
+  { day: 'Tue', date: '25', channel: 'Instagram', type: 'Carousel', title: 'Fear vs. urgency — 7 slides', status: 'scheduled', time: '11:00 AM' },
+  { day: 'Tue', date: '25', channel: 'Instagram', type: 'Single Post', title: '73% stat graphic', status: 'scheduled', time: '6:00 PM' },
+  { day: 'Wed', date: '26', channel: 'Email', type: 'Newsletter', title: 'Why your recovery emails aren\'t working', status: 'draft', time: '10:00 AM' },
+  { day: 'Thu', date: '27', channel: 'LinkedIn', type: 'Data Post', title: 'The numbers: 73% → 31% in 90 days', status: 'draft', time: '9:00 AM' },
+  { day: 'Thu', date: '27', channel: 'Twitter/X', type: 'Thread', title: 'Cart abandonment is a trust problem', status: 'idea', time: '2:00 PM' },
+  { day: 'Fri', date: '28', channel: 'Blog', type: 'Long-form', title: 'The full abandonment data breakdown', status: 'draft', time: '8:00 AM' },
+  { day: 'Fri', date: '28', channel: 'Email', type: 'Follow-up', title: 'Get the free cart abandonment playbook', status: 'idea', time: '3:00 PM' },
 ];
 
 function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void }) {
@@ -942,42 +946,77 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
         </div>
       )}
 
-      {/* ⑥ Content Calendar */}
+      {/* ⑤ Content Calendar */}
       {activeSection === 'calendar' && (
         <div className="space-y-4">
           <div className="card p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Content Calendar — Week View</p>
-                <p className="text-xs text-gray-500 mt-0.5">All outputs scheduled across channels for the week</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Content Calendar — Week of March 24</p>
+                <p className="text-xs text-gray-500 mt-0.5">9 pieces across 5 channels · 4 scheduled · 3 drafts · 2 ideas</p>
               </div>
               <span className="badge bg-brand-50 text-brand-700">Step 5 of 5</span>
             </div>
           </div>
 
-          <div className="space-y-2">
-            {MAEVEN_CALENDAR.map((item, i) => (
-              <div key={i} className="card p-4 flex items-center gap-4">
-                <div className="text-center w-12 flex-shrink-0">
-                  <p className="text-xs text-gray-500">{item.day}</p>
-                  <p className="text-xl font-bold text-gray-800">{item.date}</p>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <ChannelBadge ch={item.channel} />
-                    <span className="text-xs text-gray-500">{item.type}</span>
+          {/* Weekly grid */}
+          <div className="grid grid-cols-5 gap-2">
+            {['Mon 24', 'Tue 25', 'Wed 26', 'Thu 27', 'Fri 28'].map((dayLabel, di) => {
+              const dayKey = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'][di];
+              const items = MAEVEN_CALENDAR.filter(i => i.day === dayKey);
+              return (
+                <div key={dayLabel} className="space-y-2">
+                  {/* Day header */}
+                  <div className={`text-center py-2 rounded-lg ${di === 0 ? 'bg-brand-50 border border-brand-200' : 'bg-gray-50 border border-gray-200'}`}>
+                    <p className={`text-xs font-semibold ${di === 0 ? 'text-brand-700' : 'text-gray-600'}`}>{dayLabel.split(' ')[0]}</p>
+                    <p className={`text-lg font-bold ${di === 0 ? 'text-brand-700' : 'text-gray-800'}`}>{dayLabel.split(' ')[1]}</p>
                   </div>
-                  <p className="text-sm text-gray-600">{item.title}</p>
+                  {/* Items */}
+                  {items.map((item, ii) => (
+                    <div key={ii} className={`card p-2.5 border-l-2 ${
+                      item.status === 'scheduled' ? 'border-l-green-400' :
+                      item.status === 'draft' ? 'border-l-amber-400' : 'border-l-gray-300'
+                    }`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <ChannelBadge ch={item.channel} />
+                        <span className="text-xs text-gray-400">{item.time}</span>
+                      </div>
+                      <p className="text-xs font-medium text-gray-700 leading-snug">{item.title}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{item.type}</p>
+                      <div className="mt-1.5 flex items-center gap-1">
+                        <span className={`text-xs ${
+                          item.status === 'scheduled' ? 'text-green-600' :
+                          item.status === 'draft' ? 'text-amber-600' : 'text-gray-400'
+                        }`}>
+                          {item.status === 'scheduled' ? '✓ Scheduled' :
+                           item.status === 'draft' ? '✍ Draft' : '💡 Idea'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  {/* Empty slot */}
+                  {items.length === 0 && (
+                    <div className="card p-3 border-dashed border-gray-200 text-center">
+                      <p className="text-xs text-gray-300">—</p>
+                    </div>
+                  )}
                 </div>
-                <span className={`badge ${channelStatusColor(item.status)} flex-shrink-0`}>{item.status}</span>
-              </div>
-            ))}
+              );
+            })}
+          </div>
+
+          {/* Legend */}
+          <div className="flex items-center gap-4 px-1">
+            <span className="text-xs text-gray-400">Status:</span>
+            <span className="flex items-center gap-1 text-xs text-green-600"><span className="w-2 h-2 rounded-full bg-green-400 inline-block" /> Scheduled</span>
+            <span className="flex items-center gap-1 text-xs text-amber-600"><span className="w-2 h-2 rounded-full bg-amber-400 inline-block" /> Draft</span>
+            <span className="flex items-center gap-1 text-xs text-gray-400"><span className="w-2 h-2 rounded-full bg-gray-300 inline-block" /> Idea</span>
           </div>
 
           {/* Final CTA */}
           <div className="card p-5 text-center space-y-3">
-            <p className="text-sm font-medium text-gray-800">Ready to generate content for your brand?</p>
-            <p className="text-xs text-gray-500">Enter your Anthropic API key, click below, and run the same flow for your company in under 2 minutes.</p>
+            <p className="text-sm font-semibold text-gray-800">Generate a full week like this for your brand</p>
+            <p className="text-xs text-gray-500">Enter your Anthropic API key and run the same flow in under 2 minutes.</p>
             <button onClick={() => onUseDemoKB(MAEVEN_KB)} className="btn-primary flex items-center gap-2 mx-auto">
               <Sparkles size={14} /> Use Cartly's Brand as Template
             </button>
