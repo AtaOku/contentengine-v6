@@ -625,7 +625,7 @@ const MAEVEN_CALENDAR = [
 function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void }) {
   const [activeSection, setActiveSection] = useState<string>('brand');
   const [activeChannel, setActiveChannel] = useState<string>('LinkedIn');
-  const [activeSlide, setActiveSlide] = useState<number>(0);
+  const [activeSlide, setActiveSlide] = useState<number>(-1);
 
   const sections = [
     { id: 'brand', label: '① Brand Setup' },
@@ -775,7 +775,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
               <span className="badge bg-brand-50 text-brand-700">Step 3 of 6</span>
             </div>
             <div className="flex gap-2 flex-wrap">
-              {Object.keys(MAEVEN_CONTENT).map(ch => (
+              {Object.keys(MAEVEN_CONTENT).filter(ch => ch !== 'Instagram').map(ch => (
                 <button key={ch} onClick={() => setActiveChannel(ch)}
                   className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeChannel === ch
                     ? 'border-brand-500 bg-brand-50 text-brand-700'
@@ -791,27 +791,33 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             notes={MAEVEN_CONTENT[activeChannel as keyof typeof MAEVEN_CONTENT]?.notes ?? ''}
           />
           <button onClick={() => setActiveSection('carousel')} className="btn-primary w-full flex items-center justify-center gap-2">
-            See IG Carousel <ChevronRight size={14} />
+            See Instagram Content <ChevronRight size={14} />
           </button>
         </div>
       )}
 
-      {/* ④ Instagram Carousel */}
+      {/* ④ Instagram Content */}
       {activeSection === 'carousel' && (
         <div className="space-y-4">
           <div className="card p-4">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Instagram Carousel — 7 Slides</p>
-                <p className="text-xs text-gray-500 mt-0.5">Same topic broken into a swipeable story format</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Instagram Content</p>
+                <p className="text-xs text-gray-500 mt-0.5">Single post caption + 7-slide carousel — same topic, two formats</p>
               </div>
               <span className="badge bg-brand-50 text-brand-700">Step 4 of 6</span>
             </div>
-            {/* Slide dots */}
-            <div className="flex gap-1.5 mb-4">
-              {MAEVEN_CAROUSEL.map((_, i) => (
-                <button key={i} onClick={() => setActiveSlide(i)}
-                  className={`h-1.5 rounded-full transition-all ${activeSlide === i ? 'bg-brand-500 w-6' : 'bg-gray-700 w-1.5'}`} />
+            {/* Format switcher */}
+            <div className="flex gap-2">
+              {['Single Post', 'Carousel'].map(f => (
+                <button key={f}
+                  onClick={() => { if (f === 'Single Post') setActiveSlide(-1); else setActiveSlide(0); }}
+                  className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                    (f === 'Single Post' && activeSlide === -1) || (f === 'Carousel' && activeSlide >= 0)
+                      ? 'border-brand-500 bg-brand-50 text-brand-700'
+                      : 'border-gray-300 text-gray-500 hover:border-gray-400'}`}>
+                  {f === 'Single Post' ? '📸 Single Post' : '🎠 Carousel (7 slides)'}
+                </button>
               ))}
             </div>
           </div>
@@ -821,57 +827,87 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             <div className="w-72 bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
               {/* IG header */}
               <div className="px-3 py-2 flex items-center gap-2 border-b border-gray-100">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-xs font-bold">M</div>
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-xs font-bold">C</div>
                 <div className="flex-1">
                   <p className="text-xs font-semibold text-gray-900">@cartly</p>
                 </div>
                 <span className="text-gray-400 text-lg">···</span>
               </div>
 
-              {/* Square slide 1:1 */}
-              {(() => {
+              {/* Single Post */}
+              {activeSlide === -1 && (
+                <>
+                  {/* Visual placeholder */}
+                  <div className="aspect-square bg-gradient-to-br from-indigo-900 to-slate-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/5 -translate-y-6 translate-x-6" />
+                    <p className="text-4xl font-black text-white mb-2">73%</p>
+                    <p className="text-sm text-white/70 text-center leading-snug">of carts get abandoned.<br/>We found out why.</p>
+                    <p className="text-xs text-white/30 mt-4 uppercase tracking-widest">@cartly</p>
+                  </div>
+                  {/* Caption */}
+                  <div className="px-3 py-2">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex gap-3 text-lg">❤️ 💬 ✈️</div>
+                      <span className="text-lg">🔖</span>
+                    </div>
+                    <p className="text-xs font-semibold text-gray-900">2,841 likes</p>
+                    <div className="mt-1 max-h-20 overflow-y-auto">
+                      <p className="text-xs text-gray-700 leading-relaxed">
+                        <span className="font-semibold">cartly</span> {MAEVEN_CONTENT['Instagram'].content.split('\n').slice(0, 4).join(' ')}
+                      </p>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">View all 47 comments</p>
+                  </div>
+                </>
+              )}
+
+              {/* Carousel slides */}
+              {activeSlide >= 0 && (() => {
                 const slide = MAEVEN_CAROUSEL[activeSlide];
                 return (
-                  <div className={`aspect-square bg-gradient-to-br ${slide.color} flex flex-col justify-between p-6 relative overflow-hidden`}>
-                    <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/5 -translate-y-6 translate-x-6" />
-                    <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-4 -translate-x-4" />
-                    <span className="text-xs text-white/50 uppercase tracking-widest">{slide.type}</span>
-                    <div>
-                      <p className="text-xl font-bold text-white leading-tight mb-2 whitespace-pre-line">{slide.headline}</p>
-                      <p className="text-xs text-white/70 leading-relaxed whitespace-pre-line">{slide.body}</p>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-white/40">@@cartly</span>
-                      <div className="flex gap-1">
-                        {MAEVEN_CAROUSEL.map((_, i) => (
-                          <button key={i} onClick={() => setActiveSlide(i)}
-                            className={`rounded-full transition-all ${activeSlide === i ? 'bg-white w-3 h-1.5' : 'bg-white/30 w-1.5 h-1.5'}`} />
-                        ))}
+                  <>
+                    <div className={`aspect-square bg-gradient-to-br ${slide.color} flex flex-col justify-between p-6 relative overflow-hidden`}>
+                      <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/5 -translate-y-6 translate-x-6" />
+                      <div className="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-4 -translate-x-4" />
+                      <span className="text-xs text-white/50 uppercase tracking-widest">{slide.type}</span>
+                      <div>
+                        <p className="text-xl font-bold text-white leading-tight mb-2 whitespace-pre-line">{slide.headline}</p>
+                        <p className="text-xs text-white/70 leading-relaxed whitespace-pre-line">{slide.body}</p>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-white/40">@cartly</span>
+                        <div className="flex gap-1">
+                          {MAEVEN_CAROUSEL.map((_, i) => (
+                            <button key={i} onClick={() => setActiveSlide(i)}
+                              className={`rounded-full transition-all ${activeSlide === i ? 'bg-white w-3 h-1.5' : 'bg-white/30 w-1.5 h-1.5'}`} />
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                    <div className="px-3 py-2">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex gap-3 text-lg">❤️ 💬 ✈️</div>
+                        <span className="text-lg">🔖</span>
+                      </div>
+                      <p className="text-xs font-semibold text-gray-900">1,247 likes</p>
+                      <p className="text-xs text-gray-600 mt-0.5"><span className="font-semibold">cartly</span> Swipe → {slide.slide}/{MAEVEN_CAROUSEL.length}</p>
+                    </div>
+                  </>
                 );
               })()}
-
-              {/* IG footer */}
-              <div className="px-3 py-2">
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex gap-3 text-lg">❤️ 💬 ✈️</div>
-                  <span className="text-lg">🔖</span>
-                </div>
-                <p className="text-xs font-semibold text-gray-900">1,247 likes</p>
-                <p className="text-xs text-gray-600 mt-0.5"><span className="font-semibold">@cartly</span> Swipe to see our data →</p>
-              </div>
             </div>
           </div>
 
-          {/* Nav */}
-          <div className="flex gap-2">
-            <button onClick={() => setActiveSlide(s => Math.max(0, s - 1))} disabled={activeSlide === 0}
-              className="btn-secondary flex-1">← Prev</button>
-            <button onClick={() => setActiveSlide(s => Math.min(MAEVEN_CAROUSEL.length - 1, s + 1))} disabled={activeSlide === MAEVEN_CAROUSEL.length - 1}
-              className="btn-secondary flex-1">Next →</button>
-          </div>
+          {/* Carousel nav — only show when in carousel mode */}
+          {activeSlide >= 0 && (
+            <div className="flex gap-2">
+              <button onClick={() => setActiveSlide(s => Math.max(0, s - 1))} disabled={activeSlide === 0}
+                className="btn-secondary flex-1">← Prev</button>
+              <button onClick={() => setActiveSlide(s => Math.min(MAEVEN_CAROUSEL.length - 1, s + 1))} disabled={activeSlide === MAEVEN_CAROUSEL.length - 1}
+                className="btn-secondary flex-1">Next →</button>
+            </div>
+          )}
+
           <button onClick={() => setActiveSection('chain')} className="btn-primary w-full flex items-center justify-center gap-2">
             See Content Chain <ChevronRight size={14} />
           </button>
