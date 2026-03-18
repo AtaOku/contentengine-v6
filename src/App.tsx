@@ -935,6 +935,7 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
   const [visibleChannels, setVisibleChannels] = useState<string[]>([]);
   const [generatingChannel, setGeneratingChannel] = useState<string | null>(null);
   const [typedChars, setTypedChars] = useState<Record<string, number>>({});
+  const [viewedChannels, setViewedChannels] = useState<Set<string>>(new Set());
   const animTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const animFrames = useRef<number[]>([]);
 
@@ -991,6 +992,7 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
     setVisibleChannels([]);
     setGeneratingChannel(null);
     setTypedChars({});
+    setViewedChannels(new Set());
 
     if (id === 'brand') {
       // Type each KB field value with staggered starts
@@ -1033,7 +1035,10 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
         const tShow = setTimeout(() => {
           setVisibleChannels(prev => [...prev, ch]);
           setGeneratingChannel(null);
-          if (i === 0) setActiveChannel(ch);
+          if (i === 0) {
+            setActiveChannel(ch);
+            setViewedChannels(new Set([ch]));
+          }
         }, startDelay + 1000);
         animTimers.current.push(tGen, tShow);
       });
@@ -1150,12 +1155,20 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
                       Back
                     </button>
                   )}
-                  {sectionIdx < sections.length - 1 ? (
-                    <button onClick={() => navigateTo(sections[sectionIdx + 1].id)}
-                      className="flex-1 text-xs py-2.5 rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition-colors text-center flex items-center justify-center gap-1">
-                      Next <ChevronRight size={12} />
-                    </button>
-                  ) : (
+                  {sectionIdx < sections.length - 1 ? (() => {
+                    const allChannels = ['LinkedIn', 'Twitter/X', 'Email', 'Blog', 'Reddit', 'Instagram'];
+                    const contentLocked = activeSection === 'content' && !(allChannels.every(ch => visibleChannels.includes(ch)) && allChannels.every(ch => viewedChannels.has(ch)));
+                    return (
+                      <button onClick={() => !contentLocked && navigateTo(sections[sectionIdx + 1].id)} disabled={contentLocked}
+                        className={`flex-1 text-xs py-2.5 rounded-lg transition-colors text-center flex items-center justify-center gap-1 ${
+                          contentLocked
+                            ? 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
+                            : 'bg-brand-600 text-white hover:bg-brand-700'
+                        }`}>
+                        {contentLocked ? `${viewedChannels.size}/6 channels` : <>Next <ChevronRight size={12} /></>}
+                      </button>
+                    );
+                  })() : (
                     <button onClick={onEnterTool}
                       className="flex-1 text-xs py-2.5 rounded-lg bg-brand-600 text-white hover:bg-brand-700 transition-colors text-center flex items-center justify-center gap-1">
                       <Sparkles size={12} /> Try it yourself
@@ -1305,19 +1318,21 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
             <div className="flex gap-2 flex-wrap">
               {Object.keys(MAEVEN_CONTENT).map(ch => (
                 <button key={ch}
-                  onClick={() => { if (visibleChannels.includes(ch)) { setActiveChannel(ch); if (ch === 'Instagram') setActiveSlide(-1); } }}
+                  onClick={() => { if (visibleChannels.includes(ch)) { setActiveChannel(ch); setViewedChannels(prev => new Set([...prev, ch])); if (ch === 'Instagram') setActiveSlide(-1); } }}
                   disabled={!visibleChannels.includes(ch)}
-                  className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${
+                  className={`text-xs px-3 py-1.5 rounded-lg border transition-all flex items-center gap-1 ${
                     generatingChannel === ch ? 'border-brand-400 bg-brand-50 text-brand-600 animate-pulse' :
                     visibleChannels.includes(ch)
                       ? activeChannel === ch
                         ? 'border-brand-500 bg-brand-50 text-brand-700'
-                        : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                        : viewedChannels.has(ch)
+                          ? 'border-green-300 bg-green-50 text-green-700'
+                          : 'border-gray-300 text-gray-600 hover:border-gray-400'
                       : 'border-dashed border-gray-200 text-gray-300 cursor-not-allowed'
                   }`}>
                   {generatingChannel === ch
                     ? <span className="flex items-center gap-1"><svg className="animate-spin h-3 w-3" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>{ch === 'Twitter/X' ? '𝕏 Twitter' : ch}</span>
-                    : ch === 'Twitter/X' ? '𝕏 Twitter' : ch}
+                    : <>{viewedChannels.has(ch) && activeChannel !== ch && <span className="text-green-500">✓</span>}{ch === 'Twitter/X' ? '𝕏 Twitter' : ch}</>}
                 </button>
               ))}
             </div>
@@ -1434,9 +1449,27 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
             </div>
           )}
 
-          <button onClick={() => navigateTo('chain')} className="btn-primary w-full flex items-center justify-center gap-2">
-            See Content Chain <ChevronRight size={14} />
-          </button>
+          {(() => {
+            const allChannels = ['LinkedIn', 'Twitter/X', 'Email', 'Blog', 'Reddit', 'Instagram'];
+            const allGenerated = allChannels.every(ch => visibleChannels.includes(ch));
+            const allViewed = allChannels.every(ch => viewedChannels.has(ch));
+            const unlocked = allGenerated && allViewed;
+            return (
+              <button onClick={() => unlocked && navigateTo('chain')} disabled={!unlocked}
+                className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-medium transition-all ${
+                  unlocked
+                    ? 'btn-primary'
+                    : 'bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed'
+                }`}>
+                {!allGenerated
+                  ? <><Sparkles size={14} className="animate-pulse" /> Generating channels…</>
+                  : !allViewed
+                    ? <>View all channels to continue ({viewedChannels.size}/{allChannels.length})</>
+                    : <>See Content Chain <ChevronRight size={14} /></>
+                }
+              </button>
+            );
+          })()}
         </div>
       )}
 
