@@ -293,17 +293,13 @@ function PipelineTab({
           </div>
           <p className="text-xs text-gray-500 italic">{generated.strategic_notes}</p>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {Object.entries(generated.content ?? {}).map(([ch, { content, notes }]) => (
-              <div key={ch} className="bg-gray-800/60 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
+              <div key={ch}>
+                <div className="flex items-center gap-2 mb-2">
                   <ChannelBadge ch={ch} />
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-600">{notes}</span>
-                    <CopyButton text={content} />
-                  </div>
                 </div>
-                <p className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">{content}</p>
+                <ChannelOutputCard ch={ch} content={content} notes={notes} />
               </div>
             ))}
           </div>
@@ -324,7 +320,211 @@ function PipelineTab({
   );
 }
 
-// ── Showcase Tab ─────────────────────────────────────────────────────────────
+// ── Channel Output Cards ─────────────────────────────────────────────────────
+function LinkedInCard({ content, notes }: { content: string; notes: string }) {
+  const [liked, setLiked] = useState(false);
+  const lines = content.split('\n');
+  return (
+    <div className="bg-white rounded-xl overflow-hidden shadow-lg">
+      {/* LinkedIn header */}
+      <div className="bg-white px-4 pt-4 pb-3 border-b border-gray-100">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">A</div>
+          <div>
+            <p className="text-sm font-semibold text-gray-900">Your Name</p>
+            <p className="text-xs text-gray-500">Your Title · 1st</p>
+            <p className="text-xs text-gray-400">Just now · 🌐</p>
+          </div>
+          <button className="ml-auto text-blue-600 text-xs font-semibold border border-blue-600 rounded-full px-3 py-1">+ Follow</button>
+        </div>
+      </div>
+      {/* Post content */}
+      <div className="px-4 py-3">
+        <p className="text-sm text-gray-900 whitespace-pre-wrap leading-relaxed">{content}</p>
+      </div>
+      {/* Reactions */}
+      <div className="px-4 pb-2">
+        <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
+          <span>👍❤️💡</span><span>247 reactions · 38 comments</span>
+        </div>
+        <div className="border-t border-gray-100 pt-2 flex justify-around">
+          {[
+            { icon: '👍', label: 'Like', active: liked, action: () => setLiked(v => !v) },
+            { icon: '💬', label: 'Comment', active: false, action: () => {} },
+            { icon: '🔁', label: 'Repost', active: false, action: () => {} },
+            { icon: '↗️', label: 'Send', active: false, action: () => {} },
+          ].map(btn => (
+            <button key={btn.label} onClick={btn.action}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1 rounded hover:bg-gray-100 transition-colors ${btn.active ? 'text-blue-600 font-semibold' : 'text-gray-500'}`}>
+              <span>{btn.icon}</span>{btn.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      {/* Notes + Copy */}
+      <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-t border-gray-100">
+        <span className="text-xs text-gray-400 italic">{notes}</span>
+        <CopyButton text={content} />
+      </div>
+    </div>
+  );
+}
+
+function EmailCard({ content, notes }: { content: string; notes: string }) {
+  // Try to parse subject line if present
+  const lines = content.split('\n');
+  let subject = '';
+  let body = content;
+  const subjectLine = lines.find(l => l.toLowerCase().startsWith('subject:'));
+  if (subjectLine) {
+    subject = subjectLine.replace(/^subject:\s*/i, '');
+    body = lines.filter(l => !l.toLowerCase().startsWith('subject:')).join('\n').trim();
+  } else {
+    subject = lines[0];
+    body = lines.slice(1).join('\n').trim();
+  }
+
+  return (
+    <div className="bg-white rounded-xl overflow-hidden shadow-lg">
+      {/* Email header */}
+      <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 space-y-1.5">
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-400 w-12">From:</span>
+          <span className="text-gray-700 font-medium">you@company.com</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-400 w-12">To:</span>
+          <span className="text-gray-700">your-list@subscribers.com</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs border-t border-gray-200 pt-1.5">
+          <span className="text-gray-400 w-12">Subject:</span>
+          <span className="text-gray-900 font-semibold">{subject}</span>
+        </div>
+      </div>
+      {/* Email body */}
+      <div className="px-6 py-5">
+        <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{body}</p>
+      </div>
+      {/* Footer */}
+      <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-t border-gray-200">
+        <span className="text-xs text-gray-400 italic">{notes}</span>
+        <CopyButton text={content} />
+      </div>
+    </div>
+  );
+}
+
+function TwitterCard({ content, notes }: { content: string; notes: string }) {
+  const charCount = content.length;
+  const isOver = charCount > 280;
+  return (
+    <div className="bg-white rounded-xl overflow-hidden shadow-lg">
+      {/* Tweet header */}
+      <div className="px-4 pt-4 pb-3 flex items-start gap-3">
+        <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">A</div>
+        <div className="flex-1">
+          <div className="flex items-center gap-1">
+            <span className="text-sm font-bold text-gray-900">Your Name</span>
+            <span className="text-gray-400 text-sm">@yourhandle · now</span>
+          </div>
+          <p className="text-sm text-gray-900 mt-1 whitespace-pre-wrap leading-relaxed">{content}</p>
+          {/* Char count */}
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex gap-4 text-gray-400 text-xs">
+              <span>💬 12</span><span>🔁 34</span><span>❤️ 247</span><span>📊 4.2K</span>
+            </div>
+            <span className={`text-xs ${isOver ? 'text-red-500 font-semibold' : 'text-gray-400'}`}>
+              {charCount}/280
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-t border-gray-100">
+        <span className="text-xs text-gray-400 italic">{notes}</span>
+        <CopyButton text={content} />
+      </div>
+    </div>
+  );
+}
+
+function BlogCard({ content, notes }: { content: string; notes: string }) {
+  const words = content.split(/\s+/).length;
+  const readTime = Math.max(1, Math.round(words / 200));
+  return (
+    <div className="bg-white rounded-xl overflow-hidden shadow-lg">
+      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="flex items-center gap-3 text-xs text-gray-400">
+          <span>📖 {readTime} min read</span>
+          <span>·</span>
+          <span>{words} words</span>
+        </div>
+        <CopyButton text={content} />
+      </div>
+      <div className="px-6 py-5">
+        {content.split('\n').map((line, i) => {
+          if (line.startsWith('# ')) return <h1 key={i} className="text-xl font-bold text-gray-900 mt-4 mb-2">{line.slice(2)}</h1>;
+          if (line.startsWith('## ')) return <h2 key={i} className="text-lg font-semibold text-gray-800 mt-4 mb-1.5">{line.slice(3)}</h2>;
+          if (line.startsWith('### ')) return <h3 key={i} className="text-base font-medium text-gray-700 mt-3 mb-1">{line.slice(4)}</h3>;
+          if (line.trim() === '') return <div key={i} className="h-2" />;
+          if (line.startsWith('- ') || line.startsWith('• ')) return <li key={i} className="text-sm text-gray-700 ml-4 leading-relaxed">{line.slice(2)}</li>;
+          return <p key={i} className="text-sm text-gray-800 leading-relaxed">{line}</p>;
+        })}
+      </div>
+      <div className="bg-gray-50 px-4 py-2 border-t border-gray-100">
+        <span className="text-xs text-gray-400 italic">{notes}</span>
+      </div>
+    </div>
+  );
+}
+
+function InstagramCard({ content, notes }: { content: string; notes: string }) {
+  return (
+    <div className="bg-white rounded-xl overflow-hidden shadow-lg">
+      <div className="px-4 pt-4 pb-2 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-xs font-bold">A</div>
+        <span className="text-sm font-semibold text-gray-900">yourhandle</span>
+      </div>
+      <div className="bg-gradient-to-br from-gray-100 to-gray-200 aspect-square flex items-center justify-center mx-4 rounded-lg">
+        <span className="text-gray-400 text-xs">Visual goes here</span>
+      </div>
+      <div className="px-4 py-3">
+        <div className="flex gap-3 text-lg mb-2">❤️ 💬 ✈️ <span className="ml-auto">🔖</span></div>
+        <p className="text-xs font-semibold text-gray-900 mb-1">1,247 likes</p>
+        <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed"><span className="font-semibold">yourhandle</span> {content}</p>
+      </div>
+      <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-t border-gray-100">
+        <span className="text-xs text-gray-400 italic">{notes}</span>
+        <CopyButton text={content} />
+      </div>
+    </div>
+  );
+}
+
+function GenericChannelCard({ ch, content, notes }: { ch: string; content: string; notes: string }) {
+  return (
+    <div className="bg-gray-800/60 rounded-lg p-4">
+      <div className="flex items-center justify-between mb-3">
+        <ChannelBadge ch={ch} />
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-600 italic">{notes}</span>
+          <CopyButton text={content} />
+        </div>
+      </div>
+      <p className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">{content}</p>
+    </div>
+  );
+}
+
+function ChannelOutputCard({ ch, content, notes }: { ch: string; content: string; notes: string }) {
+  switch (ch) {
+    case 'LinkedIn': return <LinkedInCard content={content} notes={notes} />;
+    case 'Email': return <EmailCard content={content} notes={notes} />;
+    case 'Twitter/X': return <TwitterCard content={content} notes={notes} />;
+    case 'Blog': return <BlogCard content={content} notes={notes} />;
+    case 'Instagram': return <InstagramCard content={content} notes={notes} />;
+    default: return <GenericChannelCard ch={ch} content={content} notes={notes} />;
+  }
+}
 const STATIC_DEMOS: Demo[] = [
   {
     id: 'tech_saas', label: 'SaaS / B2B Tech', company: 'Nexus Analytics',
@@ -425,17 +625,13 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {Object.entries(demo.generated ?? {}).map(([ch, val]) => { const content = val?.content ?? ''; const notes = val?.notes ?? ''; return (
-          <div key={ch} className="card p-4">
-            <div className="flex items-center justify-between mb-2">
+          <div key={ch}>
+            <div className="flex items-center gap-2 mb-2">
               <ChannelBadge ch={ch} />
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-600">{notes}</span>
-                <CopyButton text={content} />
-              </div>
             </div>
-            <p className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">{content}</p>
+            <ChannelOutputCard ch={ch} content={content} notes={notes} />
           </div>
         );})}
       </div>
