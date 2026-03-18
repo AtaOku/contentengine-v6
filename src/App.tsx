@@ -150,9 +150,33 @@ function KBForm({ kb, onChange }: { kb: KnowledgeBase; onChange: (kb: KnowledgeB
 }
 
 // ── Channel Output Tabs (replaces vertical stack — each channel gets full space) ──
-function ChannelTabs({ content }: { content: Record<string, { content: string; notes: string }> }) {
+function ChannelTabs({ content, onAction, onAllViewed }: {
+  content: Record<string, { content: string; notes: string }>;
+  onAction?: (action: 'repurpose' | 'score' | 'carousel', ch: string, text: string) => void;
+  onAllViewed?: () => void;
+}) {
   const channels = Object.keys(content);
   const [active, setActive] = useState(channels[0] || '');
+  const [viewed, setViewed] = useState<Set<string>>(new Set(channels.length > 0 ? [channels[0]] : []));
+  const allViewed = channels.length > 0 && channels.every(ch => viewed.has(ch));
+  const viewedRef = useRef(false);
+
+  const selectChannel = (ch: string) => {
+    setActive(ch);
+    setViewed(prev => {
+      const next = new Set(prev);
+      next.add(ch);
+      return next;
+    });
+  };
+
+  // Fire onAllViewed once
+  useEffect(() => {
+    if (allViewed && !viewedRef.current && onAllViewed) {
+      viewedRef.current = true;
+      onAllViewed();
+    }
+  }, [allViewed, onAllViewed]);
 
   if (channels.length === 0) return null;
 
@@ -163,11 +187,14 @@ function ChannelTabs({ content }: { content: Record<string, { content: string; n
       {/* Channel tab bar */}
       <div className="flex gap-1.5 flex-wrap">
         {channels.map(ch => (
-          <button key={ch} onClick={() => setActive(ch)}
+          <button key={ch} onClick={() => selectChannel(ch)}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${active === ch
               ? 'bg-brand-600 text-white shadow-sm'
-              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              : viewed.has(ch)
+                ? 'bg-green-50 text-green-700 border border-green-200'
+                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
             }`}>
+            {viewed.has(ch) && active !== ch && <span className="text-green-500 text-xs">✓</span>}
             <ChannelBadge ch={ch} />
           </button>
         ))}
@@ -176,12 +203,35 @@ function ChannelTabs({ content }: { content: Record<string, { content: string; n
       {/* Active channel card — full size */}
       {current && <ChannelOutputCard ch={active} content={current.content} notes={current.notes} />}
 
+      {/* Action buttons for current channel */}
+      {current && onAction && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <button onClick={() => onAction('repurpose', active, current.content)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-brand-300 hover:text-brand-600 transition-colors flex items-center gap-1">
+            <Repeat size={12} /> Repurpose this →
+          </button>
+          <button onClick={() => onAction('score', active, current.content)}
+            className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-amber-300 hover:text-amber-600 transition-colors flex items-center gap-1">
+            <Star size={12} /> Score →
+          </button>
+          {(active === 'Blog' || active === 'LinkedIn') && (
+            <button onClick={() => onAction('carousel', active, current.content)}
+              className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:border-purple-300 hover:text-purple-600 transition-colors flex items-center gap-1">
+              <Layers size={12} /> Make Carousel →
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Progress indicator */}
-      <div className="flex items-center justify-center gap-1.5">
-        {channels.map(ch => (
-          <button key={ch} onClick={() => setActive(ch)}
-            className={`w-2 h-2 rounded-full transition-colors ${active === ch ? 'bg-brand-600' : 'bg-gray-300'}`} />
-        ))}
+      <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center gap-1.5">
+          {channels.map(ch => (
+            <button key={ch} onClick={() => selectChannel(ch)}
+              className={`w-2 h-2 rounded-full transition-colors ${active === ch ? 'bg-brand-600' : viewed.has(ch) ? 'bg-green-500' : 'bg-gray-300'}`} />
+          ))}
+        </div>
+        <span className="text-xs text-gray-400">{viewed.size}/{channels.length}</span>
       </div>
     </div>
   );
@@ -189,13 +239,14 @@ function ChannelTabs({ content }: { content: Record<string, { content: string; n
 
 // ── Pipeline Tab ─────────────────────────────────────────────────────────────
 function PipelineTab({
-  kb, setKb, analysis, setAnalysis, generated, setGenerated, keyValid, topic, setTopic
+  kb, setKb, analysis, setAnalysis, generated, setGenerated, keyValid, topic, setTopic, onAction
 }: {
   kb: KnowledgeBase; setKb: React.Dispatch<React.SetStateAction<KnowledgeBase>>;
   analysis: Analysis | null; setAnalysis: (a: Analysis) => void;
   generated: Generated | null; setGenerated: (g: Generated) => void;
   keyValid: boolean;
   topic: string; setTopic: (t: string) => void;
+  onAction?: (action: 'repurpose' | 'score' | 'carousel', ch: string, text: string) => void;
 }) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -209,6 +260,7 @@ function PipelineTab({
   const [carouselResult, setCarouselResult] = useState<any>(null);
   const [carouselLoading, setCarouselLoading] = useState(false);
   const [carouselActiveSlide, setCarouselActiveSlide] = useState(0);
+  const [allChannelsViewed, setAllChannelsViewed] = useState(false);
 
   // URL auto-fill
   const [scrapeUrl, setScrapeUrl] = useState('');
@@ -440,7 +492,7 @@ function PipelineTab({
           </div>
           <p className="text-xs text-gray-500 italic">{generated.strategic_notes}</p>
 
-          <ChannelTabs content={generated.content ?? {}} />
+          <ChannelTabs content={generated.content ?? {}} onAction={onAction} onAllViewed={() => setAllChannelsViewed(true)} />
 
           {generated.cta_options?.length > 0 && (
             <div>
@@ -453,9 +505,13 @@ function PipelineTab({
             </div>
           )}
 
-          {/* ── Next Steps: Content Chain + Carousel ── */}
-          <div className="border-t border-gray-200 pt-4 mt-4">
-            <p className="section-header mb-3">Next Steps</p>
+          {/* ── Next Steps: Content Chain + Carousel (unlocks after viewing all channels) ── */}
+          {allChannelsViewed && (
+          <div className="border-t border-gray-200 pt-4 mt-4 space-y-4">
+            <div>
+              <p className="section-header mb-1">Next Steps</p>
+              <p className="text-xs text-gray-500 mb-3">You've seen all channels. Now amplify — build a distribution chain or turn the blog into a carousel.</p>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <button
                 className="btn-primary flex items-center justify-center gap-2 text-sm"
@@ -491,57 +547,58 @@ function PipelineTab({
                 </button>
               )}
             </div>
-          </div>
 
-          {/* Chain result */}
-          {chainResult && (
-            <div className="card p-4 space-y-3">
-              <p className="section-header mb-1">Distribution Strategy</p>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-sm text-green-800 font-medium">{chainResult.chain_title}</p>
-                <p className="text-xs text-green-600 mt-1">{chainResult.arc}</p>
-              </div>
-              {chainResult.pieces?.map((piece: any, i: number) => (
-                <div key={i} className="flex items-start gap-3 text-sm">
-                  <span className="w-6 h-6 rounded-full bg-brand-100 text-brand-600 text-xs flex items-center justify-center font-bold flex-shrink-0">{piece.number}</span>
-                  <div>
-                    <p className="font-medium text-gray-800">{piece.title}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{piece.angle}</p>
-                    {piece.bridge && <p className="text-xs text-brand-500 mt-1">→ {piece.bridge}</p>}
-                  </div>
+            {/* Chain result */}
+            {chainResult && (
+              <div className="card p-4 space-y-3">
+                <p className="section-header mb-1">Distribution Strategy</p>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <p className="text-sm text-green-800 font-medium">{chainResult.chain_title}</p>
+                  <p className="text-xs text-green-600 mt-1">{chainResult.arc}</p>
                 </div>
-              ))}
-            </div>
-          )}
-
-          {/* Carousel result */}
-          {carouselResult && (
-            <div className="card p-4 space-y-3">
-              <p className="section-header mb-1">Carousel from Blog</p>
-              <div className="flex gap-1.5 flex-wrap">
-                {carouselResult.slides?.map((_: any, i: number) => (
-                  <button key={i} onClick={() => setCarouselActiveSlide(i)}
-                    className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${carouselActiveSlide === i ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
-                    {i + 1}
-                  </button>
+                {chainResult.pieces?.map((piece: any, i: number) => (
+                  <div key={i} className="flex items-start gap-3 text-sm">
+                    <span className="w-6 h-6 rounded-full bg-brand-100 text-brand-600 text-xs flex items-center justify-center font-bold flex-shrink-0">{piece.number}</span>
+                    <div>
+                      <p className="font-medium text-gray-800">{piece.title}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{piece.angle}</p>
+                      {piece.bridge && <p className="text-xs text-brand-500 mt-1">→ {piece.bridge}</p>}
+                    </div>
+                  </div>
                 ))}
               </div>
-              {carouselResult.slides?.[carouselActiveSlide] && (() => {
-                const s = carouselResult.slides[carouselActiveSlide];
-                return (
-                  <div className="bg-gray-50 rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center gap-2">
-                    <p className="text-base font-semibold text-gray-900 leading-snug">{s.headline}</p>
-                    {s.body && <p className="text-sm text-gray-500">{s.body}</p>}
-                  </div>
-                );
-              })()}
-              {carouselResult.caption && (
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-500 truncate flex-1">{carouselResult.caption.slice(0, 100)}…</p>
-                  <CopyButton text={carouselResult.caption} />
+            )}
+
+            {/* Carousel result */}
+            {carouselResult && (
+              <div className="card p-4 space-y-3">
+                <p className="section-header mb-1">Carousel from Blog</p>
+                <div className="flex gap-1.5 flex-wrap">
+                  {carouselResult.slides?.map((_: any, i: number) => (
+                    <button key={i} onClick={() => setCarouselActiveSlide(i)}
+                      className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${carouselActiveSlide === i ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
+                      {i + 1}
+                    </button>
+                  ))}
                 </div>
-              )}
-            </div>
+                {carouselResult.slides?.[carouselActiveSlide] && (() => {
+                  const s = carouselResult.slides[carouselActiveSlide];
+                  return (
+                    <div className="bg-gray-50 rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center gap-2">
+                      <p className="text-base font-semibold text-gray-900 leading-snug">{s.headline}</p>
+                      {s.body && <p className="text-sm text-gray-500">{s.body}</p>}
+                    </div>
+                  );
+                })()}
+                {carouselResult.caption && (
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-gray-500 truncate flex-1">{carouselResult.caption.slice(0, 100)}…</p>
+                    <CopyButton text={carouselResult.caption} />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
           )}
         </div>
       )}
@@ -558,10 +615,10 @@ function LinkedInCard({ content, notes }: { content: string; notes: string }) {
       {/* LinkedIn header */}
       <div className="bg-white px-4 pt-4 pb-3 border-b border-gray-100">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">A</div>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">C</div>
           <div>
-            <p className="text-sm font-semibold text-gray-900">Your Name</p>
-            <p className="text-xs text-gray-500">Your Title · 1st</p>
+            <p className="text-sm font-semibold text-gray-900">Cartly</p>
+            <p className="text-xs text-gray-500">E-commerce Conversion Platform · 12,847 followers</p>
             <p className="text-xs text-gray-500">Just now · 🌐</p>
           </div>
           <button className="ml-auto text-blue-600 text-xs font-semibold border border-blue-600 rounded-full px-3 py-1">+ Follow</button>
@@ -650,11 +707,11 @@ function TwitterCard({ content, notes }: { content: string; notes: string }) {
     <div className="bg-white rounded-xl overflow-hidden shadow-lg">
       {/* Tweet header */}
       <div className="px-4 pt-4 pb-3 flex items-start gap-3">
-        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-white text-sm font-bold flex-shrink-0">A</div>
+        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-sm font-bold flex-shrink-0">C</div>
         <div className="flex-1">
           <div className="flex items-center gap-1">
-            <span className="text-sm font-bold text-gray-900">Your Name</span>
-            <span className="text-gray-500 text-sm">@yourhandle · now</span>
+            <span className="text-sm font-bold text-gray-900">Cartly</span>
+            <span className="text-gray-500 text-sm">@cartly · now</span>
           </div>
           <p className="text-sm text-gray-900 mt-1 whitespace-pre-wrap leading-relaxed">{content}</p>
           {/* Char count */}
@@ -710,8 +767,8 @@ function InstagramCard({ content, notes }: { content: string; notes: string }) {
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg">
       <div className="px-4 pt-4 pb-2 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-xs font-bold">A</div>
-        <span className="text-sm font-semibold text-gray-900">yourhandle</span>
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white text-xs font-bold">C</div>
+        <span className="text-sm font-semibold text-gray-900">cartly</span>
       </div>
       <div className="bg-gradient-to-br from-gray-100 to-gray-200 aspect-square flex items-center justify-center mx-4 rounded-lg">
         <span className="text-gray-500 text-xs">Visual goes here</span>
@@ -719,7 +776,7 @@ function InstagramCard({ content, notes }: { content: string; notes: string }) {
       <div className="px-4 py-3">
         <div className="flex gap-3 text-lg mb-2">❤️ 💬 ✈️ <span className="ml-auto">🔖</span></div>
         <p className="text-xs font-semibold text-gray-900 mb-1">1,247 likes</p>
-        <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed"><span className="font-semibold">yourhandle</span> {content}</p>
+        <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed"><span className="font-semibold">cartly</span> {content}</p>
       </div>
       <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-t border-gray-100">
         <span className="text-xs text-gray-500 italic">{notes}</span>
@@ -847,11 +904,11 @@ const MAEVEN_CAROUSEL = [
 ];
 
 const MAEVEN_CHAIN = [
-  { number: 1, title: 'The Stat That Kills Margins', angle: 'Hook with the universal pain — lost revenue', hook: '73% of shopping carts get abandoned. Here\'s what 100,000 stores taught us about why.', channel: 'LinkedIn' },
-  { number: 2, title: 'The Myth vs. The Data', angle: 'Challenge conventional wisdom with survey data', hook: 'We asked 12,000 shoppers why they didn\'t buy. Not one said "too expensive." Here\'s what they actually said.', channel: 'LinkedIn' },
-  { number: 3, title: 'The Playbook', angle: 'Practical 3-step framework', hook: '3 things merchants with sub-35% abandonment rates do differently. A step-by-step breakdown.', channel: 'Email' },
-  { number: 4, title: 'The Case Study', angle: 'Before/after with a real merchant', hook: 'How one DTC brand dropped cart abandonment from 71% to 28% in 90 days — without touching their pricing.', channel: 'LinkedIn' },
-  { number: 5, title: 'The Bigger Picture', angle: 'Industry-level reframe', hook: 'The entire e-commerce industry is optimizing for the wrong thing. A case for building trust over adding urgency.', channel: 'Blog' },
+  { number: 1, title: 'The Hook — A Stat Nobody Questions', angle: 'Open with universal pain: 73% abandonment. Everyone nods. Then flip the script.', hook: '73% of shopping carts get abandoned. Everyone knows this. Almost nobody knows why.', channel: 'LinkedIn', bridge: 'Teases that the real reason will surprise them → drives to piece 2' },
+  { number: 2, title: 'The Reveal — What 12,000 Shoppers Said', angle: 'Survey data that contradicts the industry assumption. Fear, not price.', hook: 'We asked 12,000 shoppers who abandoned carts one question: why? Not one said "too expensive."', channel: 'LinkedIn', bridge: 'Now they know the problem → piece 3 gives them the fix' },
+  { number: 3, title: 'The Framework — 3 Levers That Cut It to 31%', angle: 'Actionable 3-step playbook: social proof, visible returns, fit tools.', hook: 'Three changes. 90 days. 73% → 31% abandonment. Here\'s the exact playbook.', channel: 'Email', bridge: 'Framework is abstract → piece 4 makes it real with a case study' },
+  { number: 4, title: 'The Proof — One Brand\'s 90-Day Turnaround', angle: 'Before/after case study with specific numbers. Makes the framework tangible.', hook: 'A DTC skincare brand dropped cart abandonment from 71% to 28% in 90 days. They didn\'t touch pricing once.', channel: 'LinkedIn', bridge: 'Individual proof → piece 5 zooms out to the industry shift' },
+  { number: 5, title: 'The Reframe — Trust Beats Urgency', angle: 'Industry-level thesis: the entire sector optimizes for the wrong metric.', hook: 'The e-commerce industry spent $4.9B on cart recovery tools last year. Most of them treat the symptom, not the disease.', channel: 'Blog', bridge: null },
 ];
 
 const MAEVEN_CALENDAR = [
@@ -1266,9 +1323,9 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
             </div>
           </div>
 
-          {/* Non-Instagram channels */}
+          {/* Non-Instagram channels — fade in after generation */}
           {activeChannel !== 'Instagram' && visibleChannels.includes(activeChannel) && (
-            <div className="transition-all duration-500 opacity-100 translate-y-0">
+            <div className="transition-all duration-700 animate-in fade-in opacity-100 translate-y-0" key={activeChannel}>
             <ChannelOutputCard
               ch={activeChannel}
               content={MAEVEN_CONTENT[activeChannel as keyof typeof MAEVEN_CONTENT]?.content ?? ''}
@@ -1411,9 +1468,10 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
                     </div>
                   </div>
                 </div>
-                {i < MAEVEN_CHAIN.length - 1 && (
-                  <div className={`flex items-center gap-2 mt-3 ml-10 text-xs text-gray-500 transition-all duration-300 ${visibleItems > i + 1 ? 'opacity-100' : 'opacity-0'}`}>
-                    <span>↓</span><span>leads to next piece</span>
+                {piece.bridge && i < MAEVEN_CHAIN.length - 1 && (
+                  <div className={`flex items-center gap-2 mt-3 ml-10 text-xs transition-all duration-300 ${visibleItems > i + 1 ? 'opacity-100' : 'opacity-0'}`}>
+                    <span className="text-brand-500">↓</span>
+                    <span className="text-brand-600 font-medium">{piece.bridge}</span>
                   </div>
                 )}
               </div>
@@ -1517,7 +1575,7 @@ function OnboardingExperience({ onEnterTool }: { onEnterTool: () => void }) {
 }
 
 // ── Tool Tabs (Repurpose, Discover, Carousel, Toolkit) ──
-function RepurposeTab() {
+function RepurposeTab({ prefill, onClearPrefill }: { prefill?: { content: string; channel: string } | null; onClearPrefill?: () => void }) {
   const [content, setContent] = useState('');
   const [source, setSource] = useState('Blog');
   const [targets, setTargets] = useState(['LinkedIn', 'Twitter/X']);
@@ -1525,6 +1583,17 @@ function RepurposeTab() {
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Apply prefill from Pipeline
+  useEffect(() => {
+    if (prefill) {
+      setContent(prefill.content);
+      setSource(prefill.channel);
+      // Auto-select targets excluding the source channel
+      setTargets(CHANNELS.filter(ch => ch !== prefill.channel).slice(0, 3));
+      onClearPrefill?.();
+    }
+  }, [prefill]);
 
   const run = async () => {
     setError(null); setLoading(true);
@@ -1717,9 +1786,9 @@ function DiscoverTab({ onUseInPipeline }: { onUseInPipeline: (text: string) => v
   );
 }
 
-function ScorePanel() {
-  const [content, setContent] = useState('');
-  const [channel, setChannel] = useState('LinkedIn');
+function ScorePanel({ prefillContent, prefillChannel }: { prefillContent?: string; prefillChannel?: string }) {
+  const [content, setContent] = useState(prefillContent || '');
+  const [channel, setChannel] = useState(prefillChannel || 'LinkedIn');
   const [goal, setGoal] = useState('engagement and brand awareness');
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -1787,7 +1856,7 @@ function ScorePanel() {
 }
 
 // ── Carousel Tab ──────────────────────────────────────────────────────────────
-function CarouselTab() {
+function CarouselTab({ prefill, onClearPrefill }: { prefill?: { content: string; channel: string } | null; onClearPrefill?: () => void }) {
   const [topic, setTopic] = useState('');
   const [platform, setPlatform] = useState('LinkedIn');
   const [slides, setSlides] = useState(6);
@@ -1796,6 +1865,14 @@ function CarouselTab() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
+
+  // Apply prefill from Pipeline
+  useEffect(() => {
+    if (prefill) {
+      setTopic(prefill.content.slice(0, 300));
+      onClearPrefill?.();
+    }
+  }, [prefill]);
 
   const run = async () => {
     setError(null); setLoading(true);
@@ -2096,8 +2173,16 @@ function SeoPanel() {
 }
 
 // ── Toolkit Tab (merged: SEO + Brand Voice + Content Score) ──────────────────
-function ToolkitTab() {
+function ToolkitTab({ prefill, onClearPrefill }: { prefill?: { content: string; channel: string } | null; onClearPrefill?: () => void }) {
   const [mode, setMode] = useState<'seo' | 'voice' | 'score'>('seo');
+
+  // Apply prefill — switch to Score mode with content
+  useEffect(() => {
+    if (prefill) {
+      setMode('score');
+      onClearPrefill?.();
+    }
+  }, [prefill]);
 
   return (
     <div className="space-y-4">
@@ -2123,7 +2208,7 @@ function ToolkitTab() {
 
       {mode === 'seo' && <SeoPanel />}
       {mode === 'voice' && <VoicePanel />}
-      {mode === 'score' && <ScorePanel />}
+      {mode === 'score' && <ScorePanel prefillContent={prefill?.content} prefillChannel={prefill?.channel} />}
     </div>
   );
 }
@@ -2238,6 +2323,30 @@ export default function App() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [generated, setGenerated] = useState<Generated | null>(null);
   const [pipelineTopic, setPipelineTopic] = useState('');
+
+  // Cross-tab content passing
+  const [prefill, setPrefill] = useState<{ target: string; content: string; channel: string } | null>(null);
+
+  const sendToTab = (action: 'repurpose' | 'score' | 'carousel', channel: string, content: string) => {
+    if (action === 'repurpose') {
+      setPrefill({ target: 'repurpose', content, channel });
+      setTab('repurpose');
+    } else if (action === 'score') {
+      setPrefill({ target: 'score', content, channel });
+      setTab('toolkit');
+    } else if (action === 'carousel') {
+      setPrefill({ target: 'carousel', content, channel });
+      setTab('carousel');
+    }
+  };
+  const [pendingAction, setPendingAction] = useState<{ type: string; channel: string; content: string } | null>(null);
+
+  const handleChannelAction = (action: 'repurpose' | 'score' | 'carousel', ch: string, text: string) => {
+    setPendingAction({ type: action, channel: ch, content: text });
+    if (action === 'repurpose') setTab('repurpose');
+    else if (action === 'score') setTab('toolkit');
+    else if (action === 'carousel') setTab('carousel');
+  };
   const [apiKey, setApiKeyState] = useState(() => {
     const saved = sessionStorage.getItem('ce_api_key') || '';
     if (saved) setApiKey(saved);
@@ -2285,11 +2394,11 @@ export default function App() {
 
   const renderTab = () => {
     switch (tab) {
-      case 'pipeline': return <PipelineTab kb={kb} setKb={setKb} analysis={analysis} setAnalysis={setAnalysis} generated={generated} setGenerated={setGenerated} keyValid={keyValid} topic={pipelineTopic} setTopic={setPipelineTopic} />;
-      case 'repurpose': return <RepurposeTab />;
+      case 'pipeline': return <PipelineTab kb={kb} setKb={setKb} analysis={analysis} setAnalysis={setAnalysis} generated={generated} setGenerated={setGenerated} keyValid={keyValid} topic={pipelineTopic} setTopic={setPipelineTopic} onAction={sendToTab} />;
+      case 'repurpose': return <RepurposeTab prefill={prefill?.target === 'repurpose' ? prefill : null} onClearPrefill={() => setPrefill(null)} />;
       case 'discover': return <DiscoverTab onUseInPipeline={(text) => { setPipelineTopic(text); setTab('pipeline'); }} />;
-      case 'carousel': return <CarouselTab />;
-      case 'toolkit': return <ToolkitTab />;
+      case 'carousel': return <CarouselTab prefill={prefill?.target === 'carousel' ? prefill : null} onClearPrefill={() => setPrefill(null)} />;
+      case 'toolkit': return <ToolkitTab prefill={prefill?.target === 'score' ? prefill : null} onClearPrefill={() => setPrefill(null)} />;
       default: return null;
     }
   };
