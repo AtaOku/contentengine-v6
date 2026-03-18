@@ -30,7 +30,6 @@ async function get<T>(path: string): Promise<T> {
 }
 
 export const api = {
-  health: () => get<{ status: string; version: string }>('/api/health'),
   demos: () => get<{ demos: Demo[] }>('/api/demos'),
 
   scrapeBrand: (url: string) =>
@@ -58,13 +57,13 @@ export const api = {
     post<{ result: CarouselResult; usage: Usage }>('/api/carousel', { topic, platform, slides, brand_voice }),
 
   voice: (samples: string[], topic: string) =>
-    post<{ result: VoiceResult; usage: Usage }>('/api/voice', { samples, topic }),
+    post<{ result: VoiceResult; usage: Usage }>('/api/toolkit', { type: 'voice', samples, topic }),
 
   score: (content: string, channel: string, goal: string) =>
-    post<{ result: ScoreResult; usage: Usage }>('/api/score', { content, channel, goal }),
+    post<{ result: ScoreResult; usage: Usage }>('/api/toolkit', { type: 'score', content, channel, goal }),
 
   seo: (content: string, keyword: string, secondary_keywords: string[]) =>
-    post<{ result: SeoResult; usage: Usage }>('/api/seo', { content, keyword, secondary_keywords }),
+    post<{ result: SeoResult; usage: Usage }>('/api/toolkit', { type: 'seo', content, keyword, secondary_keywords }),
 };
 
 // --- Types ---
