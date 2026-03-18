@@ -550,72 +550,76 @@ function ChannelOutputCard({ ch, content, notes }: { ch: string; content: string
 const MAEVEN_KB: KnowledgeBase = {
   company_name: 'Maeven Studio',
   industry: 'Fashion E-commerce',
-  description: 'Sustainable fashion brand for conscious millennial women. Premium basics, transparent supply chain, based in Berlin.',
-  target_audience: 'Conscious millennial women, 28–40, reducing fast fashion',
-  value_prop: 'Sustainable premium basics with full supply chain transparency and a fit guarantee',
-  brand_voice: 'Honest, understated, direct',
-  competitors: 'Everlane, Organic Basics',
-  goals: 'Build community, drive repeat purchase',
+  description: 'Premium fashion brand for style-conscious women. Curated collections, fast delivery, hassle-free returns, based in Berlin.',
+  target_audience: 'Style-conscious women, 25–40, shopping online for quality fashion',
+  value_prop: 'Curated premium fashion with a perfect-fit guarantee — love it or we fix it, free',
+  brand_voice: 'Confident, warm, direct',
+  competitors: 'ASOS, Zalando, About You',
+  goals: 'Reduce cart abandonment, increase repeat purchase, build brand loyalty',
 };
 
 const MAEVEN_ANALYSIS = {
-  company_summary: 'Maeven Studio makes premium sustainable basics for women who want to buy less and wear more.',
-  brand_voice_descriptors: ['Honest', 'Understated', 'Direct'],
-  positioning: 'Radical transparency in a greenwashed market. Maeven earns trust by showing the math — return rates, supply chain, environmental cost — not hiding it.',
+  company_summary: 'Maeven Studio curates premium fashion for women who want to look great without the guesswork of online shopping.',
+  brand_voice_descriptors: ['Confident', 'Warm', 'Direct'],
+  positioning: 'The antidote to online shopping anxiety. Maeven removes the biggest reason people hesitate to buy — uncertainty about fit and quality — through guarantees, not just promises.',
   content_opportunities: [
-    'The real cost of fast fashion returns',
-    'Why fit uncertainty is a sustainability problem',
-    'Supply chain transparency as competitive advantage',
-    'How to build a wardrobe of 12 pieces',
+    'Why 73% of shoppers abandon their cart (and how to fix it)',
+    'The psychology behind "I\'ll just leave it in the cart"',
+    'What your return rate is actually telling you',
+    'How to build confidence into the online shopping experience',
   ],
-  avoid: 'Preachy sustainability messaging, vague eco-claims, pressure tactics, trend-chasing',
-  topic: 'The real cost of fast fashion returns — and what we\'re doing differently',
-  strategic_notes: 'Lead with data, not values. Let the numbers make the moral argument.',
+  avoid: 'Generic fashion marketing, pressure tactics, vague luxury claims, trend-chasing language',
+  topic: 'Why 73% of online shoppers abandon their cart — and what we did about it',
+  strategic_notes: 'Open with the universal pain point (cart abandonment), then reveal the insight (it\'s fear, not indecision), then show the solution.',
 };
 
 const MAEVEN_CONTENT = {
   'LinkedIn': {
-    content: "The fashion industry returns 30% of online orders.\n\nMost brands absorb that as a cost of doing business.\n\nWe decided to understand it instead.\n\nAfter mapping our return patterns for 18 months, we found that 67% came from fit uncertainty.\n\nSo we built a fit guarantee: get measured at home, we'll alter any piece that doesn't fit. Free.\n\nReturns dropped 41%. Customer lifetime value increased 28%.\n\nSustainability isn't just about materials. It's about making clothes people actually keep.\n\n#SlowFashion #SustainableStyle #FashionTech",
-    notes: 'Data-led story, not values-led — earns credibility before the pitch',
+    content: "73% of online shopping carts get abandoned.\n\nMost brands blame distraction. Or price sensitivity. Or \"just browsing.\"\n\nWe dug into our own data. The real reason surprised us.\n\nFear.\n\nNot fear of spending. Fear of being wrong. Fear of ordering a size 38 and having it arrive as a size 34. Fear of going through a return process. Fear of wasting money on something that looks different in person.\n\nSo we stopped trying to nudge people into buying. We started removing the reasons not to.\n\nFit guarantee. Free alterations. No-questions returns.\n\nCart abandonment dropped 34%. Average order value went up 22%.\n\nThe best conversion optimization isn't urgency timers. It's trust.\n\n#EcommerceStrategy #FashionBusiness #ConversionOptimization",
+    notes: 'Opens with the familiar stat, flips the conventional wisdom, ends with a clean insight',
   },
   'Twitter/X': {
-    content: "30% of fashion orders get returned.\nMost end up in landfill.\n\nWe spent 18 months figuring out why.\n\nAnswer: fit uncertainty — not bad quality, not changed minds.\n\nSo we built a fit guarantee. Returns dropped 41%.\n\nSustainability starts with clothes people actually keep.\n\n#SlowFashion",
-    notes: 'Same story, compressed — the data does the work',
+    content: "73% of carts get abandoned.\n\nMost brands add urgency timers.\nWe asked why people hesitate instead.\n\nAnswer: fear of being wrong.\nWrong size. Wrong color. Wrong decision.\n\nSo we removed the risk entirely.\nFit guarantee. Free alterations.\n\nAbandonment down 34%.\nThe best conversion tool is trust.\n\n#Ecommerce",
+    notes: 'Same insight compressed — the contrast between "add urgency" vs "remove fear" is the hook',
   },
   'Email': {
-    content: "Subject: Why we built a fit guarantee (and what happened next)\n\nFashion has a return problem nobody talks about honestly.\n\n30% of everything ordered online comes back. Most of it ends up in landfill — not resold, not donated, just waste.\n\nWe tracked our own returns for 18 months. 67% came from fit uncertainty. Not quality issues. Not changed minds. Just customers who couldn't tell from a photo whether something would actually fit their body.\n\nSo we built something different.\n\nEvery Maeven piece now comes with a fit guarantee. Get measured at home with our free kit. If anything doesn't fit perfectly, we'll alter it — free, no questions.\n\nSince launch: returns down 41%. Customer lifetime value up 28%.\n\nSustainability isn't just about organic cotton. It's about making clothes worth keeping.\n\n→ Shop the new collection\n\nMaeven Studio",
-    notes: 'Story-first, product second — earns the CTA by the time it arrives',
+    content: "Subject: Why we stopped trying to make you buy faster\n\nHi,\n\nHere's something most fashion brands won't tell you: that \"Only 2 left!\" countdown timer doesn't work.\n\nWe tried it. Our customers ignored it.\n\nSo we went back to basics. We looked at our cart abandonment data — 73% of people who added items never checked out — and asked a simple question: why?\n\nThe answer wasn't price. It wasn't distraction. It was fear.\n\nFear of ordering the wrong size. Fear of the item looking different in person. Fear of a complicated return process.\n\nSo instead of adding pressure, we removed risk.\n\nEvery Maeven order now comes with a fit guarantee. If something doesn't fit perfectly, we'll alter it free of charge. Returns are free, no questions, no time limit.\n\nCart abandonment dropped 34%. Average order value went up 22%.\n\nWe think the future of online fashion isn't faster checkout flows. It's shopping without fear.\n\n→ Shop the new collection\n\nMaeven Studio",
+    notes: 'Subverts expectations immediately — "stopped trying to make you buy faster" is the anti-marketing hook',
   },
   'Blog': {
-    content: "## Why Fashion's Return Problem Is Also a Sustainability Problem\n\nEvery year, billions of garments ordered online make a round trip back to the warehouse. The industry treats this as a logistics problem. We think it's a design problem.\n\n### The Numbers Behind the Box\n\nFashion has a 30% return rate online — roughly three times the rate of consumer electronics. Most returned items don't get resold. They get liquidated, donated, or discarded. The environmental cost is significant: packaging, shipping emissions, warehouse handling, and in too many cases, landfill.\n\n### What We Found When We Looked Closely\n\nAt Maeven Studio, we tracked our own returns for 18 months — not just the rate, but the reason.\n\n**67% of our returns came from fit uncertainty.**\n\nNot quality issues. Not changed minds. Just customers who couldn't tell from photos and measurements whether a garment would actually fit their body.\n\n### The Fit Guarantee\n\nWe built a simple solution: every Maeven piece comes with a fit guarantee. Order a free measuring kit. If anything doesn't fit perfectly when it arrives, we'll alter it at no cost.\n\nThe results after six months: returns down 41%, customer lifetime value up 28%.\n\nWe think that's what slow fashion actually means — not just better materials, but fewer wasted journeys.",
-    notes: 'Thought leadership format — works as LinkedIn article too',
+    content: "## Why 73% of Online Shoppers Abandon Their Cart — And What We Did About It\n\nEvery e-commerce team knows the statistic. 73% of shopping carts get abandoned. Billions of euros in potential revenue, evaporating at the final step.\n\nThe conventional response is familiar: urgency timers, exit-intent popups, abandoned cart emails. Add friction on the way out. Create pressure on the way in.\n\nWe tried all of it. None of it moved the needle.\n\n### The Question We Weren't Asking\n\nWe spent three months doing something most brands skip: asking our customers why they didn't buy.\n\nThe answers weren't what we expected.\n\n\"I wasn't sure if it would fit.\"\n\"I couldn't tell from the photos what it actually looked like.\"\n\"I wanted it but I was worried about the return process if it didn't work.\"\n\nThe pattern was consistent. It wasn't price sensitivity. It wasn't distraction. It was **fear of being wrong**.\n\nFear of ordering a size that arrives wrong. Fear of spending €120 on something that looks different in person. Fear of navigating a return process that feels like punishment for trusting the brand.\n\n### Removing Risk Instead of Adding Pressure\n\nOnce we understood the actual problem, the solution became obvious.\n\nWe stopped trying to overcome hesitation with urgency. We started removing the reasons to hesitate.\n\nEvery Maeven order now comes with three guarantees:\n\n- **Fit guarantee** — if anything doesn't fit, we'll alter it free of charge\n- **Quality guarantee** — if it looks different from the photos, full refund\n- **No-friction returns** — free, no time limit, no questions\n\n### What Happened Next\n\nCart abandonment dropped 34% in the first quarter after launch. Average order value increased 22%. Customer lifetime value — the metric that actually matters — went up 31%.\n\nBut the number that surprised us most: repeat purchase rate increased 44%.\n\nCustomers who shop without fear come back.\n\n### The Actual Lesson\n\nUrgency tactics treat hesitation as an obstacle to overcome. We think hesitation is information — a signal that the customer doesn't trust the transaction yet.\n\nThe best conversion optimization isn't a better popup. It's a better promise.\n\n→ See how Maeven's fit guarantee works",
+    notes: 'Full thought leadership post — publishable on LinkedIn, Medium, or company blog',
+  },
+  'Instagram': {
+    content: "73% of carts get abandoned. 🛒\n\nMost brands add countdown timers.\nWe asked WHY instead.\n\nThe answer: fear of being wrong.\nWrong size. Wrong look. Wrong choice.\n\nSo we removed the risk entirely:\n✓ Fit guarantee\n✓ Free alterations\n✓ No-questions returns\n\nCart abandonment: -34% 📉\nRepeat purchases: +44% 📈\n\nThe best conversion tool isn't urgency.\nIt's trust. 🤍\n\n#FashionBusiness #Ecommerce #StyleTips #MaevenStudio #OnlineShopping #FashionMarketing",
+    notes: 'Visual-first format — pairs with a before/after graphic or stat overlay',
   },
 };
 
 const MAEVEN_CAROUSEL = [
-  { slide: 1, type: 'Cover', headline: 'The fashion industry has a return problem.', body: "And most brands pretend it doesn't exist.", color: 'from-stone-800 to-stone-900' },
-  { slide: 2, type: 'Data', headline: '30%', body: 'of all fashion orders get returned online.\nMost end up in landfill.', color: 'from-stone-700 to-stone-800' },
-  { slide: 3, type: 'Insight', headline: 'We spent 18 months asking why.', body: 'Not to fix our logistics.\nTo fix the actual problem.', color: 'from-stone-800 to-stone-900' },
-  { slide: 4, type: 'Data', headline: '67%', body: 'of returns came from fit uncertainty.\nNot bad quality. Not changed minds.', color: 'from-stone-700 to-stone-800' },
-  { slide: 5, type: 'Solution', headline: 'So we built a fit guarantee.', body: 'Measure at home. We alter anything that doesn\'t fit. Free.', color: 'from-emerald-900 to-stone-900' },
-  { slide: 6, type: 'Result', headline: 'Returns down 41%.\nLTV up 28%.', body: 'Sustainability isn\'t just materials.\nIt\'s clothes people actually keep.', color: 'from-stone-800 to-stone-900' },
-  { slide: 7, type: 'CTA', headline: 'Shop the fit guarantee →', body: '@maeven.studio\nLink in bio', color: 'from-stone-900 to-stone-950' },
+  { slide: 1, type: 'Cover', headline: '73% of carts get abandoned.', body: "Most brands add pressure.\nWe asked why instead.", color: 'from-slate-800 to-slate-950' },
+  { slide: 2, type: 'Stat', headline: '73%', body: 'of online shopping carts\nnever reach checkout.\n\nBillions in lost revenue.\nEvery. Single. Day.', color: 'from-slate-700 to-slate-900' },
+  { slide: 3, type: 'Insight', headline: 'We dug into our data.', body: 'Price sensitivity? No.\nDistraction? No.\n\nFear.\nFear of being wrong.', color: 'from-slate-800 to-slate-950' },
+  { slide: 4, type: 'Problem', headline: '"What if it doesn\'t fit?"', body: 'Wrong size. Wrong colour.\nComplicated return.\n\nHesitation isn\'t indecision.\nIt\'s risk management.', color: 'from-slate-700 to-slate-900' },
+  { slide: 5, type: 'Solution', headline: 'We removed the risk.', body: '✓ Fit guarantee\n✓ Free alterations\n✓ No-questions returns', color: 'from-violet-900 to-slate-900' },
+  { slide: 6, type: 'Result', headline: 'Abandonment -34%.\nLTV +31%.', body: 'Customers who shop\nwithout fear come back.', color: 'from-slate-800 to-slate-950' },
+  { slide: 7, type: 'CTA', headline: 'Trust > urgency.\nAlways.', body: '@maeven.studio\nShop the fit guarantee →', color: 'from-slate-900 to-slate-950' },
 ];
 
 const MAEVEN_CHAIN = [
-  { number: 1, title: 'The Problem Nobody Talks About', angle: 'Hook with industry-wide stat', hook: 'The fashion industry returns 30% of online orders. Most brands pretend this is normal.', channel: 'LinkedIn' },
-  { number: 2, title: '18 Months of Data', angle: 'Behind-the-scenes research story', hook: 'We tracked every return for 18 months. What we found changed how we build products.', channel: 'LinkedIn' },
-  { number: 3, title: 'The Fit Guarantee Explained', angle: 'How it actually works', hook: 'Here\'s exactly how our fit guarantee works — and why it\'s harder to build than it sounds.', channel: 'Email' },
-  { number: 4, title: 'Customer Story', angle: 'Social proof through transformation', hook: '"I used to order 3 sizes and return 2. Now I order once." — How Sarah changed how she shops.', channel: 'Instagram' },
-  { number: 5, title: 'The Bigger Picture', angle: 'Industry call to action', hook: 'What if every fashion brand tracked their returns this way? The math on what that would mean for the planet.', channel: 'Blog' },
+  { number: 1, title: 'The Stat Everyone Knows', angle: 'Hook with the universal pain point', hook: '73% of shopping carts get abandoned. Here\'s the reason nobody talks about.', channel: 'LinkedIn' },
+  { number: 2, title: 'The Diagnosis', angle: 'Reframe the problem as fear, not price', hook: 'We surveyed 800 customers who didn\'t buy. Not one said "too expensive." Here\'s what they actually said.', channel: 'LinkedIn' },
+  { number: 3, title: 'The Fix', angle: 'How the fit guarantee actually works', hook: 'What does "fit guarantee" actually mean? Here\'s exactly what happens when you order from Maeven.', channel: 'Email' },
+  { number: 4, title: 'The Numbers', angle: 'Results 90 days after launch', hook: '90 days since we launched our fit guarantee. Here\'s what happened to cart abandonment, LTV, and repeat purchases.', channel: 'LinkedIn' },
+  { number: 5, title: 'The Bigger Idea', angle: 'Industry call to rethink conversion', hook: 'What if the entire e-commerce industry is optimizing for the wrong thing? A case for trust over urgency.', channel: 'Blog' },
 ];
 
 const MAEVEN_CALENDAR = [
-  { day: 'Mon', date: '24', channel: 'LinkedIn', type: 'Thought Leadership', title: 'The 30% problem', status: 'scheduled' },
-  { day: 'Tue', date: '25', channel: 'Instagram', type: 'Carousel', title: '18 months of data', status: 'scheduled' },
-  { day: 'Wed', date: '26', channel: 'Email', type: 'Newsletter', title: 'Fit guarantee explained', status: 'draft' },
-  { day: 'Thu', date: '27', channel: 'Twitter/X', type: 'Thread', title: 'Returns are a design problem', status: 'idea' },
-  { day: 'Fri', date: '28', channel: 'Blog', type: 'Long-form', title: 'Fashion\'s sustainability blind spot', status: 'draft' },
+  { day: 'Mon', date: '24', channel: 'LinkedIn', type: 'Thought Leadership', title: 'The 73% problem', status: 'scheduled' },
+  { day: 'Tue', date: '25', channel: 'Instagram', type: 'Carousel', title: 'Fear vs. urgency', status: 'scheduled' },
+  { day: 'Wed', date: '26', channel: 'Email', type: 'Newsletter', title: 'We stopped trying to make you buy faster', status: 'draft' },
+  { day: 'Thu', date: '27', channel: 'Twitter/X', type: 'Thread', title: 'Cart abandonment is a trust problem', status: 'idea' },
+  { day: 'Fri', date: '28', channel: 'Blog', type: 'Long-form', title: 'Why 73% abandon — full analysis', status: 'draft' },
 ];
 
 function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void }) {
@@ -646,11 +650,11 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="badge bg-green-900/40 text-green-400">Live Demo</span>
+              <span className="badge bg-green-100 text-green-700">Live Demo</span>
               <span className="text-xs text-gray-500">No API key needed</span>
             </div>
-            <h2 className="text-lg font-semibold text-gray-100">Maeven Studio</h2>
-            <p className="text-sm text-gray-500 mt-0.5">Sustainable fashion brand — Berlin · See how ContentEngine handles a full campaign</p>
+            <h2 className="text-lg font-semibold text-gray-900">Maeven Studio</h2>
+            <p className="text-sm text-gray-500 mt-0.5">Premium fashion e-commerce — Berlin · Full campaign from brand setup to published content</p>
           </div>
           <button onClick={() => onUseDemoKB(MAEVEN_KB)} className="btn-primary flex items-center gap-1.5 flex-shrink-0">
             <Sparkles size={14} /> Use This Brand
