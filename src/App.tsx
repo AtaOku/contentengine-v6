@@ -546,280 +546,387 @@ function ChannelOutputCard({ ch, content, notes }: { ch: string; content: string
     default: return <GenericChannelCard ch={ch} content={content} notes={notes} />;
   }
 }
-const STATIC_DEMOS: Demo[] = [
-  {
-    id: 'tech_saas', label: 'SaaS / B2B Tech', company: 'Nexus Analytics',
-    tagline: 'Turn raw data into revenue decisions',
-    description: 'B2B analytics platform for e-commerce teams. Predicts churn through behavioral signals.',
-    topic: 'Why 73% of retailers make pricing decisions with 3-month-old data',
-    analysis: {
-      company_summary: 'Nexus Analytics turns behavioral data into predictive revenue signals for mid-market e-commerce.',
-      brand_voice_descriptors: ['Direct', 'Data-confident', 'Jargon-free'],
-      recommended_topics: ['The 11-week data lag killing your margins', 'Churn prediction vs churn reaction', 'Real-time cohort analysis for non-data-scientists'],
-    },
-    generated: {
-      'LinkedIn': { content: "Your pricing team made a decision last Tuesday based on November data.\n\nIn e-commerce, 3-month-old data isn't insight — it's archaeology.\n\nWe audited 47 mid-market retailers. Average lag between customer behavior change and reporting visibility: 11.4 weeks.\n\nBy the time you see the trend, you've already lost the margin.\n\nNexus Analytics closes that gap to 72 hours.\n\n→ See how [link in bio]\n\n#EcommerceAnalytics #RetailTech #DataDriven", notes: 'Leads with a concrete scenario before the stat' },
-      'Twitter/X': { content: "Your e-commerce team is making today's decisions with November's data.\n\n11-week average lag between behavior change and reporting visibility.\n\nThat's not analytics. That's archaeology.\n\n#EcommerceData", notes: 'Uses the archaeology metaphor as a hook' },
-      'Email': { content: "Subject: The 11-week problem killing your margins\n\nHere's what we found analyzing 47 mid-market retailers:\n\nAverage time between a customer behavior shift and it appearing in your analytics dashboard: 11.4 weeks.\n\nThat means the churn you're seeing right now? You could have seen it in February.\n\nNexus Analytics was built for this. Real-time behavioral scoring. No data science team required.\n\n→ Book a 20-minute demo", notes: 'Opens with insight, not a feature pitch' },
-      'Blog': { content: "## The 11-Week Blind Spot Killing E-commerce Margins\n\nMost e-commerce analytics dashboards have a dirty secret: the data you're looking at is already ancient.\n\n### The Lag Problem\n\nWe audited 47 mid-market retailers — companies doing between $10M and $100M in annual online revenue. What we found was sobering.\n\nThe average time between a meaningful customer behavior change and that change appearing in a reporting dashboard: **11.4 weeks**.\n\n### Why This Matters for Margins\n\nThink about what happens in 11 weeks. A customer cohort starts showing early churn signals in week one. By week four, they're actively disengaging. By week eight, they've churned. By week eleven, it shows up in your retention report.\n\nYou didn't lose them to a competitor. You lost them to a data lag.\n\n### What Real-Time Looks Like\n\nNexus Analytics scores every customer interaction in real time — surfacing risk signals within 72 hours, not 11 weeks. Marketing teams can intervene when it still matters.\n\n→ See how Nexus Analytics works in a 20-minute demo.", notes: 'Educational angle, positions as thought leadership' },
-    }
+// ── Single Demo: Maeven Studio ───────────────────────────────────────────────
+const MAEVEN_KB: KnowledgeBase = {
+  company_name: 'Maeven Studio',
+  industry: 'Fashion E-commerce',
+  description: 'Sustainable fashion brand for conscious millennial women. Premium basics, transparent supply chain, based in Berlin.',
+  target_audience: 'Conscious millennial women, 28–40, reducing fast fashion',
+  value_prop: 'Sustainable premium basics with full supply chain transparency and a fit guarantee',
+  brand_voice: 'Honest, understated, direct',
+  competitors: 'Everlane, Organic Basics',
+  goals: 'Build community, drive repeat purchase',
+};
+
+const MAEVEN_ANALYSIS = {
+  company_summary: 'Maeven Studio makes premium sustainable basics for women who want to buy less and wear more.',
+  brand_voice_descriptors: ['Honest', 'Understated', 'Direct'],
+  positioning: 'Radical transparency in a greenwashed market. Maeven earns trust by showing the math — return rates, supply chain, environmental cost — not hiding it.',
+  content_opportunities: [
+    'The real cost of fast fashion returns',
+    'Why fit uncertainty is a sustainability problem',
+    'Supply chain transparency as competitive advantage',
+    'How to build a wardrobe of 12 pieces',
+  ],
+  avoid: 'Preachy sustainability messaging, vague eco-claims, pressure tactics, trend-chasing',
+  topic: 'The real cost of fast fashion returns — and what we\'re doing differently',
+  strategic_notes: 'Lead with data, not values. Let the numbers make the moral argument.',
+};
+
+const MAEVEN_CONTENT = {
+  'LinkedIn': {
+    content: "The fashion industry returns 30% of online orders.\n\nMost brands absorb that as a cost of doing business.\n\nWe decided to understand it instead.\n\nAfter mapping our return patterns for 18 months, we found that 67% came from fit uncertainty.\n\nSo we built a fit guarantee: get measured at home, we'll alter any piece that doesn't fit. Free.\n\nReturns dropped 41%. Customer lifetime value increased 28%.\n\nSustainability isn't just about materials. It's about making clothes people actually keep.\n\n#SlowFashion #SustainableStyle #FashionTech",
+    notes: 'Data-led story, not values-led — earns credibility before the pitch',
   },
-  {
-    id: 'fashion_ecom', label: 'Fashion E-commerce', company: 'Maeven Studio',
-    tagline: 'Slow fashion, sharp style',
-    description: 'Sustainable fashion brand for conscious millennial women. Premium basics, transparent supply chain.',
-    topic: "The real cost of fast fashion returns — and what we're doing differently",
-    analysis: {
-      company_summary: 'Maeven Studio makes premium sustainable basics for women who want to buy less and wear more.',
-      brand_voice_descriptors: ['Honest', 'Understated', 'Direct'],
-      recommended_topics: ["Why returns are fashion's dirty secret", 'The real cost of buying twice', 'Supply chain transparency as a marketing strategy'],
-    },
-    generated: {
-      'LinkedIn': { content: "The fashion industry returns 30% of online orders.\n\nMost brands absorb that as a cost of doing business.\n\nWe decided to understand it instead.\n\nAfter mapping our return patterns for 18 months, we found that 67% came from fit uncertainty.\n\nSo we built a fit guarantee: get measured at home, we'll alter any piece that doesn't fit. Free.\n\nReturns dropped 41%. Customer lifetime value increased 28%.\n\nSustainability isn't just about materials. It's about making clothes people actually keep.\n\n#SlowFashion #SustainableStyle", notes: 'Uses data to tell a story, not to show off' },
-      'Twitter/X': { content: "30% of fashion orders get returned.\nMost end up in landfill.\n\nWe spent 18 months figuring out why.\n\nAnswer: fit uncertainty.\n\nSo we built a fit guarantee. Returns dropped 41%.\n\nSustainability starts with clothes people actually keep. #SlowFashion", notes: 'Tight, punchy, ends with the insight' },
-      'Email': { content: "Subject: Why we built a fit guarantee (and what happened next)\n\nFashion has a return problem nobody talks about honestly.\n\n30% of everything ordered online comes back. Most of it ends up in landfill.\n\nWe tracked our own returns for 18 months. 67% came from fit uncertainty — not quality issues, not changed minds.\n\nSo we built something different. Every Maeven piece now comes with a fit guarantee. Get measured at home, we'll alter anything that doesn't fit. Free.\n\nSince launch: returns down 41%. Customer lifetime value up 28%.\n\nSustainability isn't just about organic cotton. It's about making clothes worth keeping.\n\n→ Shop the new collection", notes: 'Story-first, product second — earns the CTA' },
-      'Blog': { content: "## Why Fashion's Return Problem Is Also a Sustainability Problem\n\nEvery year, billions of garments ordered online make a round trip back to the warehouse. The industry treats this as a logistics problem. We think it's a design problem.\n\n### The Numbers Behind the Box\n\nFashion has a 30% return rate online — roughly three times the rate of consumer electronics. Most returned items don't get resold. They get liquidated, donated, or discarded.\n\n### What We Found When We Looked Closely\n\nAt Maeven Studio, we tracked our own returns for 18 months — not just the rate, but the reason.\n\n**67% of our returns came from fit uncertainty.**\n\nNot quality issues. Not changed minds. Just customers who couldn't tell from photos whether a garment would fit their body.\n\n### The Fit Guarantee\n\nWe built a simple solution: every Maeven piece comes with a fit guarantee. Order a free measuring kit. If anything doesn't fit perfectly, we'll alter it at no cost.\n\nThe results after six months: returns down 41%, customer lifetime value up 28%.\n\nWe think that's what slow fashion actually means — not just better materials, but fewer wasted journeys.", notes: 'Thought leadership positioning' },
-    }
+  'Twitter/X': {
+    content: "30% of fashion orders get returned.\nMost end up in landfill.\n\nWe spent 18 months figuring out why.\n\nAnswer: fit uncertainty — not bad quality, not changed minds.\n\nSo we built a fit guarantee. Returns dropped 41%.\n\nSustainability starts with clothes people actually keep.\n\n#SlowFashion",
+    notes: 'Same story, compressed — the data does the work',
   },
-  {
-    id: 'healthtech', label: 'HealthTech / Wellness', company: 'Forma Health',
-    tagline: 'Preventive health intelligence for teams',
-    description: 'B2B wellness platform for HR teams. Predictive health scoring to reduce corporate healthcare costs.',
-    topic: 'Why employee wellness programs fail — and what actually works',
-    analysis: {
-      company_summary: 'Forma Health helps employers predict and prevent workforce health deterioration before it becomes costly.',
-      brand_voice_descriptors: ['Evidence-based', 'Empathetic', 'Precise'],
-      recommended_topics: ['The 23% participation problem', 'Why wellness ROI is measured wrong', 'Prediction beats reaction: the health cost formula'],
-    },
-    generated: {
-      'LinkedIn': { content: "The average company spends $1,200 per employee per year on wellness benefits.\n\nParticipation rate: 23%.\n\nWe analyzed 6 years of wellness program data across 140 enterprise clients.\n\nThe programs that failed treated health as an employee responsibility.\n\nThe programs that worked treated health deterioration as a predictable pattern.\n\nPrediction beats reaction. Every time.\n\nForma identifies the 15% of employees whose trajectory will drive 60% of next year's healthcare costs — and intervenes now.\n\nROI on preventive intervention vs reactive care: 4.2x.\n\n#HRTech #EmployeeWellness #PeopleOps", notes: 'Leads with the failure pattern before the solution' },
-      'Twitter/X': { content: "Companies spend $1,200/employee/year on wellness.\nParticipation rate: 23%.\n\n6 years of data across 140 clients:\n\nPrograms that fail → treat health as employee responsibility\nPrograms that work → treat deterioration as a predictable pattern\n\nPrediction beats reaction. Always. #HRTech", notes: 'Contrast structure works well in tweet format' },
-      'Email': { content: "Subject: Why 77% of your employees skip wellness benefits\n\nYou're spending roughly $1,200 per employee per year on wellness benefits.\n\nAnd 77% of your workforce isn't using them.\n\nWe've spent 6 years asking why — analyzing program data across 140 enterprise clients.\n\nThe pattern is consistent: programs that fail treat health as an individual responsibility. Programs that work treat health deterioration as a predictable organizational pattern — and intervene before it becomes expensive.\n\nForma Health identifies the 15% of employees whose health trajectory will drive 60% of next year's healthcare costs — and gives HR teams tools to intervene now.\n\nROI on preventive intervention vs reactive care: 4.2x.\n\n→ See how Forma works for teams like yours", notes: 'Reframes the problem before presenting the solution' },
-      'Blog': { content: "## The Employee Wellness Paradox: Why Most Programs Fail\n\nYour company has a wellness program. Statistically, roughly 23% of your employees are using it.\n\nThe other 77% aren't lazy. The program is probably solving the wrong problem.\n\n### Six Years of Wellness Program Data\n\nForma Health has analyzed enterprise wellness outcomes since 2018 — across 140 clients and more than 200,000 employee data points.\n\nThe finding that changed how we think about everything:\n\n**Programs that fail treat health as an individual responsibility. Programs that succeed treat health deterioration as a predictable organizational pattern.**\n\n### The Access Fallacy\n\nMost wellness programs are built on an access model: give employees tools, then measure utilization. The implicit assumption is that low utilization means employees are unmotivated.\n\nBut low utilization correlates with program design, not employee motivation. Specifically, it correlates with requiring employees to self-identify as having a health problem before they'll engage with a solution.\n\n### What Prediction-First Looks Like\n\nInstead of waiting for employees to raise their hand, Forma uses biometric screening and behavioral signals to identify health trajectories — the 15% of employees whose current pattern will drive 60% of next year's healthcare costs.\n\nHR teams get actionable cohort data. Employees get targeted, relevant support before a health issue becomes a crisis.\n\nThe ROI: 4.2x preventive vs reactive care.\n\n→ Learn how Forma Health works for enterprise HR teams", notes: 'Substantive thought leadership' },
-    }
+  'Email': {
+    content: "Subject: Why we built a fit guarantee (and what happened next)\n\nFashion has a return problem nobody talks about honestly.\n\n30% of everything ordered online comes back. Most of it ends up in landfill — not resold, not donated, just waste.\n\nWe tracked our own returns for 18 months. 67% came from fit uncertainty. Not quality issues. Not changed minds. Just customers who couldn't tell from a photo whether something would actually fit their body.\n\nSo we built something different.\n\nEvery Maeven piece now comes with a fit guarantee. Get measured at home with our free kit. If anything doesn't fit perfectly, we'll alter it — free, no questions.\n\nSince launch: returns down 41%. Customer lifetime value up 28%.\n\nSustainability isn't just about organic cotton. It's about making clothes worth keeping.\n\n→ Shop the new collection\n\nMaeven Studio",
+    notes: 'Story-first, product second — earns the CTA by the time it arrives',
   },
+  'Blog': {
+    content: "## Why Fashion's Return Problem Is Also a Sustainability Problem\n\nEvery year, billions of garments ordered online make a round trip back to the warehouse. The industry treats this as a logistics problem. We think it's a design problem.\n\n### The Numbers Behind the Box\n\nFashion has a 30% return rate online — roughly three times the rate of consumer electronics. Most returned items don't get resold. They get liquidated, donated, or discarded. The environmental cost is significant: packaging, shipping emissions, warehouse handling, and in too many cases, landfill.\n\n### What We Found When We Looked Closely\n\nAt Maeven Studio, we tracked our own returns for 18 months — not just the rate, but the reason.\n\n**67% of our returns came from fit uncertainty.**\n\nNot quality issues. Not changed minds. Just customers who couldn't tell from photos and measurements whether a garment would actually fit their body.\n\n### The Fit Guarantee\n\nWe built a simple solution: every Maeven piece comes with a fit guarantee. Order a free measuring kit. If anything doesn't fit perfectly when it arrives, we'll alter it at no cost.\n\nThe results after six months: returns down 41%, customer lifetime value up 28%.\n\nWe think that's what slow fashion actually means — not just better materials, but fewer wasted journeys.",
+    notes: 'Thought leadership format — works as LinkedIn article too',
+  },
+};
+
+const MAEVEN_CAROUSEL = [
+  { slide: 1, type: 'Cover', headline: 'The fashion industry has a return problem.', body: "And most brands pretend it doesn't exist.", color: 'from-stone-800 to-stone-900' },
+  { slide: 2, type: 'Data', headline: '30%', body: 'of all fashion orders get returned online.\nMost end up in landfill.', color: 'from-stone-700 to-stone-800' },
+  { slide: 3, type: 'Insight', headline: 'We spent 18 months asking why.', body: 'Not to fix our logistics.\nTo fix the actual problem.', color: 'from-stone-800 to-stone-900' },
+  { slide: 4, type: 'Data', headline: '67%', body: 'of returns came from fit uncertainty.\nNot bad quality. Not changed minds.', color: 'from-stone-700 to-stone-800' },
+  { slide: 5, type: 'Solution', headline: 'So we built a fit guarantee.', body: 'Measure at home. We alter anything that doesn\'t fit. Free.', color: 'from-emerald-900 to-stone-900' },
+  { slide: 6, type: 'Result', headline: 'Returns down 41%.\nLTV up 28%.', body: 'Sustainability isn\'t just materials.\nIt\'s clothes people actually keep.', color: 'from-stone-800 to-stone-900' },
+  { slide: 7, type: 'CTA', headline: 'Shop the fit guarantee →', body: '@maeven.studio\nLink in bio', color: 'from-stone-900 to-stone-950' },
 ];
 
-const KB_MAP: Record<string, KnowledgeBase> = {
-  tech_saas: { company_name: 'Nexus Analytics', industry: 'SaaS / Analytics', description: 'B2B analytics platform that helps mid-market e-commerce teams predict churn and understand behavioral signals.', target_audience: 'E-commerce directors and heads of retention at $10M-$100M online retailers', value_prop: 'Real-time behavioral scoring that predicts churn 11 weeks before it shows in your dashboard', brand_voice: 'Direct, data-confident, jargon-free', competitors: 'Mixpanel, Amplitude', goals: 'Generate demos, build authority in e-commerce analytics' },
-  fashion_ecom: { company_name: 'Maeven Studio', industry: 'Fashion E-commerce', description: 'Sustainable fashion brand for conscious millennial women. Premium basics, transparent supply chain, based in Berlin.', target_audience: 'Conscious millennial women, 28–40, reducing fast fashion', value_prop: 'Sustainable premium basics with full supply chain transparency and a fit guarantee', brand_voice: 'Honest, understated, direct', competitors: 'Everlane, Organic Basics', goals: 'Build community, drive repeat purchase' },
-  healthtech: { company_name: 'Forma Health', industry: 'HealthTech / Wellness', description: 'B2B wellness platform for HR teams. Combines biometric screening and predictive health scoring to reduce corporate healthcare costs.', target_audience: 'HR directors and Chief People Officers at 500–5000 person companies', value_prop: 'Predictive health scoring that identifies high-risk employee cohorts before they become costly', brand_voice: 'Evidence-based, empathetic, precise', competitors: 'Virgin Pulse, Noom for Business', goals: 'Build thought leadership, generate enterprise leads' },
-};
+const MAEVEN_CHAIN = [
+  { number: 1, title: 'The Problem Nobody Talks About', angle: 'Hook with industry-wide stat', hook: 'The fashion industry returns 30% of online orders. Most brands pretend this is normal.', channel: 'LinkedIn' },
+  { number: 2, title: '18 Months of Data', angle: 'Behind-the-scenes research story', hook: 'We tracked every return for 18 months. What we found changed how we build products.', channel: 'LinkedIn' },
+  { number: 3, title: 'The Fit Guarantee Explained', angle: 'How it actually works', hook: 'Here\'s exactly how our fit guarantee works — and why it\'s harder to build than it sounds.', channel: 'Email' },
+  { number: 4, title: 'Customer Story', angle: 'Social proof through transformation', hook: '"I used to order 3 sizes and return 2. Now I order once." — How Sarah changed how she shops.', channel: 'Instagram' },
+  { number: 5, title: 'The Bigger Picture', angle: 'Industry call to action', hook: 'What if every fashion brand tracked their returns this way? The math on what that would mean for the planet.', channel: 'Blog' },
+];
 
-const DEMO_ANALYSIS_EXTRA: Record<string, { positioning: string; content_opportunities: string[]; avoid: string }> = {
-  tech_saas: {
-    positioning: 'Anti-hype analytics. Nexus wins by making the invisible visible — not by adding more dashboards, but by closing the gap between what\'s happening and when you know about it.',
-    content_opportunities: ['The 11-week data lag problem', 'Why churn prediction > churn reaction', 'How real-time behavioral scoring works without a data team'],
-    avoid: 'Buzzwords (AI-powered, game-changing), generic SaaS claims, feature-first messaging',
-  },
-  fashion_ecom: {
-    positioning: 'Radical transparency in a greenwashed market. Maeven earns trust by showing the math — return rates, supply chain, environmental cost — not hiding it.',
-    content_opportunities: ['The real cost of returns for the planet', 'Why fast fashion is a fit problem', 'Supply chain transparency as competitive advantage'],
-    avoid: 'Preachy sustainability messaging, vague eco-claims, pressure tactics',
-  },
-  healthtech: {
-    positioning: 'From reactive healthcare to predictive intervention. Forma flips the wellness model — instead of waiting for employees to engage, it identifies who needs support before they know it.',
-    content_opportunities: ['Why 77% of wellness benefits go unused', 'The ROI case for preventive vs reactive care', 'How predictive health scoring works for HR'],
-    avoid: 'Medical jargon, fear-based messaging, oversimplified wellness platitudes',
-  },
-};
+const MAEVEN_CALENDAR = [
+  { day: 'Mon', date: '24', channel: 'LinkedIn', type: 'Thought Leadership', title: 'The 30% problem', status: 'scheduled' },
+  { day: 'Tue', date: '25', channel: 'Instagram', type: 'Carousel', title: '18 months of data', status: 'scheduled' },
+  { day: 'Wed', date: '26', channel: 'Email', type: 'Newsletter', title: 'Fit guarantee explained', status: 'draft' },
+  { day: 'Thu', date: '27', channel: 'Twitter/X', type: 'Thread', title: 'Returns are a design problem', status: 'idea' },
+  { day: 'Fri', date: '28', channel: 'Blog', type: 'Long-form', title: 'Fashion\'s sustainability blind spot', status: 'draft' },
+];
 
 function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void }) {
-  const [active, setActive] = useState<string>('tech_saas');
+  const [activeSection, setActiveSection] = useState<string>('brand');
   const [activeChannel, setActiveChannel] = useState<string>('LinkedIn');
-  const [step, setStep] = useState<number>(1);
-  const demo = STATIC_DEMOS.find(d => d.id === active)!;
-  const extra = DEMO_ANALYSIS_EXTRA[active];
-  const kb = KB_MAP[active];
-  const availableChannels = Object.keys(demo.generated ?? {});
-  const currentContent = demo.generated?.[activeChannel as keyof typeof demo.generated];
+  const [activeSlide, setActiveSlide] = useState<number>(0);
 
-  const switchDemo = (id: string) => {
-    setActive(id);
-    setStep(1);
-    setActiveChannel('LinkedIn');
-  };
+  const sections = [
+    { id: 'brand', label: '① Brand Setup' },
+    { id: 'analysis', label: '② AI Analysis' },
+    { id: 'content', label: '③ Multi-Channel' },
+    { id: 'carousel', label: '④ IG Carousel' },
+    { id: 'chain', label: '⑤ Content Chain' },
+    { id: 'calendar', label: '⑥ Calendar' },
+  ];
+
+  const channelStatusColor = (status: string) => ({
+    scheduled: 'bg-green-900/40 text-green-400',
+    draft: 'bg-amber-900/40 text-amber-400',
+    idea: 'bg-gray-800 text-gray-400',
+  }[status] ?? 'bg-gray-800 text-gray-400');
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-semibold text-gray-200">Full workflow demo</p>
-          <p className="text-xs text-gray-500 mt-0.5">See how ContentEngine works from brand setup to published content — no API key needed</p>
+      <div className="card p-5">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="badge bg-green-900/40 text-green-400">Live Demo</span>
+              <span className="text-xs text-gray-500">No API key needed</span>
+            </div>
+            <h2 className="text-lg font-semibold text-gray-100">Maeven Studio</h2>
+            <p className="text-sm text-gray-400 mt-0.5">Sustainable fashion brand — Berlin · See how ContentEngine handles a full campaign</p>
+          </div>
+          <button onClick={() => onUseDemoKB(MAEVEN_KB)} className="btn-primary flex items-center gap-1.5 flex-shrink-0">
+            <Sparkles size={14} /> Use This Brand
+          </button>
         </div>
       </div>
 
-      {/* Brand selector */}
-      <div className="grid grid-cols-3 gap-3">
-        {STATIC_DEMOS.map(d => (
-          <button key={d.id} onClick={() => switchDemo(d.id)}
-            className={`text-left p-4 rounded-xl border transition-all ${active === d.id
-              ? 'border-brand-500 bg-brand-900/20'
-              : 'border-gray-800 bg-gray-900/40 hover:border-gray-700'}`}>
-            <p className={`text-xs font-semibold mb-0.5 ${active === d.id ? 'text-brand-400' : 'text-gray-500'}`}>{d.label}</p>
-            <p className="text-sm font-medium text-gray-200">{d.company}</p>
-            <p className="text-xs text-gray-500 mt-1 leading-relaxed">{d.tagline}</p>
+      {/* Section nav */}
+      <div className="flex gap-1.5 flex-wrap">
+        {sections.map(s => (
+          <button key={s.id} onClick={() => setActiveSection(s.id)}
+            className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeSection === s.id
+              ? 'border-brand-500 bg-brand-900/30 text-brand-300'
+              : 'border-gray-700 text-gray-500 hover:text-gray-300 hover:border-gray-600'}`}>
+            {s.label}
           </button>
         ))}
       </div>
 
-      {/* Step navigator */}
-      <div className="flex items-center gap-0">
-        {[
-          { n: 1, label: 'Brand Setup' },
-          { n: 2, label: 'AI Analysis' },
-          { n: 3, label: 'Generated Content' },
-        ].map((s, i) => (
-          <div key={s.n} className="flex items-center">
-            <button onClick={() => setStep(s.n)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium transition-colors ${step === s.n
-                ? 'bg-brand-600 text-white'
-                : 'text-gray-500 hover:text-gray-300'}`}>
-              <span className={`w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold ${step === s.n ? 'bg-white/20 text-white' : 'bg-gray-800 text-gray-400'}`}>{s.n}</span>
-              {s.label}
-            </button>
-            {i < 2 && <span className="text-gray-700 mx-1">→</span>}
-          </div>
-        ))}
-      </div>
-
-      {/* Step 1: Brand Setup */}
-      {step === 1 && (
-        <div className="space-y-4">
-          <div className="card p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Step 1 — Brand Knowledge Base</p>
-                <p className="text-sm text-gray-400 mt-0.5">This is the brand context ContentEngine uses to generate everything</p>
-              </div>
-              <span className="badge bg-green-900/40 text-green-400">✓ Pre-filled</span>
+      {/* ① Brand Setup */}
+      {activeSection === 'brand' && (
+        <div className="card p-5 space-y-4">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Brand Knowledge Base</p>
+              <p className="text-xs text-gray-600 mt-0.5">Everything ContentEngine knows about this brand before generating</p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: 'Company Name', value: kb.company_name },
-                { label: 'Industry', value: kb.industry },
-                { label: 'Target Audience', value: kb.target_audience },
-                { label: 'Brand Voice', value: kb.brand_voice },
-                { label: 'Core Value Proposition', value: kb.value_prop, full: true },
-                { label: 'What You Do', value: kb.description, full: true },
-                { label: 'Competitors', value: kb.competitors },
-                { label: 'Content Goals', value: kb.goals },
-              ].map((f, i) => (
-                <div key={i} className={`${f.full ? 'col-span-2' : ''}`}>
-                  <p className="text-xs text-gray-500 mb-1">{f.label}</p>
-                  <div className="bg-gray-800/60 rounded-lg px-3 py-2">
-                    <p className="text-sm text-gray-300">{f.value}</p>
-                  </div>
+            <span className="badge bg-brand-900/40 text-brand-300">Step 1 of 6</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: 'Company', value: MAEVEN_KB.company_name },
+              { label: 'Industry', value: MAEVEN_KB.industry },
+              { label: 'Target Audience', value: MAEVEN_KB.target_audience },
+              { label: 'Brand Voice', value: MAEVEN_KB.brand_voice },
+              { label: 'Value Proposition', value: MAEVEN_KB.value_prop, full: true },
+              { label: 'Description', value: MAEVEN_KB.description, full: true },
+              { label: 'Competitors', value: MAEVEN_KB.competitors },
+              { label: 'Content Goals', value: MAEVEN_KB.goals },
+            ].map((f, i) => (
+              <div key={i} className={f.full ? 'col-span-2' : ''}>
+                <p className="text-xs text-gray-500 mb-1">{f.label}</p>
+                <div className="bg-gray-800/60 rounded-lg px-3 py-2">
+                  <p className="text-sm text-gray-300">{f.value}</p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-          <button onClick={() => setStep(2)} className="btn-primary w-full flex items-center justify-center gap-2">
-            See AI Analysis <ChevronRight size={14} />
+          <button onClick={() => setActiveSection('analysis')} className="btn-primary w-full flex items-center justify-center gap-2">
+            See AI Analysis → <ChevronRight size={14} />
           </button>
         </div>
       )}
 
-      {/* Step 2: AI Analysis */}
-      {step === 2 && (
+      {/* ② AI Analysis */}
+      {activeSection === 'analysis' && (
         <div className="space-y-4">
           <div className="card p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Step 2 — Brand Analysis</p>
-                <p className="text-sm text-gray-400 mt-0.5">What Claude extracted from the brand knowledge base</p>
-              </div>
-              <span className="badge bg-brand-900/40 text-brand-300">AI Generated</span>
+              <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">AI Brand Analysis</p>
+              <span className="badge bg-brand-900/40 text-brand-300">Step 2 of 6</span>
             </div>
-
             <div>
               <p className="text-xs text-gray-500 mb-2">Brand Summary</p>
               <div className="bg-gray-800/60 rounded-lg p-3">
-                <p className="text-sm text-gray-300 italic">"{demo.analysis?.company_summary}"</p>
+                <p className="text-sm text-gray-300 italic">"{MAEVEN_ANALYSIS.company_summary}"</p>
               </div>
             </div>
-
             <div>
               <p className="text-xs text-gray-500 mb-2">Voice DNA</p>
-              <div className="flex flex-wrap gap-2">
-                {demo.analysis?.brand_voice_descriptors?.map((v, i) => (
-                  <span key={i} className="badge bg-brand-900/40 text-brand-300 text-xs px-3 py-1">{v}</span>
+              <div className="flex gap-2">
+                {MAEVEN_ANALYSIS.brand_voice_descriptors.map((v, i) => (
+                  <span key={i} className="badge bg-brand-900/40 text-brand-300 px-3 py-1">{v}</span>
                 ))}
               </div>
             </div>
-
             <div>
               <p className="text-xs text-gray-500 mb-2">Strategic Positioning</p>
               <div className="bg-gray-800/60 rounded-lg p-3">
-                <p className="text-sm text-gray-300">{extra.positioning}</p>
+                <p className="text-sm text-gray-300">{MAEVEN_ANALYSIS.positioning}</p>
               </div>
             </div>
-
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <p className="text-xs text-gray-500 mb-2">Content Opportunities</p>
                 <ul className="space-y-1.5">
-                  {extra.content_opportunities.map((o, i) => (
+                  {MAEVEN_ANALYSIS.content_opportunities.map((o, i) => (
                     <li key={i} className="flex items-start gap-2 text-xs text-gray-300">
-                      <span className="text-brand-400 mt-0.5 flex-shrink-0">→</span>{o}
+                      <span className="text-brand-400 flex-shrink-0">→</span>{o}
                     </li>
                   ))}
                 </ul>
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-2">Topic Used for This Demo</p>
+                <p className="text-xs text-gray-500 mb-2">Topic for This Demo</p>
                 <div className="bg-gray-800/60 rounded-lg p-3">
-                  <p className="text-sm text-gray-300 italic">"{demo.topic}"</p>
+                  <p className="text-sm text-gray-300 italic">"{MAEVEN_ANALYSIS.topic}"</p>
                 </div>
-                <p className="text-xs text-gray-600 mt-2">⚠ Avoid: {extra.avoid}</p>
+                <p className="text-xs text-gray-600 mt-2 leading-relaxed">⚠ Avoid: {MAEVEN_ANALYSIS.avoid}</p>
               </div>
             </div>
           </div>
-          <div className="flex gap-3">
-            <button onClick={() => setStep(1)} className="btn-secondary flex-1 flex items-center justify-center gap-2">
-              ← Brand Setup
-            </button>
-            <button onClick={() => setStep(3)} className="btn-primary flex-1 flex items-center justify-center gap-2">
-              See Generated Content <ChevronRight size={14} />
-            </button>
-          </div>
+          <button onClick={() => setActiveSection('content')} className="btn-primary w-full flex items-center justify-center gap-2">
+            See Generated Content <ChevronRight size={14} />
+          </button>
         </div>
       )}
 
-      {/* Step 3: Generated Content */}
-      {step === 3 && (
+      {/* ③ Multi-Channel Content */}
+      {activeSection === 'content' && (
         <div className="space-y-4">
           <div className="card p-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">Step 3 — Generated Content</p>
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2 flex-wrap">
-                {availableChannels.map(ch => (
-                  <button key={ch} onClick={() => setActiveChannel(ch)}
-                    className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeChannel === ch
-                      ? 'border-brand-500 bg-brand-900/30 text-brand-300'
-                      : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300'}`}>
-                    {ch === 'Twitter/X' ? '𝕏 Twitter' : ch}
-                  </button>
-                ))}
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Multi-Channel Output</p>
+                <p className="text-xs text-gray-600 mt-0.5">Same insight, adapted for each platform's format and audience</p>
               </div>
-              <button onClick={() => onUseDemoKB(kb)} className="btn-primary text-xs flex items-center gap-1.5 py-1.5 px-3">
-                Use This Brand <ChevronRight size={12} />
-              </button>
+              <span className="badge bg-brand-900/40 text-brand-300">Step 3 of 6</span>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {Object.keys(MAEVEN_CONTENT).map(ch => (
+                <button key={ch} onClick={() => setActiveChannel(ch)}
+                  className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeChannel === ch
+                    ? 'border-brand-500 bg-brand-900/30 text-brand-300'
+                    : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300'}`}>
+                  {ch === 'Twitter/X' ? '𝕏 Twitter' : ch}
+                </button>
+              ))}
+            </div>
+          </div>
+          <ChannelOutputCard
+            ch={activeChannel}
+            content={MAEVEN_CONTENT[activeChannel as keyof typeof MAEVEN_CONTENT]?.content ?? ''}
+            notes={MAEVEN_CONTENT[activeChannel as keyof typeof MAEVEN_CONTENT]?.notes ?? ''}
+          />
+          <button onClick={() => setActiveSection('carousel')} className="btn-primary w-full flex items-center justify-center gap-2">
+            See IG Carousel <ChevronRight size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* ④ Instagram Carousel */}
+      {activeSection === 'carousel' && (
+        <div className="space-y-4">
+          <div className="card p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Instagram Carousel — 7 Slides</p>
+                <p className="text-xs text-gray-600 mt-0.5">Same topic broken into a swipeable story format</p>
+              </div>
+              <span className="badge bg-brand-900/40 text-brand-300">Step 4 of 6</span>
+            </div>
+            {/* Slide dots */}
+            <div className="flex gap-1.5 mb-4">
+              {MAEVEN_CAROUSEL.map((_, i) => (
+                <button key={i} onClick={() => setActiveSlide(i)}
+                  className={`h-1.5 rounded-full transition-all ${activeSlide === i ? 'bg-brand-500 w-6' : 'bg-gray-700 w-1.5'}`} />
+              ))}
             </div>
           </div>
 
-          {currentContent && (
-            <ChannelOutputCard ch={activeChannel} content={currentContent.content} notes={currentContent.notes} />
-          )}
+          {/* Carousel slide */}
+          {(() => {
+            const slide = MAEVEN_CAROUSEL[activeSlide];
+            return (
+              <div className={`rounded-2xl bg-gradient-to-br ${slide.color} p-8 min-h-64 flex flex-col justify-between relative overflow-hidden`}>
+                <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/5 -translate-y-8 translate-x-8" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-white/5 translate-y-6 -translate-x-6" />
+                <div>
+                  <span className="text-xs text-white/50 uppercase tracking-widest">{slide.type} · {slide.slide}/{MAEVEN_CAROUSEL.length}</span>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-white leading-tight mb-3 whitespace-pre-line">{slide.headline}</p>
+                  <p className="text-sm text-white/70 leading-relaxed whitespace-pre-line">{slide.body}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-white/40">@maeven.studio</span>
+                  <span className="text-xs text-white/40">{slide.slide} / {MAEVEN_CAROUSEL.length}</span>
+                </div>
+              </div>
+            );
+          })()}
 
-          <div className="flex gap-3">
-            <button onClick={() => setStep(2)} className="btn-secondary flex-1 flex items-center justify-center gap-2">
-              ← AI Analysis
-            </button>
-            <button onClick={() => onUseDemoKB(kb)} className="btn-primary flex-1 flex items-center justify-center gap-2">
-              <Sparkles size={14} /> Try With Your Brand
+          {/* Nav */}
+          <div className="flex gap-2">
+            <button onClick={() => setActiveSlide(s => Math.max(0, s - 1))} disabled={activeSlide === 0}
+              className="btn-secondary flex-1">← Prev</button>
+            <button onClick={() => setActiveSlide(s => Math.min(MAEVEN_CAROUSEL.length - 1, s + 1))} disabled={activeSlide === MAEVEN_CAROUSEL.length - 1}
+              className="btn-secondary flex-1">Next →</button>
+          </div>
+          <button onClick={() => setActiveSection('chain')} className="btn-primary w-full flex items-center justify-center gap-2">
+            See Content Chain <ChevronRight size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* ⑤ Content Chain */}
+      {activeSection === 'chain' && (
+        <div className="space-y-4">
+          <div className="card p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Content Chain — 5 Posts</p>
+                <p className="text-xs text-gray-600 mt-0.5">A sequence that guides the audience from awareness to conversion</p>
+              </div>
+              <span className="badge bg-brand-900/40 text-brand-300">Step 5 of 6</span>
+            </div>
+          </div>
+          <div className="space-y-3">
+            {MAEVEN_CHAIN.map((piece, i) => (
+              <div key={i} className="card p-4">
+                <div className="flex items-start gap-3">
+                  <span className="w-7 h-7 rounded-full bg-brand-900/60 text-brand-300 text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">{piece.number}</span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="text-sm font-medium text-gray-200">{piece.title}</p>
+                      <ChannelBadge ch={piece.channel} />
+                    </div>
+                    <p className="text-xs text-gray-500 mb-2">{piece.angle}</p>
+                    <div className="bg-gray-800/60 rounded-lg p-3">
+                      <p className="text-sm text-gray-300 italic">"{piece.hook}"</p>
+                    </div>
+                  </div>
+                </div>
+                {i < MAEVEN_CHAIN.length - 1 && (
+                  <div className="flex items-center gap-2 mt-3 ml-10 text-xs text-gray-600">
+                    <span>↓</span><span>leads to next piece</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <button onClick={() => setActiveSection('calendar')} className="btn-primary w-full flex items-center justify-center gap-2">
+            See Content Calendar <ChevronRight size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* ⑥ Content Calendar */}
+      {activeSection === 'calendar' && (
+        <div className="space-y-4">
+          <div className="card p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Content Calendar — Week View</p>
+                <p className="text-xs text-gray-600 mt-0.5">All outputs scheduled across channels for the week</p>
+              </div>
+              <span className="badge bg-brand-900/40 text-brand-300">Step 6 of 6</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {MAEVEN_CALENDAR.map((item, i) => (
+              <div key={i} className="card p-4 flex items-center gap-4">
+                <div className="text-center w-12 flex-shrink-0">
+                  <p className="text-xs text-gray-500">{item.day}</p>
+                  <p className="text-xl font-bold text-gray-200">{item.date}</p>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <ChannelBadge ch={item.channel} />
+                    <span className="text-xs text-gray-500">{item.type}</span>
+                  </div>
+                  <p className="text-sm text-gray-300">{item.title}</p>
+                </div>
+                <span className={`badge ${channelStatusColor(item.status)} flex-shrink-0`}>{item.status}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Final CTA */}
+          <div className="card p-5 text-center space-y-3">
+            <p className="text-sm font-medium text-gray-200">Ready to generate content for your brand?</p>
+            <p className="text-xs text-gray-500">Enter your Anthropic API key, click below, and run the same flow for your company in under 2 minutes.</p>
+            <button onClick={() => onUseDemoKB(MAEVEN_KB)} className="btn-primary flex items-center gap-2 mx-auto">
+              <Sparkles size={14} /> Use Maeven's Brand as Template
             </button>
           </div>
         </div>
