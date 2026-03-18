@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   Zap, LayoutDashboard, Repeat, TrendingUp, BarChart2,
   Link2, Layers, Mic, Star, Search, ChevronRight, Sparkles
@@ -631,6 +631,71 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
   const [activeChannel, setActiveChannel] = useState<string>('LinkedIn');
   const [activeSlide, setActiveSlide] = useState<number>(-1);
 
+  // Animation states
+  const [visibleItems, setVisibleItems] = useState<number>(0);
+  const [analysisPhase, setAnalysisPhase] = useState<'idle' | 'analyzing' | 'done'>('idle');
+  const [visibleChannels, setVisibleChannels] = useState<string[]>([]);
+  const [generatingChannel, setGeneratingChannel] = useState<string | null>(null);
+  const animTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const clearTimers = () => { animTimers.current.forEach(clearTimeout); animTimers.current = []; };
+
+  const navigateTo = (id: string) => {
+    clearTimers();
+    setActiveSection(id);
+    setVisibleItems(0);
+    setAnalysisPhase('idle');
+    setVisibleChannels([]);
+    setGeneratingChannel(null);
+
+    if (id === 'brand') {
+      const kbKeys = ['Company', 'Industry', 'Target Audience', 'Brand Voice', 'Value Proposition', 'Description', 'Competitors', 'Content Goals'];
+      kbKeys.forEach((_, i) => {
+        const t = setTimeout(() => setVisibleItems(i + 1), 120 * (i + 1));
+        animTimers.current.push(t);
+      });
+    }
+
+    if (id === 'analysis') {
+      setAnalysisPhase('analyzing');
+      const t1 = setTimeout(() => setAnalysisPhase('done'), 1800);
+      const t2 = setTimeout(() => setVisibleItems(1), 2000);
+      const t3 = setTimeout(() => setVisibleItems(2), 2400);
+      const t4 = setTimeout(() => setVisibleItems(3), 2800);
+      const t5 = setTimeout(() => setVisibleItems(4), 3200);
+      animTimers.current.push(t1, t2, t3, t4, t5);
+    }
+
+    if (id === 'content') {
+      const channels = ['LinkedIn', 'Twitter/X', 'Email', 'Blog', 'Instagram'];
+      channels.forEach((ch, i) => {
+        const tGen = setTimeout(() => setGeneratingChannel(ch), 600 * i);
+        const tShow = setTimeout(() => {
+          setVisibleChannels(prev => [...prev, ch]);
+          setGeneratingChannel(null);
+        }, 600 * i + 500);
+        animTimers.current.push(tGen, tShow);
+      });
+    }
+
+    if (id === 'chain') {
+      MAEVEN_CHAIN.forEach((_, i) => {
+        const t = setTimeout(() => setVisibleItems(i + 1), 300 * (i + 1));
+        animTimers.current.push(t);
+      });
+    }
+
+    if (id === 'calendar') {
+      MAEVEN_CALENDAR.forEach((_, i) => {
+        const t = setTimeout(() => setVisibleItems(i + 1), 150 * (i + 1));
+        animTimers.current.push(t);
+      });
+    }
+  };
+
+  // Kick off brand animation on mount
+  useEffect(() => { navigateTo('brand'); return clearTimers; }, []);
+
   const sections = [
     { id: 'brand', label: '① Brand Setup' },
     { id: 'analysis', label: '② AI Analysis' },
@@ -668,7 +733,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
       {/* Section nav */}
       <div className="flex gap-1.5 flex-wrap">
         {sections.map(s => (
-          <button key={s.id} onClick={() => setActiveSection(s.id)}
+          <button key={s.id} onClick={() => navigateTo(s.id)}
             className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeSection === s.id
               ? 'border-brand-500 bg-brand-50 text-brand-700'
               : 'border-gray-300 text-gray-500 hover:text-gray-600 hover:border-gray-400'}`}>
@@ -698,7 +763,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
               { label: 'Competitors', value: MAEVEN_KB.competitors },
               { label: 'Content Goals', value: MAEVEN_KB.goals },
             ].map((f, i) => (
-              <div key={i} className={f.full ? 'col-span-2' : ''}>
+              <div key={i} className={`transition-all duration-500 ${f.full ? 'col-span-2' : ''} ${visibleItems > i ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
                 <p className="text-xs text-gray-500 mb-1">{f.label}</p>
                 <div className="bg-gray-50 rounded-lg px-3 py-2">
                   <p className="text-sm text-gray-600">{f.value}</p>
@@ -706,7 +771,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
               </div>
             ))}
           </div>
-          <button onClick={() => setActiveSection('analysis')} className="btn-primary w-full flex items-center justify-center gap-2">
+          <button onClick={() => navigateTo('analysis')} className="btn-primary w-full flex items-center justify-center gap-2">
             See AI Analysis → <ChevronRight size={14} />
           </button>
         </div>
@@ -715,18 +780,40 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
       {/* ② AI Analysis */}
       {activeSection === 'analysis' && (
         <div className="space-y-4">
+          {/* Analyzing spinner */}
+          {analysisPhase === 'analyzing' && (
+            <div className="card p-8 flex flex-col items-center justify-center gap-3">
+              <div className="flex items-center gap-3">
+                <svg className="animate-spin h-5 w-5 text-brand-600" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                <p className="text-sm font-medium text-gray-700">Analyzing brand knowledge base…</p>
+              </div>
+              <div className="flex gap-2 text-xs text-gray-400">
+                {['Extracting voice DNA', 'Building positioning', 'Finding content angles'].map((s, i) => (
+                  <span key={i} className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse" style={{ animationDelay: `${i * 300}ms` }} />
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {analysisPhase === 'done' && (
           <div className="card p-5 space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">AI Brand Analysis</p>
-              <span className="badge bg-brand-50 text-brand-700">Step 2 of 6</span>
+              <span className="badge bg-brand-50 text-brand-700">Step 2 of 5</span>
             </div>
-            <div>
+            <div className={`transition-all duration-500 ${visibleItems >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
               <p className="text-xs text-gray-500 mb-2">Brand Summary</p>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-sm text-gray-600 italic">"{MAEVEN_ANALYSIS.company_summary}"</p>
               </div>
             </div>
-            <div>
+            <div className={`transition-all duration-500 ${visibleItems >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
               <p className="text-xs text-gray-500 mb-2">Voice DNA</p>
               <div className="flex gap-2">
                 {MAEVEN_ANALYSIS.brand_voice_descriptors.map((v, i) => (
@@ -734,13 +821,13 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
                 ))}
               </div>
             </div>
-            <div>
+            <div className={`transition-all duration-500 ${visibleItems >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
               <p className="text-xs text-gray-500 mb-2">Strategic Positioning</p>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-sm text-gray-600">{MAEVEN_ANALYSIS.positioning}</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className={`grid grid-cols-2 gap-3 transition-all duration-500 ${visibleItems >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
               <div>
                 <p className="text-xs text-gray-500 mb-2">Content Opportunities</p>
                 <ul className="space-y-1.5">
@@ -760,9 +847,12 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
               </div>
             </div>
           </div>
-          <button onClick={() => setActiveSection('content')} className="btn-primary w-full flex items-center justify-center gap-2">
+          )}
+          {analysisPhase === 'done' && (
+          <button onClick={() => navigateTo('content')} className="btn-primary w-full flex items-center justify-center gap-2">
             See Generated Content <ChevronRight size={14} />
           </button>
+          )}
         </div>
       )}
 
@@ -779,23 +869,34 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             </div>
             <div className="flex gap-2 flex-wrap">
               {Object.keys(MAEVEN_CONTENT).map(ch => (
-                <button key={ch} onClick={() => { setActiveChannel(ch); if (ch === 'Instagram') setActiveSlide(-1); }}
-                  className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeChannel === ch
-                    ? 'border-brand-500 bg-brand-50 text-brand-700'
-                    : 'border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600'}`}>
-                  {ch === 'Twitter/X' ? '𝕏 Twitter' : ch}
+                <button key={ch}
+                  onClick={() => { if (visibleChannels.includes(ch)) { setActiveChannel(ch); if (ch === 'Instagram') setActiveSlide(-1); } }}
+                  disabled={!visibleChannels.includes(ch)}
+                  className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${
+                    generatingChannel === ch ? 'border-brand-400 bg-brand-50 text-brand-600 animate-pulse' :
+                    visibleChannels.includes(ch)
+                      ? activeChannel === ch
+                        ? 'border-brand-500 bg-brand-50 text-brand-700'
+                        : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                      : 'border-dashed border-gray-200 text-gray-300 cursor-not-allowed'
+                  }`}>
+                  {generatingChannel === ch
+                    ? <span className="flex items-center gap-1"><svg className="animate-spin h-3 w-3" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>{ch === 'Twitter/X' ? '𝕏 Twitter' : ch}</span>
+                    : ch === 'Twitter/X' ? '𝕏 Twitter' : ch}
                 </button>
               ))}
             </div>
           </div>
 
           {/* Non-Instagram channels */}
-          {activeChannel !== 'Instagram' && (
+          {activeChannel !== 'Instagram' && visibleChannels.includes(activeChannel) && (
+            <div className="transition-all duration-500 opacity-100 translate-y-0">
             <ChannelOutputCard
               ch={activeChannel}
               content={MAEVEN_CONTENT[activeChannel as keyof typeof MAEVEN_CONTENT]?.content ?? ''}
               notes={MAEVEN_CONTENT[activeChannel as keyof typeof MAEVEN_CONTENT]?.notes ?? ''}
             />
+            </div>
           )}
 
           {/* Instagram — single post + carousel inline */}
@@ -898,7 +999,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             </div>
           )}
 
-          <button onClick={() => setActiveSection('chain')} className="btn-primary w-full flex items-center justify-center gap-2">
+          <button onClick={() => navigateTo('chain')} className="btn-primary w-full flex items-center justify-center gap-2">
             See Content Chain <ChevronRight size={14} />
           </button>
         </div>
@@ -918,7 +1019,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
           </div>
           <div className="space-y-3">
             {MAEVEN_CHAIN.map((piece, i) => (
-              <div key={i} className="card p-4">
+              <div key={i} className={`card p-4 transition-all duration-500 ${visibleItems > i ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <div className="flex items-start gap-3">
                   <span className="w-7 h-7 rounded-full bg-brand-100 text-brand-700 text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">{piece.number}</span>
                   <div className="flex-1">
@@ -933,14 +1034,14 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
                   </div>
                 </div>
                 {i < MAEVEN_CHAIN.length - 1 && (
-                  <div className="flex items-center gap-2 mt-3 ml-10 text-xs text-gray-500">
+                  <div className={`flex items-center gap-2 mt-3 ml-10 text-xs text-gray-500 transition-all duration-300 ${visibleItems > i + 1 ? 'opacity-100' : 'opacity-0'}`}>
                     <span>↓</span><span>leads to next piece</span>
                   </div>
                 )}
               </div>
             ))}
           </div>
-          <button onClick={() => setActiveSection('calendar')} className="btn-primary w-full flex items-center justify-center gap-2">
+          <button onClick={() => navigateTo('calendar')} className="btn-primary w-full flex items-center justify-center gap-2">
             See Content Calendar <ChevronRight size={14} />
           </button>
         </div>
@@ -972,8 +1073,12 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
                     <p className={`text-lg font-bold ${di === 0 ? 'text-brand-700' : 'text-gray-800'}`}>{dayLabel.split(' ')[1]}</p>
                   </div>
                   {/* Items */}
-                  {items.map((item, ii) => (
-                    <div key={ii} className={`card p-2.5 border-l-2 ${
+                  {items.map((item, ii) => {
+                    const globalIndex = MAEVEN_CALENDAR.indexOf(item);
+                    return (
+                    <div key={ii} className={`card p-2.5 border-l-2 transition-all duration-500 ${
+                      visibleItems > globalIndex ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
+                    } ${
                       item.status === 'scheduled' ? 'border-l-green-400' :
                       item.status === 'draft' ? 'border-l-amber-400' : 'border-l-gray-300'
                     }`}>
@@ -993,7 +1098,8 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
                         </span>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                   {/* Empty slot */}
                   {items.length === 0 && (
                     <div className="card p-3 border-dashed border-gray-200 text-center">
