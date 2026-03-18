@@ -58,13 +58,13 @@ function Spinner() {
 function ChannelBadge({ ch }: { ch: string }) {
   const colors: Record<string, string> = {
     'LinkedIn': 'bg-blue-100 text-blue-700',
-    'Twitter/X': 'bg-gray-200 text-gray-600',
+    'Twitter/X': 'bg-gray-200 text-gray-500',
     'Email': 'bg-purple-100 text-purple-700',
     'Blog': 'bg-amber-100 text-amber-700',
     'Instagram': 'bg-pink-100 text-pink-700',
     'TikTok/Video': 'bg-cyan-900/40 text-cyan-300',
   };
-  return <span className={`badge ${colors[ch] ?? 'bg-gray-200 text-gray-600'}`}>{ch}</span>;
+  return <span className={`badge ${colors[ch] ?? 'bg-gray-200 text-gray-500'}`}>{ch}</span>;
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -75,7 +75,7 @@ function CopyButton({ text }: { text: string }) {
     setTimeout(() => setCopied(false), 1500);
   };
   return (
-    <button onClick={copy} className="text-xs text-gray-500 hover:text-gray-600 transition-colors px-2 py-0.5 rounded">
+    <button onClick={copy} className="text-xs text-gray-500 hover:text-gray-500 transition-colors px-2 py-0.5 rounded">
       {copied ? '✓ Copied' : 'Copy'}
     </button>
   );
@@ -233,7 +233,7 @@ function PipelineTab({
             <span className="w-6 h-6 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">2</span>
             <span className="font-medium text-sm">Strategic Analysis</span>
           </div>
-          <p className="text-sm text-gray-600 italic">"{analysis.company_summary}"</p>
+          <p className="text-sm text-gray-500 italic">"{analysis.company_summary}"</p>
 
           <div className="grid grid-cols-3 gap-3">
             <div>
@@ -256,7 +256,7 @@ function PipelineTab({
               <p className="section-header mb-2">Voice DNA</p>
               <div className="flex flex-wrap gap-1">
                 {analysis.brand_voice_descriptors?.map((d, i) => (
-                  <span key={i} className="badge bg-brand-900/50 text-brand-600">{d}</span>
+                  <span key={i} className="badge bg-brand-50 text-brand-700">{d}</span>
                 ))}
               </div>
             </div>
@@ -267,7 +267,7 @@ function PipelineTab({
             <div className="flex flex-wrap gap-2">
               {analysis.recommended_topics?.map((t, i) => (
                 <button key={i} onClick={() => setTopic(t)}
-                  className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${topic === t ? 'border-brand-500 bg-brand-100 text-brand-600' : 'border-gray-300 text-gray-500 hover:border-gray-600'}`}>
+                  className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${topic === t ? 'border-brand-500 bg-brand-100 text-brand-600' : 'border-gray-300 text-gray-500 hover:border-gray-400'}`}>
                   {t}
                 </button>
               ))}
@@ -285,7 +285,7 @@ function PipelineTab({
               <div className="flex flex-wrap gap-2">
                 {CHANNELS.map(ch => (
                   <button key={ch} onClick={() => toggleChannel(ch)}
-                    className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${channels.includes(ch) ? 'border-brand-500 bg-brand-100 text-brand-600' : 'border-gray-300 text-gray-500 hover:border-gray-600'}`}>
+                    className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${channels.includes(ch) ? 'border-brand-500 bg-brand-100 text-brand-600' : 'border-gray-300 text-gray-500 hover:border-gray-400'}`}>
                     {ch}
                   </button>
                 ))}
@@ -330,7 +330,7 @@ function PipelineTab({
               <p className="section-header mb-2">CTA Options</p>
               <div className="flex flex-wrap gap-2">
                 {generated.cta_options.map((cta, i) => (
-                  <span key={i} className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600">{cta}</span>
+                  <span key={i} className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500">{cta}</span>
                 ))}
               </div>
             </div>
@@ -411,11 +411,11 @@ function EmailCard({ content, notes }: { content: string; notes: string }) {
       <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 space-y-1.5">
         <div className="flex items-center gap-2 text-xs">
           <span className="text-gray-500 w-12">From:</span>
-          <span className="text-gray-600 font-medium">you@company.com</span>
+          <span className="text-gray-500 font-medium">you@company.com</span>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <span className="text-gray-500 w-12">To:</span>
-          <span className="text-gray-600">your-list@subscribers.com</span>
+          <span className="text-gray-500">your-list@subscribers.com</span>
         </div>
         <div className="flex items-center gap-2 text-xs border-t border-gray-200 pt-1.5">
           <span className="text-gray-500 w-12">Subject:</span>
@@ -485,9 +485,9 @@ function BlogCard({ content, notes }: { content: string; notes: string }) {
         {content.split('\n').map((line, i) => {
           if (line.startsWith('# ')) return <h1 key={i} className="text-xl font-bold text-gray-900 mt-4 mb-2">{line.slice(2)}</h1>;
           if (line.startsWith('## ')) return <h2 key={i} className="text-lg font-semibold text-gray-800 mt-4 mb-1.5">{line.slice(3)}</h2>;
-          if (line.startsWith('### ')) return <h3 key={i} className="text-base font-medium text-gray-600 mt-3 mb-1">{line.slice(4)}</h3>;
+          if (line.startsWith('### ')) return <h3 key={i} className="text-base font-medium text-gray-500 mt-3 mb-1">{line.slice(4)}</h3>;
           if (line.trim() === '') return <div key={i} className="h-2" />;
-          if (line.startsWith('- ') || line.startsWith('• ')) return <li key={i} className="text-sm text-gray-600 ml-4 leading-relaxed">{line.slice(2)}</li>;
+          if (line.startsWith('- ') || line.startsWith('• ')) return <li key={i} className="text-sm text-gray-500 ml-4 leading-relaxed">{line.slice(2)}</li>;
           return <p key={i} className="text-sm text-gray-800 leading-relaxed">{line}</p>;
         })}
       </div>
@@ -635,8 +635,8 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
   const channelStatusColor = (status: string) => ({
     scheduled: 'bg-green-900/40 text-green-400',
     draft: 'bg-amber-900/40 text-amber-400',
-    idea: 'bg-gray-800 text-gray-400',
-  }[status] ?? 'bg-gray-800 text-gray-400');
+    idea: 'bg-gray-100 text-gray-500',
+  }[status] ?? 'bg-gray-100 text-gray-500');
 
   return (
     <div className="space-y-6">
@@ -650,7 +650,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
               <span className="text-xs text-gray-500">No API key needed</span>
             </div>
             <h2 className="text-lg font-semibold text-gray-100">Maeven Studio</h2>
-            <p className="text-sm text-gray-400 mt-0.5">Sustainable fashion brand — Berlin · See how ContentEngine handles a full campaign</p>
+            <p className="text-sm text-gray-500 mt-0.5">Sustainable fashion brand — Berlin · See how ContentEngine handles a full campaign</p>
           </div>
           <button onClick={() => onUseDemoKB(MAEVEN_KB)} className="btn-primary flex items-center gap-1.5 flex-shrink-0">
             <Sparkles size={14} /> Use This Brand
@@ -663,8 +663,8 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
         {sections.map(s => (
           <button key={s.id} onClick={() => setActiveSection(s.id)}
             className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeSection === s.id
-              ? 'border-brand-500 bg-brand-900/30 text-brand-300'
-              : 'border-gray-700 text-gray-500 hover:text-gray-300 hover:border-gray-600'}`}>
+              ? 'border-brand-500 bg-brand-50 text-brand-700'
+              : 'border-gray-300 text-gray-500 hover:text-gray-600 hover:border-gray-400'}`}>
             {s.label}
           </button>
         ))}
@@ -676,9 +676,9 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
           <div className="flex items-center justify-between mb-2">
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Brand Knowledge Base</p>
-              <p className="text-xs text-gray-600 mt-0.5">Everything ContentEngine knows about this brand before generating</p>
+              <p className="text-xs text-gray-500 mt-0.5">Everything ContentEngine knows about this brand before generating</p>
             </div>
-            <span className="badge bg-brand-900/40 text-brand-300">Step 1 of 6</span>
+            <span className="badge bg-brand-50 text-brand-700">Step 1 of 6</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {[
@@ -693,8 +693,8 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             ].map((f, i) => (
               <div key={i} className={f.full ? 'col-span-2' : ''}>
                 <p className="text-xs text-gray-500 mb-1">{f.label}</p>
-                <div className="bg-gray-800/60 rounded-lg px-3 py-2">
-                  <p className="text-sm text-gray-300">{f.value}</p>
+                <div className="bg-gray-50 rounded-lg px-3 py-2">
+                  <p className="text-sm text-gray-600">{f.value}</p>
                 </div>
               </div>
             ))}
@@ -711,26 +711,26 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
           <div className="card p-5 space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">AI Brand Analysis</p>
-              <span className="badge bg-brand-900/40 text-brand-300">Step 2 of 6</span>
+              <span className="badge bg-brand-50 text-brand-700">Step 2 of 6</span>
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-2">Brand Summary</p>
-              <div className="bg-gray-800/60 rounded-lg p-3">
-                <p className="text-sm text-gray-300 italic">"{MAEVEN_ANALYSIS.company_summary}"</p>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="text-sm text-gray-600 italic">"{MAEVEN_ANALYSIS.company_summary}"</p>
               </div>
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-2">Voice DNA</p>
               <div className="flex gap-2">
                 {MAEVEN_ANALYSIS.brand_voice_descriptors.map((v, i) => (
-                  <span key={i} className="badge bg-brand-900/40 text-brand-300 px-3 py-1">{v}</span>
+                  <span key={i} className="badge bg-brand-50 text-brand-700 px-3 py-1">{v}</span>
                 ))}
               </div>
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-2">Strategic Positioning</p>
-              <div className="bg-gray-800/60 rounded-lg p-3">
-                <p className="text-sm text-gray-300">{MAEVEN_ANALYSIS.positioning}</p>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="text-sm text-gray-600">{MAEVEN_ANALYSIS.positioning}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -738,18 +738,18 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
                 <p className="text-xs text-gray-500 mb-2">Content Opportunities</p>
                 <ul className="space-y-1.5">
                   {MAEVEN_ANALYSIS.content_opportunities.map((o, i) => (
-                    <li key={i} className="flex items-start gap-2 text-xs text-gray-300">
-                      <span className="text-brand-400 flex-shrink-0">→</span>{o}
+                    <li key={i} className="flex items-start gap-2 text-xs text-gray-600">
+                      <span className="text-brand-600 flex-shrink-0">→</span>{o}
                     </li>
                   ))}
                 </ul>
               </div>
               <div>
                 <p className="text-xs text-gray-500 mb-2">Topic for This Demo</p>
-                <div className="bg-gray-800/60 rounded-lg p-3">
-                  <p className="text-sm text-gray-300 italic">"{MAEVEN_ANALYSIS.topic}"</p>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-sm text-gray-600 italic">"{MAEVEN_ANALYSIS.topic}"</p>
                 </div>
-                <p className="text-xs text-gray-600 mt-2 leading-relaxed">⚠ Avoid: {MAEVEN_ANALYSIS.avoid}</p>
+                <p className="text-xs text-gray-500 mt-2 leading-relaxed">⚠ Avoid: {MAEVEN_ANALYSIS.avoid}</p>
               </div>
             </div>
           </div>
@@ -766,16 +766,16 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Multi-Channel Output</p>
-                <p className="text-xs text-gray-600 mt-0.5">Same insight, adapted for each platform's format and audience</p>
+                <p className="text-xs text-gray-500 mt-0.5">Same insight, adapted for each platform's format and audience</p>
               </div>
-              <span className="badge bg-brand-900/40 text-brand-300">Step 3 of 6</span>
+              <span className="badge bg-brand-50 text-brand-700">Step 3 of 6</span>
             </div>
             <div className="flex gap-2 flex-wrap">
               {Object.keys(MAEVEN_CONTENT).map(ch => (
                 <button key={ch} onClick={() => setActiveChannel(ch)}
                   className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeChannel === ch
-                    ? 'border-brand-500 bg-brand-900/30 text-brand-300'
-                    : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300'}`}>
+                    ? 'border-brand-500 bg-brand-50 text-brand-700'
+                    : 'border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600'}`}>
                   {ch === 'Twitter/X' ? '𝕏 Twitter' : ch}
                 </button>
               ))}
@@ -799,9 +799,9 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             <div className="flex items-center justify-between mb-3">
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Instagram Carousel — 7 Slides</p>
-                <p className="text-xs text-gray-600 mt-0.5">Same topic broken into a swipeable story format</p>
+                <p className="text-xs text-gray-500 mt-0.5">Same topic broken into a swipeable story format</p>
               </div>
-              <span className="badge bg-brand-900/40 text-brand-300">Step 4 of 6</span>
+              <span className="badge bg-brand-50 text-brand-700">Step 4 of 6</span>
             </div>
             {/* Slide dots */}
             <div className="flex gap-1.5 mb-4">
@@ -854,29 +854,29 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Content Chain — 5 Posts</p>
-                <p className="text-xs text-gray-600 mt-0.5">A sequence that guides the audience from awareness to conversion</p>
+                <p className="text-xs text-gray-500 mt-0.5">A sequence that guides the audience from awareness to conversion</p>
               </div>
-              <span className="badge bg-brand-900/40 text-brand-300">Step 5 of 6</span>
+              <span className="badge bg-brand-50 text-brand-700">Step 5 of 6</span>
             </div>
           </div>
           <div className="space-y-3">
             {MAEVEN_CHAIN.map((piece, i) => (
               <div key={i} className="card p-4">
                 <div className="flex items-start gap-3">
-                  <span className="w-7 h-7 rounded-full bg-brand-900/60 text-brand-300 text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">{piece.number}</span>
+                  <span className="w-7 h-7 rounded-full bg-brand-100 text-brand-700 text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">{piece.number}</span>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="text-sm font-medium text-gray-200">{piece.title}</p>
+                      <p className="text-sm font-medium text-gray-800">{piece.title}</p>
                       <ChannelBadge ch={piece.channel} />
                     </div>
                     <p className="text-xs text-gray-500 mb-2">{piece.angle}</p>
-                    <div className="bg-gray-800/60 rounded-lg p-3">
-                      <p className="text-sm text-gray-300 italic">"{piece.hook}"</p>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-sm text-gray-600 italic">"{piece.hook}"</p>
                     </div>
                   </div>
                 </div>
                 {i < MAEVEN_CHAIN.length - 1 && (
-                  <div className="flex items-center gap-2 mt-3 ml-10 text-xs text-gray-600">
+                  <div className="flex items-center gap-2 mt-3 ml-10 text-xs text-gray-500">
                     <span>↓</span><span>leads to next piece</span>
                   </div>
                 )}
@@ -896,9 +896,9 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Content Calendar — Week View</p>
-                <p className="text-xs text-gray-600 mt-0.5">All outputs scheduled across channels for the week</p>
+                <p className="text-xs text-gray-500 mt-0.5">All outputs scheduled across channels for the week</p>
               </div>
-              <span className="badge bg-brand-900/40 text-brand-300">Step 6 of 6</span>
+              <span className="badge bg-brand-50 text-brand-700">Step 6 of 6</span>
             </div>
           </div>
 
@@ -907,14 +907,14 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
               <div key={i} className="card p-4 flex items-center gap-4">
                 <div className="text-center w-12 flex-shrink-0">
                   <p className="text-xs text-gray-500">{item.day}</p>
-                  <p className="text-xl font-bold text-gray-200">{item.date}</p>
+                  <p className="text-xl font-bold text-gray-800">{item.date}</p>
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <ChannelBadge ch={item.channel} />
                     <span className="text-xs text-gray-500">{item.type}</span>
                   </div>
-                  <p className="text-sm text-gray-300">{item.title}</p>
+                  <p className="text-sm text-gray-600">{item.title}</p>
                 </div>
                 <span className={`badge ${channelStatusColor(item.status)} flex-shrink-0`}>{item.status}</span>
               </div>
@@ -923,7 +923,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
 
           {/* Final CTA */}
           <div className="card p-5 text-center space-y-3">
-            <p className="text-sm font-medium text-gray-200">Ready to generate content for your brand?</p>
+            <p className="text-sm font-medium text-gray-800">Ready to generate content for your brand?</p>
             <p className="text-xs text-gray-500">Enter your Anthropic API key, click below, and run the same flow for your company in under 2 minutes.</p>
             <button onClick={() => onUseDemoKB(MAEVEN_KB)} className="btn-primary flex items-center gap-2 mx-auto">
               <Sparkles size={14} /> Use Maeven's Brand as Template
@@ -992,7 +992,7 @@ function RepurposeTab() {
         <div className="space-y-3">
           <div className="card p-4">
             <p className="section-header mb-1">Key Message Preserved</p>
-            <p className="text-sm text-gray-600 italic">"{result.key_message}"</p>
+            <p className="text-sm text-gray-500 italic">"{result.key_message}"</p>
           </div>
           {Object.entries(result.repurposed ?? {}).map(([ch, val]: any) => (
             <div key={ch} className="card p-4">
@@ -1158,13 +1158,13 @@ function ScoreTab() {
             </div>
           </div>
           <div className="card p-4">
-            <p className="text-sm text-gray-600 italic">"{result.verdict}"</p>
+            <p className="text-sm text-gray-500 italic">"{result.verdict}"</p>
           </div>
           {result.improvements?.length > 0 && (
             <div className="card p-4 space-y-2">
               <p className="section-header mb-2">Improvements</p>
               {result.improvements.map((imp: any, i: number) => (
-                <div key={i} className="text-sm"><span className="text-red-600">→ {imp.issue}: </span><span className="text-gray-600">{imp.fix}</span></div>
+                <div key={i} className="text-sm"><span className="text-red-600">→ {imp.issue}: </span><span className="text-gray-500">{imp.fix}</span></div>
               ))}
             </div>
           )}
@@ -1228,7 +1228,7 @@ function ChainTab() {
         <div className="space-y-3">
           <div className="card p-4">
             <p className="section-header mb-1">Chain Strategy</p>
-            <p className="text-sm text-gray-600 italic">"{result.chain_title}"</p>
+            <p className="text-sm text-gray-500 italic">"{result.chain_title}"</p>
             <p className="text-xs text-gray-500 mt-1">{result.arc}</p>
           </div>
           {result.pieces?.map((piece: any, i: number) => (
@@ -1253,7 +1253,7 @@ function ChainTab() {
                       <span className="text-xs text-brand-600 font-medium">Hook</span>
                       <CopyButton text={piece.hook} />
                     </div>
-                    <p className="text-sm text-gray-600 italic">"{piece.hook}"</p>
+                    <p className="text-sm text-gray-500 italic">"{piece.hook}"</p>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
@@ -1298,8 +1298,8 @@ function CarouselTab() {
 
   const slideTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      Cover: 'bg-brand-900/50 text-brand-600',
-      Content: 'bg-gray-100 text-gray-600',
+      Cover: 'bg-brand-50 text-brand-700',
+      Content: 'bg-gray-100 text-gray-500',
       Data: 'bg-green-100 text-green-700',
       Quote: 'bg-purple-100 text-purple-700',
       CTA: 'bg-amber-100 text-amber-700',
@@ -1371,11 +1371,11 @@ function CarouselTab() {
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="bg-gray-50 rounded p-2">
                       <p className="text-gray-500 mb-0.5">Visual</p>
-                      <p className="text-gray-600">{s.visual_direction}</p>
+                      <p className="text-gray-500">{s.visual_direction}</p>
                     </div>
                     <div className="bg-gray-50 rounded p-2">
                       <p className="text-gray-500 mb-0.5">Design note</p>
-                      <p className="text-gray-600">{s.design_note}</p>
+                      <p className="text-gray-500">{s.design_note}</p>
                     </div>
                   </div>
                 </div>
@@ -1388,7 +1388,7 @@ function CarouselTab() {
               <p className="section-header">Caption</p>
               <CopyButton text={`${result.caption}\n\n${result.hashtags?.map((h: string) => `#${h}`).join(' ')}`} />
             </div>
-            <p className="text-sm text-gray-600 whitespace-pre-wrap">{result.caption}</p>
+            <p className="text-sm text-gray-500 whitespace-pre-wrap">{result.caption}</p>
             <div className="flex flex-wrap gap-1 mt-2">
               {result.hashtags?.map((h: string, i: number) => (
                 <span key={i} className="badge bg-brand-100 text-brand-700">#{h}</span>
@@ -1453,11 +1453,11 @@ function VoiceTab() {
                 <div><span className="text-xs text-gray-500 block mb-0.5">Tone</span><span className="text-gray-800">{result.voice_analysis.tone}</span></div>
                 <div><span className="text-xs text-gray-500 block mb-0.5">Vocabulary</span><span className="text-gray-800">{result.voice_analysis.vocabulary}</span></div>
                 <div className="col-span-2"><span className="text-xs text-gray-500 block mb-0.5">Sentence Style</span><span className="text-gray-800">{result.voice_analysis.sentence_structure}</span></div>
-                <div className="col-span-2"><span className="text-xs text-gray-500 block mb-0.5">Personality</span><span className="text-gray-600 italic">"{result.voice_analysis.personality}"</span></div>
+                <div className="col-span-2"><span className="text-xs text-gray-500 block mb-0.5">Personality</span><span className="text-gray-500 italic">"{result.voice_analysis.personality}"</span></div>
                 {result.voice_analysis.what_to_avoid && (
                   <div className="col-span-2 bg-red-50 border border-red-200 rounded p-2">
                     <span className="text-xs text-red-600 block mb-0.5">Avoid</span>
-                    <span className="text-xs text-gray-600">{result.voice_analysis.what_to_avoid}</span>
+                    <span className="text-xs text-gray-500">{result.voice_analysis.what_to_avoid}</span>
                   </div>
                 )}
               </div>
@@ -1547,19 +1547,19 @@ function SeoTab() {
           <div className="card p-4 grid grid-cols-2 gap-3 text-sm">
             <div>
               <span className="text-xs text-gray-500 block mb-1">Primary Keyword Usage</span>
-              <p className="text-gray-600">{result.keyword_usage?.primary}</p>
+              <p className="text-gray-500">{result.keyword_usage?.primary}</p>
             </div>
             <div>
               <span className="text-xs text-gray-500 block mb-1">Secondary Keywords</span>
-              <p className="text-gray-600">{result.keyword_usage?.secondary}</p>
+              <p className="text-gray-500">{result.keyword_usage?.secondary}</p>
             </div>
             <div>
               <span className="text-xs text-gray-500 block mb-1">Readability</span>
-              <p className="text-gray-600">{result.readability_score}</p>
+              <p className="text-gray-500">{result.readability_score}</p>
             </div>
             <div>
               <span className="text-xs text-gray-500 block mb-1">Schema Type</span>
-              <p className="text-gray-600">{result.schema_type}</p>
+              <p className="text-gray-500">{result.schema_type}</p>
             </div>
           </div>
 
@@ -1648,7 +1648,7 @@ function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) =
           />
           <button
             onClick={() => setShow(v => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-500"
           >
             {show ? 'hide' : 'show'}
           </button>
@@ -1670,7 +1670,7 @@ function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) =
 
         <button
           onClick={onViewExamples}
-          className="w-full py-2.5 text-sm text-gray-500 border border-gray-200 rounded-lg hover:border-gray-300 hover:text-gray-600 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-2.5 text-sm text-gray-500 border border-gray-200 rounded-lg hover:border-gray-300 hover:text-gray-500 transition-colors flex items-center justify-center gap-2"
         >
           <LayoutDashboard size={14} /> View Examples — No API Key Needed
         </button>
@@ -1768,7 +1768,7 @@ export default function App() {
             />
             <button
               onClick={() => setShowKey(v => !v)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-600"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-500"
             >
               {showKey ? 'hide' : 'show'}
             </button>
@@ -1779,7 +1779,7 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
-          <a href="https://notion.so/326feccf871081f7a3cde0e1033be38b" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-gray-600 transition-colors">Case Study →</a>
+          <a href="https://notion.so/326feccf871081f7a3cde0e1033be38b" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-gray-500 transition-colors">Case Study →</a>
         </div>
       </header>
 
@@ -1788,10 +1788,10 @@ export default function App() {
         {groups.map((group, gi) => (
           <div key={group} className="flex items-center flex-shrink-0">
             {gi > 0 && <div className="w-px h-4 bg-gray-100 mx-2" />}
-            <span className="text-xs text-gray-600 pr-1">{group}</span>
+            <span className="text-xs text-gray-500 pr-1">{group}</span>
             {TABS.filter(t => t.group === group).map(t => (
               <button key={t.id} onClick={() => setTab(t.id)}
-                className={`flex items-center gap-1.5 px-3 py-3 text-xs border-b-2 transition-colors whitespace-nowrap ${tab === t.id ? 'border-brand-500 text-brand-600 font-medium' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                className={`flex items-center gap-1.5 px-3 py-3 text-xs border-b-2 transition-colors whitespace-nowrap ${tab === t.id ? 'border-brand-500 text-brand-600 font-medium' : 'border-transparent text-gray-500 hover:text-gray-600'}`}>
                 {t.icon}<span className="hidden sm:inline">{t.label}</span>
               </button>
             ))}
