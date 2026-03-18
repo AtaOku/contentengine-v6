@@ -838,6 +838,7 @@ function ShowcaseTab() {
   const [activeSection, setActiveSection] = useState<string>('brand');
   const [activeChannel, setActiveChannel] = useState<string>('LinkedIn');
   const [activeSlide, setActiveSlide] = useState<number>(-1);
+  const [completedSections, setCompletedSections] = useState<Set<string>>(new Set());
 
   // Animation states
   const [visibleItems, setVisibleItems] = useState<number>(0);
@@ -849,6 +850,8 @@ function ShowcaseTab() {
   const clearTimers = () => { animTimers.current.forEach(clearTimeout); animTimers.current = []; };
 
   const navigateTo = (id: string) => {
+    // Mark current section as completed when moving forward
+    setCompletedSections(prev => new Set([...prev, activeSection]));
     clearTimers();
     setActiveSection(id);
     setVisibleItems(0);
@@ -930,22 +933,32 @@ function ShowcaseTab() {
               <span className="text-xs text-gray-500">No API key needed</span>
             </div>
             <h2 className="text-lg font-semibold text-gray-900">Cartly</h2>
-            <p className="text-sm text-gray-500 mt-0.5">Premium fashion e-commerce — Berlin · Full campaign from brand setup to published content</p>
+            <p className="text-sm text-gray-500 mt-0.5">E-commerce SaaS — Full campaign from brand setup to published content</p>
           </div>
-          <span className="badge bg-green-100 text-green-700 flex-shrink-0">Live Demo</span>
         </div>
       </div>
 
-      {/* Section nav */}
+      {/* Section nav — locked progression */}
       <div className="flex gap-1.5 flex-wrap">
-        {sections.map(s => (
-          <button key={s.id} onClick={() => navigateTo(s.id)}
-            className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeSection === s.id
-              ? 'border-brand-500 bg-brand-50 text-brand-700'
-              : 'border-gray-300 text-gray-500 hover:text-gray-600 hover:border-gray-400'}`}>
-            {s.label}
-          </button>
-        ))}
+        {sections.map((s, i) => {
+          const isActive = activeSection === s.id;
+          const isCompleted = completedSections.has(s.id);
+          const isUnlocked = isActive || isCompleted || i === 0;
+          return (
+            <button key={s.id}
+              onClick={() => isUnlocked && navigateTo(s.id)}
+              disabled={!isUnlocked}
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                isActive
+                  ? 'border-brand-500 bg-brand-50 text-brand-700'
+                  : isCompleted
+                    ? 'border-green-300 bg-green-50 text-green-700'
+                    : 'border-gray-200 text-gray-300 cursor-not-allowed'
+              }`}>
+              {isCompleted && !isActive ? '✓ ' : ''}{s.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* ① Brand Setup */}
