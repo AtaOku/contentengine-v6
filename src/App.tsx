@@ -37,7 +37,7 @@ const DEFAULT_KB: KnowledgeBase = {
 // ── Shared UI atoms ──────────────────────────────────────────────────────────
 function CostBadge({ usage }: { usage: Usage }) {
   return (
-    <span className="badge bg-green-900/40 text-green-400">
+    <span className="badge bg-green-100 text-green-700">
       ${usage.cost_usd} · {usage.input_tokens + usage.output_tokens} tok
     </span>
   );
@@ -45,7 +45,7 @@ function CostBadge({ usage }: { usage: Usage }) {
 
 function Spinner() {
   return (
-    <div className="flex items-center gap-2 text-gray-400 text-sm">
+    <div className="flex items-center gap-2 text-gray-500 text-sm">
       <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
@@ -57,14 +57,14 @@ function Spinner() {
 
 function ChannelBadge({ ch }: { ch: string }) {
   const colors: Record<string, string> = {
-    'LinkedIn': 'bg-blue-900/40 text-blue-300',
-    'Twitter/X': 'bg-gray-700 text-gray-300',
-    'Email': 'bg-purple-900/40 text-purple-300',
-    'Blog': 'bg-amber-900/40 text-amber-300',
-    'Instagram': 'bg-pink-900/40 text-pink-300',
+    'LinkedIn': 'bg-blue-100 text-blue-700',
+    'Twitter/X': 'bg-gray-200 text-gray-600',
+    'Email': 'bg-purple-100 text-purple-700',
+    'Blog': 'bg-amber-100 text-amber-700',
+    'Instagram': 'bg-pink-100 text-pink-700',
     'TikTok/Video': 'bg-cyan-900/40 text-cyan-300',
   };
-  return <span className={`badge ${colors[ch] ?? 'bg-gray-700 text-gray-300'}`}>{ch}</span>;
+  return <span className={`badge ${colors[ch] ?? 'bg-gray-200 text-gray-600'}`}>{ch}</span>;
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -75,7 +75,7 @@ function CopyButton({ text }: { text: string }) {
     setTimeout(() => setCopied(false), 1500);
   };
   return (
-    <button onClick={copy} className="text-xs text-gray-500 hover:text-gray-300 transition-colors px-2 py-0.5 rounded">
+    <button onClick={copy} className="text-xs text-gray-500 hover:text-gray-600 transition-colors px-2 py-0.5 rounded">
       {copied ? '✓ Copied' : 'Copy'}
     </button>
   );
@@ -198,12 +198,12 @@ function PipelineTab({
         ].map((s, i) => (
           <div key={s.n} className="flex items-center flex-1">
             <div className={`flex items-center gap-2 ${step >= s.n ? 'opacity-100' : 'opacity-30'}`}>
-              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-bold flex-shrink-0 ${step > s.n ? 'bg-green-600 text-white' : step === s.n ? 'bg-brand-600 text-white' : 'bg-gray-800 text-gray-500'}`}>
+              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-bold flex-shrink-0 ${step > s.n ? 'bg-green-600 text-white' : step === s.n ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-500'}`}>
                 {step > s.n ? '✓' : s.n}
               </span>
-              <span className={`text-xs ${step === s.n ? 'text-gray-200 font-medium' : 'text-gray-500'}`}>{s.label}</span>
+              <span className={`text-xs ${step === s.n ? 'text-gray-800 font-medium' : 'text-gray-500'}`}>{s.label}</span>
             </div>
-            {i < 2 && <div className={`flex-1 h-px mx-3 ${step > s.n ? 'bg-green-700' : 'bg-gray-800'}`} />}
+            {i < 2 && <div className={`flex-1 h-px mx-3 ${step > s.n ? 'bg-green-700' : 'bg-gray-100'}`} />}
           </div>
         ))}
       </div>
@@ -215,7 +215,7 @@ function PipelineTab({
             <span className="w-6 h-6 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">1</span>
             <span className="font-medium text-sm">Brand Setup</span>
           </div>
-          {analysis && <span className="badge bg-green-900/40 text-green-400">✓ Analyzed</span>}
+          {analysis && <span className="badge bg-green-100 text-green-700">✓ Analyzed</span>}
         </div>
         <KBForm kb={kb} onChange={setKb} />
         <div className="mt-4 flex items-center gap-3">
@@ -233,14 +233,14 @@ function PipelineTab({
             <span className="w-6 h-6 rounded-full bg-brand-600 text-white text-xs flex items-center justify-center font-bold">2</span>
             <span className="font-medium text-sm">Strategic Analysis</span>
           </div>
-          <p className="text-sm text-gray-300 italic">"{analysis.company_summary}"</p>
+          <p className="text-sm text-gray-600 italic">"{analysis.company_summary}"</p>
 
           <div className="grid grid-cols-3 gap-3">
             <div>
               <p className="section-header mb-2">Audience Pain Points</p>
               <ul className="space-y-1">
                 {analysis.target_audience?.pain_points?.map((p, i) => (
-                  <li key={i} className="text-xs text-gray-400 flex gap-1.5"><span className="text-red-400 mt-0.5">·</span>{p}</li>
+                  <li key={i} className="text-xs text-gray-500 flex gap-1.5"><span className="text-red-600 mt-0.5">·</span>{p}</li>
                 ))}
               </ul>
             </div>
@@ -248,7 +248,7 @@ function PipelineTab({
               <p className="section-header mb-2">Value Props</p>
               <ul className="space-y-1">
                 {analysis.value_propositions?.map((v, i) => (
-                  <li key={i} className="text-xs text-gray-400 flex gap-1.5"><span className="text-green-400 mt-0.5">·</span>{v}</li>
+                  <li key={i} className="text-xs text-gray-500 flex gap-1.5"><span className="text-green-600 mt-0.5">·</span>{v}</li>
                 ))}
               </ul>
             </div>
@@ -256,7 +256,7 @@ function PipelineTab({
               <p className="section-header mb-2">Voice DNA</p>
               <div className="flex flex-wrap gap-1">
                 {analysis.brand_voice_descriptors?.map((d, i) => (
-                  <span key={i} className="badge bg-brand-900/50 text-brand-300">{d}</span>
+                  <span key={i} className="badge bg-brand-900/50 text-brand-600">{d}</span>
                 ))}
               </div>
             </div>
@@ -267,7 +267,7 @@ function PipelineTab({
             <div className="flex flex-wrap gap-2">
               {analysis.recommended_topics?.map((t, i) => (
                 <button key={i} onClick={() => setTopic(t)}
-                  className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${topic === t ? 'border-brand-500 bg-brand-900/30 text-brand-300' : 'border-gray-700 text-gray-400 hover:border-gray-600'}`}>
+                  className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${topic === t ? 'border-brand-500 bg-brand-100 text-brand-600' : 'border-gray-300 text-gray-500 hover:border-gray-600'}`}>
                   {t}
                 </button>
               ))}
@@ -275,7 +275,7 @@ function PipelineTab({
           </div>
 
           {/* Topic + Channel selector */}
-          <div className="border-t border-gray-800 pt-4 space-y-3">
+          <div className="border-t border-gray-200 pt-4 space-y-3">
             <div>
               <label className="text-xs text-gray-500 mb-1 block">Topic (or select above)</label>
               <input className="input w-full" placeholder="Custom topic…" value={topic} onChange={e => setTopic(e.target.value)} />
@@ -285,7 +285,7 @@ function PipelineTab({
               <div className="flex flex-wrap gap-2">
                 {CHANNELS.map(ch => (
                   <button key={ch} onClick={() => toggleChannel(ch)}
-                    className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${channels.includes(ch) ? 'border-brand-500 bg-brand-900/30 text-brand-300' : 'border-gray-700 text-gray-400 hover:border-gray-600'}`}>
+                    className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${channels.includes(ch) ? 'border-brand-500 bg-brand-100 text-brand-600' : 'border-gray-300 text-gray-500 hover:border-gray-600'}`}>
                     {ch}
                   </button>
                 ))}
@@ -309,7 +309,7 @@ function PipelineTab({
               <span className="font-medium text-sm">Generated Content</span>
             </div>
             <div className="flex items-center gap-2">
-              {totalCost > 0 && <span className="badge bg-green-900/40 text-green-400">Total: ${totalCost.toFixed(4)}</span>}
+              {totalCost > 0 && <span className="badge bg-green-100 text-green-700">Total: ${totalCost.toFixed(4)}</span>}
             </div>
           </div>
           <p className="text-xs text-gray-500 italic">{generated.strategic_notes}</p>
@@ -330,7 +330,7 @@ function PipelineTab({
               <p className="section-header mb-2">CTA Options</p>
               <div className="flex flex-wrap gap-2">
                 {generated.cta_options.map((cta, i) => (
-                  <span key={i} className="text-xs px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300">{cta}</span>
+                  <span key={i} className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600">{cta}</span>
                 ))}
               </div>
             </div>
@@ -354,7 +354,7 @@ function LinkedInCard({ content, notes }: { content: string; notes: string }) {
           <div>
             <p className="text-sm font-semibold text-gray-900">Your Name</p>
             <p className="text-xs text-gray-500">Your Title · 1st</p>
-            <p className="text-xs text-gray-400">Just now · 🌐</p>
+            <p className="text-xs text-gray-500">Just now · 🌐</p>
           </div>
           <button className="ml-auto text-blue-600 text-xs font-semibold border border-blue-600 rounded-full px-3 py-1">+ Follow</button>
         </div>
@@ -384,7 +384,7 @@ function LinkedInCard({ content, notes }: { content: string; notes: string }) {
       </div>
       {/* Notes + Copy */}
       <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-t border-gray-100">
-        <span className="text-xs text-gray-400 italic">{notes}</span>
+        <span className="text-xs text-gray-500 italic">{notes}</span>
         <CopyButton text={content} />
       </div>
     </div>
@@ -410,15 +410,15 @@ function EmailCard({ content, notes }: { content: string; notes: string }) {
       {/* Email header */}
       <div className="bg-gray-50 border-b border-gray-200 px-4 py-3 space-y-1.5">
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-gray-400 w-12">From:</span>
-          <span className="text-gray-700 font-medium">you@company.com</span>
+          <span className="text-gray-500 w-12">From:</span>
+          <span className="text-gray-600 font-medium">you@company.com</span>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-gray-400 w-12">To:</span>
-          <span className="text-gray-700">your-list@subscribers.com</span>
+          <span className="text-gray-500 w-12">To:</span>
+          <span className="text-gray-600">your-list@subscribers.com</span>
         </div>
         <div className="flex items-center gap-2 text-xs border-t border-gray-200 pt-1.5">
-          <span className="text-gray-400 w-12">Subject:</span>
+          <span className="text-gray-500 w-12">Subject:</span>
           <span className="text-gray-900 font-semibold">{subject}</span>
         </div>
       </div>
@@ -428,7 +428,7 @@ function EmailCard({ content, notes }: { content: string; notes: string }) {
       </div>
       {/* Footer */}
       <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-t border-gray-200">
-        <span className="text-xs text-gray-400 italic">{notes}</span>
+        <span className="text-xs text-gray-500 italic">{notes}</span>
         <CopyButton text={content} />
       </div>
     </div>
@@ -442,26 +442,26 @@ function TwitterCard({ content, notes }: { content: string; notes: string }) {
     <div className="bg-white rounded-xl overflow-hidden shadow-lg">
       {/* Tweet header */}
       <div className="px-4 pt-4 pb-3 flex items-start gap-3">
-        <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">A</div>
+        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-white text-sm font-bold flex-shrink-0">A</div>
         <div className="flex-1">
           <div className="flex items-center gap-1">
             <span className="text-sm font-bold text-gray-900">Your Name</span>
-            <span className="text-gray-400 text-sm">@yourhandle · now</span>
+            <span className="text-gray-500 text-sm">@yourhandle · now</span>
           </div>
           <p className="text-sm text-gray-900 mt-1 whitespace-pre-wrap leading-relaxed">{content}</p>
           {/* Char count */}
           <div className="flex items-center justify-between mt-2">
-            <div className="flex gap-4 text-gray-400 text-xs">
+            <div className="flex gap-4 text-gray-500 text-xs">
               <span>💬 12</span><span>🔁 34</span><span>❤️ 247</span><span>📊 4.2K</span>
             </div>
-            <span className={`text-xs ${isOver ? 'text-red-500 font-semibold' : 'text-gray-400'}`}>
+            <span className={`text-xs ${isOver ? 'text-red-500 font-semibold' : 'text-gray-500'}`}>
               {charCount}/280
             </span>
           </div>
         </div>
       </div>
       <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-t border-gray-100">
-        <span className="text-xs text-gray-400 italic">{notes}</span>
+        <span className="text-xs text-gray-500 italic">{notes}</span>
         <CopyButton text={content} />
       </div>
     </div>
@@ -474,7 +474,7 @@ function BlogCard({ content, notes }: { content: string; notes: string }) {
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-lg">
       <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-        <div className="flex items-center gap-3 text-xs text-gray-400">
+        <div className="flex items-center gap-3 text-xs text-gray-500">
           <span>📖 {readTime} min read</span>
           <span>·</span>
           <span>{words} words</span>
@@ -485,14 +485,14 @@ function BlogCard({ content, notes }: { content: string; notes: string }) {
         {content.split('\n').map((line, i) => {
           if (line.startsWith('# ')) return <h1 key={i} className="text-xl font-bold text-gray-900 mt-4 mb-2">{line.slice(2)}</h1>;
           if (line.startsWith('## ')) return <h2 key={i} className="text-lg font-semibold text-gray-800 mt-4 mb-1.5">{line.slice(3)}</h2>;
-          if (line.startsWith('### ')) return <h3 key={i} className="text-base font-medium text-gray-700 mt-3 mb-1">{line.slice(4)}</h3>;
+          if (line.startsWith('### ')) return <h3 key={i} className="text-base font-medium text-gray-600 mt-3 mb-1">{line.slice(4)}</h3>;
           if (line.trim() === '') return <div key={i} className="h-2" />;
-          if (line.startsWith('- ') || line.startsWith('• ')) return <li key={i} className="text-sm text-gray-700 ml-4 leading-relaxed">{line.slice(2)}</li>;
+          if (line.startsWith('- ') || line.startsWith('• ')) return <li key={i} className="text-sm text-gray-600 ml-4 leading-relaxed">{line.slice(2)}</li>;
           return <p key={i} className="text-sm text-gray-800 leading-relaxed">{line}</p>;
         })}
       </div>
       <div className="bg-gray-50 px-4 py-2 border-t border-gray-100">
-        <span className="text-xs text-gray-400 italic">{notes}</span>
+        <span className="text-xs text-gray-500 italic">{notes}</span>
       </div>
     </div>
   );
@@ -506,7 +506,7 @@ function InstagramCard({ content, notes }: { content: string; notes: string }) {
         <span className="text-sm font-semibold text-gray-900">yourhandle</span>
       </div>
       <div className="bg-gradient-to-br from-gray-100 to-gray-200 aspect-square flex items-center justify-center mx-4 rounded-lg">
-        <span className="text-gray-400 text-xs">Visual goes here</span>
+        <span className="text-gray-500 text-xs">Visual goes here</span>
       </div>
       <div className="px-4 py-3">
         <div className="flex gap-3 text-lg mb-2">❤️ 💬 ✈️ <span className="ml-auto">🔖</span></div>
@@ -514,7 +514,7 @@ function InstagramCard({ content, notes }: { content: string; notes: string }) {
         <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed"><span className="font-semibold">yourhandle</span> {content}</p>
       </div>
       <div className="bg-gray-50 px-4 py-2 flex items-center justify-between border-t border-gray-100">
-        <span className="text-xs text-gray-400 italic">{notes}</span>
+        <span className="text-xs text-gray-500 italic">{notes}</span>
         <CopyButton text={content} />
       </div>
     </div>
@@ -523,15 +523,15 @@ function InstagramCard({ content, notes }: { content: string; notes: string }) {
 
 function GenericChannelCard({ ch, content, notes }: { ch: string; content: string; notes: string }) {
   return (
-    <div className="bg-gray-800/60 rounded-lg p-4">
+    <div className="bg-gray-50 rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">
         <ChannelBadge ch={ch} />
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-600 italic">{notes}</span>
+          <span className="text-xs text-gray-500 italic">{notes}</span>
           <CopyButton text={content} />
         </div>
       </div>
-      <p className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">{content}</p>
+      <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{content}</p>
     </div>
   );
 }
@@ -633,9 +633,9 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
           <button key={d.id} onClick={() => switchDemo(d.id)}
             className={`text-left p-4 rounded-xl border transition-all ${active === d.id
               ? 'border-brand-500 bg-brand-900/20'
-              : 'border-gray-800 bg-gray-900/40 hover:border-gray-700'}`}>
-            <p className={`text-xs font-semibold mb-0.5 ${active === d.id ? 'text-brand-300' : 'text-gray-500'}`}>{d.label}</p>
-            <p className="text-sm font-medium text-gray-200">{d.company}</p>
+              : 'border-gray-200 bg-white/60 hover:border-gray-300'}`}>
+            <p className={`text-xs font-semibold mb-0.5 ${active === d.id ? 'text-brand-600' : 'text-gray-500'}`}>{d.label}</p>
+            <p className="text-sm font-medium text-gray-800">{d.company}</p>
             <p className="text-xs text-gray-500 mt-1 leading-relaxed">{d.tagline}</p>
           </button>
         ))}
@@ -645,13 +645,13 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
       <div className="grid grid-cols-2 gap-3">
         <div className="card p-4">
           <p className="text-xs text-gray-500 mb-1.5">Topic used to generate this content</p>
-          <p className="text-sm text-gray-200 italic">"{demo.topic}"</p>
+          <p className="text-sm text-gray-800 italic">"{demo.topic}"</p>
         </div>
         <div className="card p-4">
           <p className="text-xs text-gray-500 mb-2">Brand Voice</p>
           <div className="flex flex-wrap gap-1.5">
             {demo.analysis?.brand_voice_descriptors?.map((d, i) => (
-              <span key={i} className="badge bg-brand-900/40 text-brand-300">{d}</span>
+              <span key={i} className="badge bg-brand-100 text-brand-700">{d}</span>
             ))}
           </div>
         </div>
@@ -664,8 +664,8 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
             {availableChannels.map(ch => (
               <button key={ch} onClick={() => setActiveChannel(ch)}
                 className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${activeChannel === ch
-                  ? 'border-brand-500 bg-brand-900/30 text-brand-300'
-                  : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-gray-300'}`}>
+                  ? 'border-brand-500 bg-brand-100 text-brand-600'
+                  : 'border-gray-300 text-gray-500 hover:border-gray-600 hover:text-gray-600'}`}>
                 {ch === 'Twitter/X' ? '𝕏 Twitter' : ch}
               </button>
             ))}
@@ -682,7 +682,7 @@ function ShowcaseTab({ onUseDemoKB }: { onUseDemoKB: (kb: KnowledgeBase) => void
       {/* Bottom CTA */}
       <div className="card p-4 flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-200">Generate content for your own brand</p>
+          <p className="text-sm font-medium text-gray-800">Generate content for your own brand</p>
           <p className="text-xs text-gray-500 mt-0.5">Enter your Anthropic API key above, click "Use This Brand" to pre-fill, or go to Generate</p>
         </div>
         <button onClick={useThis} className="btn-primary flex items-center gap-1.5">
@@ -720,7 +720,7 @@ function RepurposeTab() {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs text-gray-500 mb-1 block">Source Format</label>
-            <select className="input w-full bg-gray-800" value={source} onChange={e => setSource(e.target.value)}>
+            <select className="input w-full bg-gray-100" value={source} onChange={e => setSource(e.target.value)}>
               {['Blog', 'LinkedIn', 'Email', 'Twitter/X', 'Podcast transcript', 'Video script'].map(f => <option key={f}>{f}</option>)}
             </select>
           </div>
@@ -735,7 +735,7 @@ function RepurposeTab() {
           <div className="flex flex-wrap gap-2">
             {CHANNELS.map(ch => (
               <button key={ch} onClick={() => setTargets(prev => prev.includes(ch) ? prev.filter(c => c !== ch) : [...prev, ch])}
-                className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${targets.includes(ch) ? 'border-brand-500 bg-brand-900/30 text-brand-300' : 'border-gray-700 text-gray-400'}`}>
+                className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${targets.includes(ch) ? 'border-brand-500 bg-brand-100 text-brand-600' : 'border-gray-300 text-gray-500'}`}>
                 {ch}
               </button>
             ))}
@@ -750,7 +750,7 @@ function RepurposeTab() {
         <div className="space-y-3">
           <div className="card p-4">
             <p className="section-header mb-1">Key Message Preserved</p>
-            <p className="text-sm text-gray-300 italic">"{result.key_message}"</p>
+            <p className="text-sm text-gray-600 italic">"{result.key_message}"</p>
           </div>
           {Object.entries(result.repurposed ?? {}).map(([ch, val]: any) => (
             <div key={ch} className="card p-4">
@@ -758,8 +758,8 @@ function RepurposeTab() {
                 <ChannelBadge ch={ch} />
                 <CopyButton text={val.content} />
               </div>
-              <p className="text-sm text-gray-200 whitespace-pre-wrap">{val.content}</p>
-              <p className="text-xs text-gray-600 mt-2">{val.adaptation_notes}</p>
+              <p className="text-sm text-gray-800 whitespace-pre-wrap">{val.content}</p>
+              <p className="text-xs text-gray-500 mt-2">{val.adaptation_notes}</p>
             </div>
           ))}
         </div>
@@ -782,7 +782,7 @@ function TrendsTab() {
     finally { setLoading(false); }
   };
 
-  const urgencyColor = (u: string) => u === 'high' ? 'text-red-400' : u === 'medium' ? 'text-amber-400' : 'text-gray-400';
+  const urgencyColor = (u: string) => u === 'high' ? 'text-red-600' : u === 'medium' ? 'text-amber-400' : 'text-gray-500';
 
   return (
     <div className="space-y-4">
@@ -803,10 +803,10 @@ function TrendsTab() {
             <span className="font-medium text-sm">{t.trend}</span>
             <span className={`text-xs font-medium uppercase ${urgencyColor(t.urgency)}`}>{t.urgency}</span>
           </div>
-          <p className="text-xs text-gray-400">{t.why_relevant}</p>
-          <p className="text-sm text-gray-200">{t.content_angle}</p>
+          <p className="text-xs text-gray-500">{t.why_relevant}</p>
+          <p className="text-sm text-gray-800">{t.content_angle}</p>
           <div className="flex flex-wrap gap-1">
-            {t.formats?.map((f: string, j: number) => <span key={j} className="badge bg-gray-800 text-gray-400">{f}</span>)}
+            {t.formats?.map((f: string, j: number) => <span key={j} className="badge bg-gray-100 text-gray-500">{f}</span>)}
           </div>
         </div>
       ))}
@@ -837,7 +837,7 @@ function DataTab() {
         <input className="input w-full" placeholder="Brand context (optional)" value={context} onChange={e => setContext(e.target.value)} />
         <div className="flex flex-wrap gap-2">
           {CHANNELS.map(ch => <button key={ch} onClick={() => setChannels(prev => prev.includes(ch) ? prev.filter(c => c !== ch) : [...prev, ch])}
-            className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${channels.includes(ch) ? 'border-brand-500 bg-brand-900/30 text-brand-300' : 'border-gray-700 text-gray-400'}`}>{ch}</button>)}
+            className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${channels.includes(ch) ? 'border-brand-500 bg-brand-100 text-brand-600' : 'border-gray-300 text-gray-500'}`}>{ch}</button>)}
         </div>
         <button className="btn-primary flex items-center gap-2" onClick={run} disabled={!data || loading}>
           {loading ? <Spinner /> : <><BarChart2 size={14} /> Convert to Content</>}
@@ -848,13 +848,13 @@ function DataTab() {
         <div className="space-y-3">
           <div className="card p-4">
             <p className="section-header mb-1">Data Story</p>
-            <p className="text-sm text-gray-200">{result.data_story}</p>
-            <p className="text-xs text-gray-500 mt-2">Key stat: <span className="text-brand-300">{result.key_stat}</span></p>
+            <p className="text-sm text-gray-800">{result.data_story}</p>
+            <p className="text-xs text-gray-500 mt-2">Key stat: <span className="text-brand-600">{result.key_stat}</span></p>
           </div>
           {Object.entries(result.content ?? {}).map(([ch, val]: any) => (
             <div key={ch} className="card p-4">
               <div className="flex items-center justify-between mb-2"><ChannelBadge ch={ch} /><CopyButton text={val.content} /></div>
-              <p className="text-sm text-gray-200 whitespace-pre-wrap">{val.content}</p>
+              <p className="text-sm text-gray-800 whitespace-pre-wrap">{val.content}</p>
             </div>
           ))}
         </div>
@@ -878,7 +878,7 @@ function ScoreTab() {
     finally { setLoading(false); }
   };
 
-  const scoreColor = (s: number) => s >= 80 ? 'text-green-400' : s >= 60 ? 'text-amber-400' : 'text-red-400';
+  const scoreColor = (s: number) => s >= 80 ? 'text-green-600' : s >= 60 ? 'text-amber-400' : 'text-red-600';
 
   return (
     <div className="space-y-4">
@@ -887,7 +887,7 @@ function ScoreTab() {
         <textarea className="input w-full h-32 resize-none" placeholder="Paste content to score…" value={content} onChange={e => setContent(e.target.value)} />
         <div className="grid grid-cols-2 gap-3">
           <div><label className="text-xs text-gray-500 mb-1 block">Channel</label>
-            <select className="input w-full bg-gray-800" value={channel} onChange={e => setChannel(e.target.value)}>
+            <select className="input w-full bg-gray-100" value={channel} onChange={e => setChannel(e.target.value)}>
               {CHANNELS.map(c => <option key={c}>{c}</option>)}
             </select>
           </div>
@@ -908,21 +908,21 @@ function ScoreTab() {
             <div className="flex-1 space-y-2">
               {Object.entries(result.grades ?? {}).map(([dim, val]: any) => (
                 <div key={dim} className="flex items-center gap-3">
-                  <span className="text-xs text-gray-400 w-32 capitalize">{dim.replace('_', ' ')}</span>
-                  <div className="flex-1 h-1.5 bg-gray-800 rounded-full"><div className={`h-1.5 rounded-full ${val.score >= 80 ? 'bg-green-500' : val.score >= 60 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${val.score}%` }} /></div>
+                  <span className="text-xs text-gray-500 w-32 capitalize">{dim.replace('_', ' ')}</span>
+                  <div className="flex-1 h-1.5 bg-gray-100 rounded-full"><div className={`h-1.5 rounded-full ${val.score >= 80 ? 'bg-green-500' : val.score >= 60 ? 'bg-amber-500' : 'bg-red-500'}`} style={{ width: `${val.score}%` }} /></div>
                   <span className={`text-xs font-medium ${scoreColor(val.score)}`}>{val.score}</span>
                 </div>
               ))}
             </div>
           </div>
           <div className="card p-4">
-            <p className="text-sm text-gray-300 italic">"{result.verdict}"</p>
+            <p className="text-sm text-gray-600 italic">"{result.verdict}"</p>
           </div>
           {result.improvements?.length > 0 && (
             <div className="card p-4 space-y-2">
               <p className="section-header mb-2">Improvements</p>
               {result.improvements.map((imp: any, i: number) => (
-                <div key={i} className="text-sm"><span className="text-red-400">→ {imp.issue}: </span><span className="text-gray-300">{imp.fix}</span></div>
+                <div key={i} className="text-sm"><span className="text-red-600">→ {imp.issue}: </span><span className="text-gray-600">{imp.fix}</span></div>
               ))}
             </div>
           )}
@@ -972,7 +972,7 @@ function ChainTab() {
           </div>
           <div>
             <label className="text-xs text-gray-500 mb-1 block">Number of Pieces</label>
-            <select className="input w-full bg-gray-800" value={pieces} onChange={e => setPieces(Number(e.target.value))}>
+            <select className="input w-full bg-gray-100" value={pieces} onChange={e => setPieces(Number(e.target.value))}>
               {[3, 4, 5, 6, 7].map(n => <option key={n} value={n}>{n} pieces</option>)}
             </select>
           </div>
@@ -986,39 +986,39 @@ function ChainTab() {
         <div className="space-y-3">
           <div className="card p-4">
             <p className="section-header mb-1">Chain Strategy</p>
-            <p className="text-sm text-gray-300 italic">"{result.chain_title}"</p>
+            <p className="text-sm text-gray-600 italic">"{result.chain_title}"</p>
             <p className="text-xs text-gray-500 mt-1">{result.arc}</p>
           </div>
           {result.pieces?.map((piece: any, i: number) => (
             <div key={i} className="card overflow-hidden">
               <button
-                className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-800/40 transition-colors"
+                className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
                 onClick={() => setExpanded(expanded === i ? null : i)}
               >
                 <div className="flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-full bg-brand-900/60 text-brand-300 text-xs flex items-center justify-center font-bold flex-shrink-0">{piece.number}</span>
+                  <span className="w-6 h-6 rounded-full bg-brand-100 text-brand-600 text-xs flex items-center justify-center font-bold flex-shrink-0">{piece.number}</span>
                   <div>
-                    <p className="text-sm font-medium text-gray-200">{piece.title}</p>
+                    <p className="text-sm font-medium text-gray-800">{piece.title}</p>
                     <p className="text-xs text-gray-500">{piece.angle}</p>
                   </div>
                 </div>
-                <span className="text-gray-600 text-xs">{expanded === i ? '▲' : '▼'}</span>
+                <span className="text-gray-500 text-xs">{expanded === i ? '▲' : '▼'}</span>
               </button>
               {expanded === i && (
-                <div className="px-4 pb-4 space-y-3 border-t border-gray-800">
-                  <div className="mt-3 bg-gray-800/60 rounded-lg p-3">
+                <div className="px-4 pb-4 space-y-3 border-t border-gray-200">
+                  <div className="mt-3 bg-gray-50 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-brand-400 font-medium">Hook</span>
+                      <span className="text-xs text-brand-600 font-medium">Hook</span>
                       <CopyButton text={piece.hook} />
                     </div>
-                    <p className="text-sm text-gray-300 italic">"{piece.hook}"</p>
+                    <p className="text-sm text-gray-600 italic">"{piece.hook}"</p>
                   </div>
-                  <div className="bg-gray-800/60 rounded-lg p-3">
+                  <div className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-gray-400 font-medium">Full Content</span>
+                      <span className="text-xs text-gray-500 font-medium">Full Content</span>
                       <CopyButton text={piece.content} />
                     </div>
-                    <p className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">{piece.content}</p>
+                    <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{piece.content}</p>
                   </div>
                   {piece.bridge && (
                     <div className="flex items-start gap-2 text-xs text-gray-500">
@@ -1056,13 +1056,13 @@ function CarouselTab() {
 
   const slideTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      Cover: 'bg-brand-900/50 text-brand-300',
-      Content: 'bg-gray-800 text-gray-300',
-      Data: 'bg-green-900/40 text-green-300',
-      Quote: 'bg-purple-900/40 text-purple-300',
-      CTA: 'bg-amber-900/40 text-amber-300',
+      Cover: 'bg-brand-900/50 text-brand-600',
+      Content: 'bg-gray-100 text-gray-600',
+      Data: 'bg-green-100 text-green-700',
+      Quote: 'bg-purple-100 text-purple-700',
+      CTA: 'bg-amber-100 text-amber-700',
     };
-    return colors[type] ?? 'bg-gray-800 text-gray-400';
+    return colors[type] ?? 'bg-gray-100 text-gray-500';
   };
 
   return (
@@ -1076,13 +1076,13 @@ function CarouselTab() {
           </div>
           <div>
             <label className="text-xs text-gray-500 mb-1 block">Platform</label>
-            <select className="input w-full bg-gray-800" value={platform} onChange={e => setPlatform(e.target.value)}>
+            <select className="input w-full bg-gray-100" value={platform} onChange={e => setPlatform(e.target.value)}>
               {['LinkedIn', 'Instagram', 'Twitter/X'].map(p => <option key={p}>{p}</option>)}
             </select>
           </div>
           <div>
             <label className="text-xs text-gray-500 mb-1 block">Slides</label>
-            <select className="input w-full bg-gray-800" value={slides} onChange={e => setSlides(Number(e.target.value))}>
+            <select className="input w-full bg-gray-100" value={slides} onChange={e => setSlides(Number(e.target.value))}>
               {[5, 6, 7, 8, 10].map(n => <option key={n} value={n}>{n} slides</option>)}
             </select>
           </div>
@@ -1100,7 +1100,7 @@ function CarouselTab() {
         <div className="space-y-4">
           <div className="card p-4">
             <p className="section-header mb-1">Carousel Title</p>
-            <p className="text-sm font-medium text-gray-200">{result.carousel_title}</p>
+            <p className="text-sm font-medium text-gray-800">{result.carousel_title}</p>
             <p className="text-xs text-gray-500 mt-1">{result.hook_strategy}</p>
           </div>
 
@@ -1109,7 +1109,7 @@ function CarouselTab() {
             <div className="flex gap-1.5 flex-wrap">
               {result.slides?.map((s: any, i: number) => (
                 <button key={i} onClick={() => setActiveSlide(i)}
-                  className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${activeSlide === i ? 'bg-brand-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}>
+                  className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${activeSlide === i ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-700'}`}>
                   {i + 1}
                 </button>
               ))}
@@ -1122,18 +1122,18 @@ function CarouselTab() {
                     <span className={`badge ${slideTypeColor(s.type)}`}>{s.type}</span>
                     <span className="text-xs text-gray-500">Slide {s.number}</span>
                   </div>
-                  <div className="bg-gray-800/80 rounded-xl p-6 text-center min-h-32 flex flex-col items-center justify-center gap-2">
-                    <p className="text-base font-semibold text-gray-100 leading-snug">{s.headline}</p>
-                    {s.body && <p className="text-sm text-gray-400">{s.body}</p>}
+                  <div className="bg-gray-50 rounded-xl p-6 text-center min-h-32 flex flex-col items-center justify-center gap-2">
+                    <p className="text-base font-semibold text-gray-900 leading-snug">{s.headline}</p>
+                    {s.body && <p className="text-sm text-gray-500">{s.body}</p>}
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="bg-gray-800/40 rounded p-2">
+                    <div className="bg-gray-50 rounded p-2">
                       <p className="text-gray-500 mb-0.5">Visual</p>
-                      <p className="text-gray-300">{s.visual_direction}</p>
+                      <p className="text-gray-600">{s.visual_direction}</p>
                     </div>
-                    <div className="bg-gray-800/40 rounded p-2">
+                    <div className="bg-gray-50 rounded p-2">
                       <p className="text-gray-500 mb-0.5">Design note</p>
-                      <p className="text-gray-300">{s.design_note}</p>
+                      <p className="text-gray-600">{s.design_note}</p>
                     </div>
                   </div>
                 </div>
@@ -1146,10 +1146,10 @@ function CarouselTab() {
               <p className="section-header">Caption</p>
               <CopyButton text={`${result.caption}\n\n${result.hashtags?.map((h: string) => `#${h}`).join(' ')}`} />
             </div>
-            <p className="text-sm text-gray-300 whitespace-pre-wrap">{result.caption}</p>
+            <p className="text-sm text-gray-600 whitespace-pre-wrap">{result.caption}</p>
             <div className="flex flex-wrap gap-1 mt-2">
               {result.hashtags?.map((h: string, i: number) => (
-                <span key={i} className="badge bg-brand-900/40 text-brand-300">#{h}</span>
+                <span key={i} className="badge bg-brand-100 text-brand-700">#{h}</span>
               ))}
             </div>
           </div>
@@ -1208,14 +1208,14 @@ function VoiceTab() {
             <div className="card p-5 space-y-3">
               <p className="section-header mb-1">Voice DNA</p>
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div><span className="text-xs text-gray-500 block mb-0.5">Tone</span><span className="text-gray-200">{result.voice_analysis.tone}</span></div>
-                <div><span className="text-xs text-gray-500 block mb-0.5">Vocabulary</span><span className="text-gray-200">{result.voice_analysis.vocabulary}</span></div>
-                <div className="col-span-2"><span className="text-xs text-gray-500 block mb-0.5">Sentence Style</span><span className="text-gray-200">{result.voice_analysis.sentence_structure}</span></div>
-                <div className="col-span-2"><span className="text-xs text-gray-500 block mb-0.5">Personality</span><span className="text-gray-300 italic">"{result.voice_analysis.personality}"</span></div>
+                <div><span className="text-xs text-gray-500 block mb-0.5">Tone</span><span className="text-gray-800">{result.voice_analysis.tone}</span></div>
+                <div><span className="text-xs text-gray-500 block mb-0.5">Vocabulary</span><span className="text-gray-800">{result.voice_analysis.vocabulary}</span></div>
+                <div className="col-span-2"><span className="text-xs text-gray-500 block mb-0.5">Sentence Style</span><span className="text-gray-800">{result.voice_analysis.sentence_structure}</span></div>
+                <div className="col-span-2"><span className="text-xs text-gray-500 block mb-0.5">Personality</span><span className="text-gray-600 italic">"{result.voice_analysis.personality}"</span></div>
                 {result.voice_analysis.what_to_avoid && (
-                  <div className="col-span-2 bg-red-900/20 border border-red-900/40 rounded p-2">
-                    <span className="text-xs text-red-400 block mb-0.5">Avoid</span>
-                    <span className="text-xs text-gray-300">{result.voice_analysis.what_to_avoid}</span>
+                  <div className="col-span-2 bg-red-50 border border-red-200 rounded p-2">
+                    <span className="text-xs text-red-600 block mb-0.5">Avoid</span>
+                    <span className="text-xs text-gray-600">{result.voice_analysis.what_to_avoid}</span>
                   </div>
                 )}
               </div>
@@ -1227,13 +1227,13 @@ function VoiceTab() {
                 <p className="section-header">Generated — In Your Voice</p>
                 <CopyButton text={result.new_content} />
               </div>
-              <p className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">{result.new_content}</p>
+              <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{result.new_content}</p>
             </div>
           )}
           {result.voice_applied && (
             <div className="card p-4">
               <p className="section-header mb-1">Why it works</p>
-              <p className="text-xs text-gray-400">{result.voice_applied}</p>
+              <p className="text-xs text-gray-500">{result.voice_applied}</p>
             </div>
           )}
         </div>
@@ -1288,15 +1288,15 @@ function SeoTab() {
             <p className="section-header mb-2">Meta Tags</p>
             <div>
               <span className="text-xs text-gray-500">Title Tag</span>
-              <div className="flex items-center justify-between mt-0.5 bg-gray-800/60 rounded p-2">
-                <p className="text-sm text-gray-200">{result.title_tag}</p>
+              <div className="flex items-center justify-between mt-0.5 bg-gray-50 rounded p-2">
+                <p className="text-sm text-gray-800">{result.title_tag}</p>
                 <CopyButton text={result.title_tag} />
               </div>
             </div>
             <div>
               <span className="text-xs text-gray-500">Meta Description</span>
-              <div className="flex items-center justify-between mt-0.5 bg-gray-800/60 rounded p-2">
-                <p className="text-sm text-gray-200">{result.meta_description}</p>
+              <div className="flex items-center justify-between mt-0.5 bg-gray-50 rounded p-2">
+                <p className="text-sm text-gray-800">{result.meta_description}</p>
                 <CopyButton text={result.meta_description} />
               </div>
             </div>
@@ -1305,19 +1305,19 @@ function SeoTab() {
           <div className="card p-4 grid grid-cols-2 gap-3 text-sm">
             <div>
               <span className="text-xs text-gray-500 block mb-1">Primary Keyword Usage</span>
-              <p className="text-gray-300">{result.keyword_usage?.primary}</p>
+              <p className="text-gray-600">{result.keyword_usage?.primary}</p>
             </div>
             <div>
               <span className="text-xs text-gray-500 block mb-1">Secondary Keywords</span>
-              <p className="text-gray-300">{result.keyword_usage?.secondary}</p>
+              <p className="text-gray-600">{result.keyword_usage?.secondary}</p>
             </div>
             <div>
               <span className="text-xs text-gray-500 block mb-1">Readability</span>
-              <p className="text-gray-300">{result.readability_score}</p>
+              <p className="text-gray-600">{result.readability_score}</p>
             </div>
             <div>
               <span className="text-xs text-gray-500 block mb-1">Schema Type</span>
-              <p className="text-gray-300">{result.schema_type}</p>
+              <p className="text-gray-600">{result.schema_type}</p>
             </div>
           </div>
 
@@ -1326,7 +1326,7 @@ function SeoTab() {
               <p className="section-header mb-2">Internal Link Opportunities</p>
               <ul className="space-y-1">
                 {result.internal_link_suggestions.map((s: string, i: number) => (
-                  <li key={i} className="text-sm text-gray-400 flex gap-2"><span className="text-brand-500">→</span>{s}</li>
+                  <li key={i} className="text-sm text-gray-500 flex gap-2"><span className="text-brand-500">→</span>{s}</li>
                 ))}
               </ul>
             </div>
@@ -1337,7 +1337,7 @@ function SeoTab() {
               <p className="section-header">Optimized Content</p>
               <CopyButton text={result.optimized_content} />
             </div>
-            <p className="text-sm text-gray-200 whitespace-pre-wrap leading-relaxed">{result.optimized_content}</p>
+            <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{result.optimized_content}</p>
           </div>
         </div>
       )}
@@ -1352,24 +1352,24 @@ function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) =
   const valid = key.startsWith('sk-ant-') && key.length > 20;
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-6">
       {/* Logo */}
       <div className="flex items-center gap-3 mb-12">
         <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center">
           <Zap size={20} className="text-white" />
         </div>
         <div>
-          <span className="font-semibold text-lg text-gray-100">ContentEngine</span>
+          <span className="font-semibold text-lg text-gray-900">ContentEngine</span>
           <span className="text-xs text-gray-500 ml-2">AI</span>
         </div>
       </div>
 
       {/* Hero */}
       <div className="text-center max-w-lg mb-10">
-        <h1 className="text-2xl font-semibold text-gray-100 mb-3 leading-snug">
+        <h1 className="text-2xl font-semibold text-gray-900 mb-3 leading-snug">
           Turn any insight into<br />multi-channel content
         </h1>
-        <p className="text-gray-400 text-sm leading-relaxed">
+        <p className="text-gray-500 text-sm leading-relaxed">
           Paste a topic or stat → get a LinkedIn post, email, tweet, and blog outline — all in one click. Built on Claude AI.
         </p>
       </div>
@@ -1382,10 +1382,10 @@ function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) =
           { icon: <TrendingUp size={14} />, label: 'Trend Radar', desc: 'Find content angles in your industry' },
           { icon: <Mic size={14} />, label: 'Brand Voice', desc: 'Write new content that sounds like you' },
         ].map((item, i) => (
-          <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-3 flex items-start gap-3">
-            <span className="text-brand-400 mt-0.5 flex-shrink-0">{item.icon}</span>
+          <div key={i} className="bg-white border border-gray-200 rounded-xl p-3 flex items-start gap-3">
+            <span className="text-brand-600 mt-0.5 flex-shrink-0">{item.icon}</span>
             <div>
-              <p className="text-xs font-medium text-gray-200">{item.label}</p>
+              <p className="text-xs font-medium text-gray-800">{item.label}</p>
               <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
             </div>
           </div>
@@ -1406,7 +1406,7 @@ function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) =
           />
           <button
             onClick={() => setShow(v => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-300"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-600"
           >
             {show ? 'hide' : 'show'}
           </button>
@@ -1421,21 +1421,21 @@ function WelcomeScreen({ onKeySet, onViewExamples }: { onKeySet: (key: string) =
         </button>
 
         <div className="flex items-center gap-3">
-          <div className="flex-1 h-px bg-gray-800" />
-          <span className="text-xs text-gray-600">or</span>
-          <div className="flex-1 h-px bg-gray-800" />
+          <div className="flex-1 h-px bg-gray-100" />
+          <span className="text-xs text-gray-500">or</span>
+          <div className="flex-1 h-px bg-gray-100" />
         </div>
 
         <button
           onClick={onViewExamples}
-          className="w-full py-2.5 text-sm text-gray-400 border border-gray-800 rounded-lg hover:border-gray-700 hover:text-gray-300 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-2.5 text-sm text-gray-500 border border-gray-200 rounded-lg hover:border-gray-300 hover:text-gray-600 transition-colors flex items-center justify-center gap-2"
         >
           <LayoutDashboard size={14} /> View Examples — No API Key Needed
         </button>
 
-        <p className="text-xs text-gray-600 text-center">
+        <p className="text-xs text-gray-500 text-center">
           Get your free API key at{' '}
-          <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" className="text-brand-400 hover:text-brand-300">
+          <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-600">
             console.anthropic.com
           </a>
           {' '}· Your key stays in your browser, never stored on our servers
@@ -1504,14 +1504,14 @@ export default function App() {
   const groups = ['Core', 'Tools', 'Analytics'];
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Header */}
-      <header className="border-b border-gray-800 px-6 py-3 flex items-center justify-between gap-4">
+      <header className="border-b border-gray-200 px-6 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 flex-shrink-0">
           <div className="w-7 h-7 bg-brand-600 rounded-lg flex items-center justify-center">
             <Zap size={14} className="text-white" />
           </div>
-          <span className="font-semibold text-sm text-gray-100">ContentEngine</span>
+          <span className="font-semibold text-sm text-gray-900">ContentEngine</span>
         </div>
 
         {/* API Key input */}
@@ -1526,30 +1526,30 @@ export default function App() {
             />
             <button
               onClick={() => setShowKey(v => !v)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-300"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500 hover:text-gray-600"
             >
               {showKey ? 'hide' : 'show'}
             </button>
           </div>
-          <span className={`text-xs flex-shrink-0 ${keyValid ? 'text-green-400' : 'text-gray-600'}`}>
+          <span className={`text-xs flex-shrink-0 ${keyValid ? 'text-green-600' : 'text-gray-500'}`}>
             {keyValid ? '✓ Ready' : '⚠ No key'}
           </span>
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
-          <a href="https://notion.so/326feccf871081f7a3cde0e1033be38b" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">Case Study →</a>
+          <a href="https://notion.so/326feccf871081f7a3cde0e1033be38b" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 hover:text-gray-600 transition-colors">Case Study →</a>
         </div>
       </header>
 
       {/* Tab bar */}
-      <nav className="border-b border-gray-800 px-4 flex items-center overflow-x-auto">
+      <nav className="border-b border-gray-200 px-4 flex items-center overflow-x-auto">
         {groups.map((group, gi) => (
           <div key={group} className="flex items-center flex-shrink-0">
-            {gi > 0 && <div className="w-px h-4 bg-gray-800 mx-2" />}
-            <span className="text-xs text-gray-700 pr-1">{group}</span>
+            {gi > 0 && <div className="w-px h-4 bg-gray-100 mx-2" />}
+            <span className="text-xs text-gray-600 pr-1">{group}</span>
             {TABS.filter(t => t.group === group).map(t => (
               <button key={t.id} onClick={() => setTab(t.id)}
-                className={`flex items-center gap-1.5 px-3 py-3 text-xs border-b-2 transition-colors whitespace-nowrap ${tab === t.id ? 'border-brand-500 text-brand-300 font-medium' : 'border-transparent text-gray-500 hover:text-gray-300'}`}>
+                className={`flex items-center gap-1.5 px-3 py-3 text-xs border-b-2 transition-colors whitespace-nowrap ${tab === t.id ? 'border-brand-500 text-brand-600 font-medium' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
                 {t.icon}<span className="hidden sm:inline">{t.label}</span>
               </button>
             ))}
@@ -1559,10 +1559,10 @@ export default function App() {
 
       {/* Tab description banner */}
       {activeTab && (
-        <div className="bg-gray-900/50 border-b border-gray-800/60 px-6 py-2 flex items-center justify-between">
+        <div className="bg-white/70 border-b border-gray-200/60 px-6 py-2 flex items-center justify-between">
           <p className="text-xs text-gray-500">{activeTab.desc}</p>
           {!keyValid && tab !== 'showcase' && (
-            <span className="text-xs text-amber-500/80">← Enter API key in header to generate</span>
+            <span className="text-xs text-amber-600">← Enter API key in header to generate</span>
           )}
         </div>
       )}
